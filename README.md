@@ -2,7 +2,9 @@
 
 _This page is a draft and subject to change._
 
-Welecome to CMPS290S, fall 2018 edition!  Here's an "official" course description:
+Welcome to CMPS290S, fall 2018 edition!  This is a 5-unit graduate seminar course; the "S" stands for "systems".
+
+Here's an "official" course description:
 
 > This graduate seminar course explores the theory and practice of distributed programming from a programming languages perspective.  We will focus on programming models, language-level abstractions, and verification techniques that attempt to tame the many complexities of distributed systems: inevitable failures of the underlying hardware or network; communication latency resulting from the distance between nodes; the challenge of scaling to handle ever-larger amounts of work; and more.  Most of the work in the course will consist of reading classic and recent papers from the academic literature, writing short responses to the readings, and discussing them in class.  Furthermore, every participant in the class will contribute to a public group blog where we will share what we learn with a broader audience.
 
@@ -50,7 +52,7 @@ Will this be less work than a traditional course project?  No.  A blog post requ
 
 You may want to do one 50-hour post instead of two 25-hour ones.  In that case, you should break it up into two chunks and publish them as "part one" and "part two".  You might not know something is a 50-hour project until you're in the middle of it, so play it by ear: if you put in 25 hours of focused work during October and you're still nowhere near done, then find a reasonable stopping point, call what you've done so far "part one", and then do "part two" in November.
 
-Blog posts aimed at a general technical audience call for a different writing style than academic papers do, but that doesn't mean we won't hold them to a high standard of quality.  (If anything, we should be _more_ concerned about writing well.  Making the blog a pleasure to read will be a top priority.)  Therefore, in addition to writing your own posts for the blog, you will also serve as an _editor_ for two posts (other than your own).  The role of the editor is to help the writer do their best work -- by reading drafts, asking clarifying questions, and spotting mistakes and rough spots.  Expect to spend at least ten hours on editing (at least five hours per post on which you serve as editor).  We'll pair up editors with writers as the quarter proceeds.  I'll contribute some editing effort to each post as well, because I care and I want the blog to be awesome.
+Blog posts aimed at a general technical audience call for a different writing style than academic papers do, but that doesn't mean we won't hold them to a high standard of quality.  (If anything, we should be _more_ concerned about writing well.  Making the blog a pleasure to read will be a top priority.)  Therefore, in addition to writing your own posts for the blog, you will also serve as an _editor_ for two posts (other than your own).  The role of the editor is to help the writer do their best work -- by reading drafts, asking clarifying questions, and spotting mistakes and rough spots.  Expect to spend at least ten hours on editing (at least five hours per post on which you serve as editor).  We'll pair up editors with writers as the quarter proceeds, and when you're on the receiving end, you'll be expected to incorporate the editor's feedback before the post can be published.  I'll contribute some editing effort to each post as well, because I care and I want the blog to be awesome.
 
 Each post will credit its author (and editor), and you're also welcome to cross-post your individual posts to your own blog if you have one.
 
