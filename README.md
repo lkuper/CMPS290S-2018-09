@@ -61,3 +61,7 @@ You'll write your blog posts in Markdown format (with LaTeX support via MathJax 
 This is a graduate seminar; you're expected and encouraged to discuss your work with others.  That said, everything you write for the class (paper summaries, blog posts, presentation slides, etc.)  must be your own original work.
 
 Properly attribute any work that you use.  (More details forthcoming.)
+
+## Similar courses
+
+[Heather Miller's fall 2016 course at Northeastern on programming models for distributed computing](http://heather.miller.am/teaching/cs7680/) was structured similarly to this one and has some overlap in material.  There's also some overlap with the "programming models" part of [Peter Alvaro's winter 2016 edition of 290S](https://github.com/palvaro/CMPS290S-Winter16).
