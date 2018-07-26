@@ -18,26 +18,31 @@ Responses should be in the ballpark of 500 to 1000 words, which is about the min
 
 The five questions above are intended to help you structure your response structure.  You may find that what you have to say about the reading doesn't fit neatly into answers to those five questions.  (You also may not have a research question about every reading.)  In that case, feel free to try structuring your response differently.  Below are some alternative response structures:
 
-  * From [Heather Miller](http://heather.miller.am/teaching/cs7680/reading-papers.html):
-    1. What are the contributions of this work? How novel or significant are they?
-    2. How does the paper relate to other papers you've read?
-    3. What problem did the authors solve? How well did they solve it? What are the limitations of the presented solution? Is there some simple solution that the authors may have overlooked?
-    4. Are the assumptions that motivate this work sound and reasonable?
-    5. What questions are you left with? Is anything unclear?
-  * From [William Griswold](https://cseweb.ucsd.edu/~wgg/CSE210/paperform.pdf):
-    1. What is your take-away message from this paper?
-    2. What is the motivation for this work (both people problem and technical problem), and its distillation into a research question?  _Why doesn't the people problem have a trivial solution?  What are the previous solutions and why are they inadequate?_
-    3. What is the proposed solution (hypothesis, idea, design)?  _Why is it believed it will work?  How does it represent an improvement?  How is the solution achieved?_
-    4. What is the author's evaluation of the solution?  _What logic, argument, evidence, artifacts (e.g., a proof-of-concept system), or experiments are presented in support of the idea?_
-    5. What is your analysis of the identified problem, idea and evaluation?  _Is this a good idea?  What flaws do you perceive in the work?  What are the most interesting or controversial ideas?  For work that has practical implications, ask whether this will work, who would want it, what it will take to give it to them, and when might it become a reality?_
-    6. What are the paper's contributions (author's and your opinion)?  _Ideas, methods, software, experimental results, experimental techniques...?_
-    7. What are future directions for this research (author's and yours, perhaps driven by shortcomings or other critiques)?
-    8. What questions are you left with?  _What questions would you like to raise in an open discussion of the work (review interesting and controversial points, above)?  What do you find difficult to understand?  List as many as you can._
-  * From [Ethan Miller](https://courses.soe.ucsc.edu/courses/cmps290s/Fall11/01/pages/syllabus):
-    1. What is the problem or issue addressed by the reading, and why is the problem important?
-    2. What approaches are discussed in the reading, and how dow they help address the problem or issue?
-    3. What other approaches (if any) are mentioned in the reading, and how are the approaches in the reading better than alternatives?
-    4. Three or more comments/questions about the reading.
+### From [Heather Miller](http://heather.miller.am/teaching/cs7680/reading-papers.html):
+
+  1. What are the contributions of this work? How novel or significant are they?
+  2. How does the paper relate to other papers you've read?
+  3. What problem did the authors solve? How well did they solve it? What are the limitations of the presented solution? Is there some simple solution that the authors may have overlooked?
+  4. Are the assumptions that motivate this work sound and reasonable?
+  5. What questions are you left with? Is anything unclear?
+
+### From [William Griswold](https://cseweb.ucsd.edu/~wgg/CSE210/paperform.pdf):
+
+  1. What is your take-away message from this paper?
+  2. What is the motivation for this work (both people problem and technical problem), and its distillation into a research question?  _Why doesn't the people problem have a trivial solution?  What are the previous solutions and why are they inadequate?_
+  3. What is the proposed solution (hypothesis, idea, design)?  _Why is it believed it will work?  How does it represent an improvement?  How is the solution achieved?_
+  4. What is the author's evaluation of the solution?  _What logic, argument, evidence, artifacts (e.g., a proof-of-concept system), or experiments are presented in support of the idea?_
+  5. What is your analysis of the identified problem, idea and evaluation?  _Is this a good idea?  What flaws do you perceive in the work?  What are the most interesting or controversial ideas?  For work that has practical implications, ask whether this will work, who would want it, what it will take to give it to them, and when might it become a reality?_
+  6. What are the paper's contributions (author's and your opinion)?  _Ideas, methods, software, experimental results, experimental techniques...?_
+  7. What are future directions for this research (author's and yours, perhaps driven by shortcomings or other critiques)?
+  8. What questions are you left with?  _What questions would you like to raise in an open discussion of the work (review interesting and controversial points, above)?  What do you find difficult to understand?  List as many as you can._
+
+### From [Ethan Miller](https://courses.soe.ucsc.edu/courses/cmps290s/Fall11/01/pages/syllabus):
+
+  1. What is the problem or issue addressed by the reading, and why is the problem important?
+  2. What approaches are discussed in the reading, and how dow they help address the problem or issue?
+  3. What other approaches (if any) are mentioned in the reading, and how are the approaches in the reading better than alternatives?
+  4. Three or more comments/questions about the reading.
 
 ## Additional advice on how to read papers
 
