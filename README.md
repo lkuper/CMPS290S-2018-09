@@ -16,7 +16,7 @@ Familiarity with (or willingness to learn) some basic PL concepts as applied to 
 
 ## Class meetings
 
-  - MoWeFr 1:20-2:25PM, Porter Acad 241 (a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
+  - MoWeFr 1:20-2:25pm, Porter Acad 241 (a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
 
 We won't have a final exam.  I haven't decided what to do with our final exam time slot (8-11am on Wednesday, December 12) yet; perhaps it will be some kind of group social event to celebrate us all having survived the quarter.
 
