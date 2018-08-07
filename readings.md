@@ -21,7 +21,11 @@ Eventually, there'll be a schedule here, with dates and all that.
   - Causal consistency: [Causal memory: definitions, implementation, and programming (Distributed Computing, 1995)](https://link.springer.com/article/10.1007/BF01784241)
   - Eventual consistency: [Eventually consistent (CACM 2009)](https://dl.acm.org/citation.cfm?id=1435432)
   - Convergent causal consistency: [Don't Settle for Eventual: Scalable Causal Consistency for Wide-Area Storage with COPS (SOSP '11)](https://www.cs.cmu.edu/~dga/papers/cops-sosp2011.pdf)
-  - [Consistency, Availability, and Convergence (2011)](http://www.cs.cornell.edu/lorenzo/papers/cac-tr.pdf)
+  - Surveys and overviews:
+    - [Consistency, Availability, and Convergence (2011)](http://www.cs.cornell.edu/lorenzo/papers/cac-tr.pdf)
+    - [Consistency in Non-Transactional Distributed Storage Systems (ACM Computing Surveys, 2016)](https://dl.acm.org/citation.cfm?id=2926965)
+      - See also: [author's version](http://www.vukolic.com/consistency-survey.pdf); [verson on arXiv](https://arxiv.org/abs/1512.00168)
+      - cf. [the Jepsen overview of consistency models](https://jepsen.io/consistency)
 
 ### Replicated data types for eventual consistency
 
@@ -102,7 +106,9 @@ Eventually, there'll be a schedule here, with dates and all that.
   - [Computation Orchestration: A Basis for Wide-Area Computing (JSSM 2007)](http://orc.csres.utexas.edu/papers/OrcJSSM.pdf)
   - [The Orc Programming Language (FORTE '09)](http://orc.csres.utexas.edu/papers/forte09.pdf)
 
-### Abstractions for programming the cloud: system configuration languages
+### Abstractions for configuration management and network update
 
+  - [Modular Software Upgrades for Distributed Systems (ECOOP '06)](http://pmg.csail.mit.edu/pubs/ajmani06modular-abstract.html)
+  - [Abstractions for Network Update (SIGCOMM '12)](http://reitblatt.com/papers/consistent-updates-sigcomm12.pdf)
   - [Tortoise: Interactive System Configuration Repair (ASE '17)](https://people.cs.umass.edu/~arjun/papers/2017-weiss-tortoise.html)
   - [Rehearsal: A Configuration Verification Tool for Puppet (PLDI '16)](https://people.cs.umass.edu/~arjun/papers/2016-rehearsal.html)
