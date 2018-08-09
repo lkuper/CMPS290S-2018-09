@@ -35,9 +35,9 @@ _Free pass policy_: Because life throws unexpected challenges at each of us, you
 
 ## Presentations
 
-Each participant in the class will present two or three readings during the course of the quarter.  As a rough guideline, you should expect to do one or two presentations in October and one or two in November.  (You don't have to submit a response for readings that you're presenting.)
+Each participant in the class will present two or three readings (depending on how many people take the class) during the course of the quarter.  As a rough guideline, you should expect to do one or two presentations in October and one or two in November.  (You don't have to submit a response for readings that you're presenting.)
 
-More information and logistical details about presentations will be forthcoming.
+You'll have the opportunity to sign up to present particular readings.  (If you don't pick, I'll pick for you.)  More information and logistical details about presentations will be forthcoming.
 
 ## Class blog
 
