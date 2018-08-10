@@ -45,6 +45,7 @@ This page is neither sound (i.e., if it's listed here, that doesn't mean we'll r
 ## To add somewhere
 
   - [Replicated Data Types: Specification, Verification, Optimality (POPL '14)](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/)
+  - [Disciplined Inconsistency with Consistency Types (SoCC '16)](http://bholt.org/gen/ipa.pdf)
   - [Safe Replication through Bounded Concurrency Verification (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-safe-replication-through-bounded-concurrency-verification) (TODO: update with correct paper link)
 
 ## Further reading
