@@ -29,8 +29,8 @@ This page is neither sound (i.e., if it's listed here, that doesn't mean we'll r
 | Wednesday, 11/7  | Languages and frameworks for distribution    |                      | [Consistency Analysis in Bloom: a CALM and Collected Approach (CIDR '11)](http://db.cs.berkeley.edu/papers/cidr11-bloom.pdf)
 | Friday, 11/9     | Languages and frameworks for distribution    |                      | [Logic and Lattices for Distributed Programming (SOCC '15)](https://dl.acm.org/citation.cfm?id=2391230)
 | Monday, 11/12    | No class (Veterans Day)
-| Wednesday, 11/14 | Languages and frameworks for distribution    |                      | [From Clarity to Efficiency for Distributed Algorithms (OOPSLA '12)](http://www3.cs.stonybrook.edu/~liu/papers/DistPL-OOPSLA12.pdf)
-| Friday, 11/16    | Languages and frameworks for distribution    |                      | [PSync: A partially synchronous language for fault-tolerant distributed algorithms (POPL '16)](https://hal.inria.fr/hal-01251199/document) (see also: [the extended TOPLAS version](https://arxiv.org/pdf/1412.8461.pdf); [the DistAlgo website](https://sites.google.com/site/distalgo/))
+| Wednesday, 11/14 | Languages and frameworks for distribution    |                      | [From Clarity to Efficiency for Distributed Algorithms (OOPSLA '12)](http://www3.cs.stonybrook.edu/~liu/papers/DistPL-OOPSLA12.pdf)  (see also: [the extended TOPLAS version](https://arxiv.org/pdf/1412.8461.pdf); [the DistAlgo website](https://sites.google.com/site/distalgo/))
+| Friday, 11/16    | Languages and frameworks for distribution    |                      | [PSync: A partially synchronous language for fault-tolerant distributed algorithms (POPL '16)](https://hal.inria.fr/hal-01251199/document)
 | Monday, 11/19    | Multitier programming                        |                      | [Links: web programming without tiers (FMCO '06)](http://links-lang.org/papers/links-fmco06.pdf)
 | Wednesday, 11/21 | Multitier programming                        |                      | [Distributed System Development with ScalaLoci (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-distributed-system-development-with-scalaloci) (TODO: update with correct paper link) (see also: [ScalaLoci website](https://scala-loci.github.io/) and [GitHub organization](https://github.com/scala-loci))
 | Friday, 11/23    | No class (Thanksgiving)
@@ -41,6 +41,10 @@ This page is neither sound (i.e., if it's listed here, that doesn't mean we'll r
 | Wednesday, 12/5  | Abstractions for configuration management    |                      | [Abstractions for Network Update (SIGCOMM '12)](http://reitblatt.com/papers/consistent-updates-sigcomm12.pdf)
 | Friday, 12/7     | Abstractions for configuration management    |                      | [Rehearsal: A Configuration Verification Tool for Puppet (PLDI '16)](https://people.cs.umass.edu/~arjun/papers/2016-rehearsal.html)
 | Wednesday, 12/12 | ~~final exam~~ end-of-quarter celebration
+
+## To add somewhere
+
+  - [Safe Replication through Bounded Concurrency Verification (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-safe-replication-through-bounded-concurrency-verification) (TODO: update with correct paper link)
 
 ## Further reading
 
