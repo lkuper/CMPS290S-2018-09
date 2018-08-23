@@ -18,7 +18,7 @@ Rather, your goal is to construct a rich mental map of existing work in the fiel
 
 ## Alternative response structures
 
-The five questions above are intended to help you structure your response structure.  You may find that what you have to say about the reading doesn't fit neatly into answers to those five questions.  For example, for some readings you may be more interested in focusing on how the reading relates to other papers you've read than you are in formulating a research question.
+The five questions above are intended to help you structure your response.  But you may find that what you have to say about the reading doesn't fit neatly into answers to those five questions.  For example, for some readings you may be more interested in focusing on how the reading relates to other papers you've read than you are in formulating a research question.
 
 In that case, feel free to try structuring your response differently.  Below are some alternative response structures:
 
