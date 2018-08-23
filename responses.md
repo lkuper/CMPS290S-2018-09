@@ -6,17 +6,21 @@ For each reading, you will write a response and submit it by 11am on the day we 
 
 Class is at 1:20PM, so you have a chance to glance over other people's responses after submitting yours, so you know what to <s>argue with them about</s> discuss with them in class.
 
-Responses should be in the ballpark of 500 to 1000 words, which is about the minimum length that, say, a PLDI review should be.  But responding to these reaadings is quite different from reviewing submissions to a conference.  For one thing, we're reading stuff that has (with a few possible exceptions) already been thoroughly peer-reviewed.  Your goal here isn't to assess the quality of the papers.  Rather, your goal is to learn -- to construct a rich mental map of literature in the field, and to build a foundation for your own work.  To that end, you should structure your response around the following questions:
+Responses should be in the ballpark of 500 to 1000 words, which is about the minimum length that, say, a PLDI review should be.  But responding to these readings is quite different from reviewing submissions to a conference.  For one thing, we're reading stuff that has (with a few possible exceptions) already been thoroughly peer-reviewed.  Your goal here isn't to assess the quality of the papers.
+
+Rather, your goal is to construct a rich mental map of existing work in the field which you will sooner or later be able to use as a foundation for your own research.  To that end, you should structure your response around the following questions:
 
   1. What's this paper about?  (Summarize the paper and its contributions in your own words.)
   2. What's one thing I learned?
   3. What's something I didn't understand?
-  4. What's a research-level question I'm curious about after having read this paper?  (A "research-level" question is something deeper than "What did the Greek letters on page 4 mean?" or "What's the baseline in Figure 6?" -- those would fall under a"What's something I didn't understand about the paper?", above.  Rather, a research-level question might be something like, "The problem you addressed in this paper reminds me of the X problem, which is similar in ways A and B, but different in way C.  Could this paper's approach, or something like it, be used to address X?")
+  4. What's a research-level question I'm curious about after having read this paper?  (A "research-level" question is something deeper than "What did the Greek letters on page 4 mean?" or "What's the baseline in Figure 6?" -- those would fall under "What's something I didn't understand?", above.  Rather, a research-level question might be something like, "The problem you addressed in this paper reminds me of the X problem, which is similar in ways A and B, but different in way C.  Could this paper's approach, or something like it, be used to address X?")
   5. What are some concrete steps can I take toward answering the research question?
 
 ## Alternative response structures
 
-The five questions above are intended to help you structure your response structure.  You may find that what you have to say about the reading doesn't fit neatly into answers to those five questions.  (You also may not have a research question about every reading.)  In that case, feel free to try structuring your response differently.  Below are some alternative response structures:
+The five questions above are intended to help you structure your response structure.  You may find that what you have to say about the reading doesn't fit neatly into answers to those five questions.  For example, for some readings you may be more interested in focusing on how the reading relates to other papers you've read than you are in formulating a research question.
+
+In that case, feel free to try structuring your response differently.  Below are some alternative response structures:
 
 ### From [Heather Miller](http://heather.miller.am/teaching/cs7680/reading-papers.html):
 
