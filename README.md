@@ -26,6 +26,10 @@ We won't have a final exam.  I haven't decided what to do with our final exam ti
   - Participation in discussion (online and in class): 20%
   - In-class [presentations](#presentations): 20%
   - [Class blog](#class-blog) posts: 35%
+  
+## Office hours
+
+  - Wednesdays and Fridays, 11am-noon, Engineering 2 349B, or by appointment ([email me](mailto:lkuper@ucsc.edu))
 
 ## Readings and responses
 
@@ -41,7 +45,7 @@ You'll have the opportunity to sign up to present particular readings.  (If you 
 
 ## Class blog
 
-As a grad student, I always dreaded having to do course "projects".  In an ideal world, these projects were supposed to dovetail nicely with one's "real" research, or they were supposed to morph into "real" research within three months by some mysterious alchemical process involving lots of luck and suffering.  In practice, they just ended up taking time away from real research, and they always ended up being hastily implemented and shoddily written up.
+As a grad student, I always dreaded having to do course projects.  In an ideal world, these projects were supposed to dovetail nicely with one's "real" research, or they were supposed to morph into "real" research within three months by some mysterious alchemical process involving lots of luck and suffering.  In practice, they usually ended up taking time away from real research, and they always ended up being hastily implemented and shoddily written up.
 
 So, let's try something different.  Instead of a traditional course "project", **each participant in the class will write (and illustrate!) two posts for a public group blog aimed at a general technical audience.**  The goal is to create an artifact that will outlive the class and be valuable to the broader community.  Here's a non-exhaustive list of possibilities for blog posts:
 
