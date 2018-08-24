@@ -19,7 +19,7 @@ This page is neither sound (i.e., if it's listed here, that doesn't mean we'll r
 | Monday, 10/22    | Replicated data types                        |                      | Marc Shapiro et al., [A comprehensive study of Convergent and Commutative Replicated Data Types (2011)](https://hal.inria.fr/inria-00555588/document)
 | Wednesday, 10/24 | Replicated data types                        |                      | Sebastian Burckhardt et al., [Cloud Types for Eventual Consistency (ECOOP '12)](https://dl.acm.org/citation.cfm?id=2367183) (see also: Burckhardt's book, [_Principles of Eventual Consistency_](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/final-printversion-10-5-14.pdf))
 | Friday, 10/26    | Replicated data types                        |                      | Sebastian Burckhardt et al., [Replicated Data Types: Specification, Verification, Optimality (POPL '14)](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/)
-| Monday, 10/29    | \*pause for breath\* **(aim to be nearly done with the first of your two blog posts and soliciting editor/instructor feedback by today)**
+| Monday, 10/29    | \*pause for breath\* **(aim to be nearly done with the first of your two blog posts and soliciting editor/instructor feedback by today)** | | (none)
 | Wednesday, 10/31 | Combining consistencies                      |                      | Alexey Gotsman et al., ['Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (POPL '16)](http://software.imdea.org/~gotsman/papers/logic-popl16.pdf)
 | Friday, 11/2     | Combining consistencies                      |                      | Brandon Holt et al., [Disciplined Inconsistency with Consistency Types (SoCC '16)](http://bholt.org/gen/ipa.pdf)
 | Monday, 11/5     | Combining consistencies                      |                      | Matthew Milano and Andrew C. Myers, [MixT: a Language for Mixing Consistency in Geodistributed Transactions (PLDI '18)](http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf)
@@ -41,42 +41,42 @@ This page is neither sound (i.e., if it's listed here, that doesn't mean we'll r
 
 ## Further reading
 
-There's a vast amount of reading material that would be in scope for a course on "languages and abstractions for distributed programming", but that this particular course won't have time to cover, including but not limited to (TODO: add missing author names):
+There's a vast amount of reading material that would be in scope for a course on "languages and abstractions for distributed programming", but that this particular course won't have time to cover, including but not limited to:
 
   - ...yet more foundational or survey papers on consistency models, such as:
     - Leslie Lamport, [How to Make a Multiprocessor Computer That Correctly Executes Multiprocess Programs (1979)](https://www.microsoft.com/en-us/research/publication/make-multiprocessor-computer-correctly-executes-multiprocess-programs/)
     - Theo Haerder and Andreas Reuter, [Principles of Transaction-Oriented Database Recovery (ACM Computing Surveys, 1983)](https://dl.acm.org/citation.cfm?id=291)
     - Prince Mahajan, Lorenzo Alvisi, and Mike Dahlin, [Consistency, Availability, and Convergence (2011)](http://www.cs.cornell.edu/lorenzo/papers/cac-tr.pdf)
   - ...yet more material on verif{ying, ied} distributed systems, such as:
-    - [Verdi: A Framework for Implementing and Formally Verifying Distributed Systems (PLDI '15)](http://verdi.uwplse.org/verdi.pdf) (see also: [the Verdi website](http://verdi.uwplse.org/))
+    - James R. Wilcox et al., [Verdi: A Framework for Implementing and Formally Verifying Distributed Systems (PLDI '15)](http://verdi.uwplse.org/verdi.pdf) (see also: [the Verdi website](http://verdi.uwplse.org/))
     - Ilya Sergey, James R. Wilcox, and Zachary Tatlock, [Programming and Proving with Distributed Protocols (POPL '18)](http://ilyasergey.net/papers/disel-popl18.pdf)
   - ...material on process calculi, such as:
     - the pi-calculus (see [Jeannette Wing's FAQ](https://www.cs.columbia.edu/~wing/publications/Wing02a.pdf)
-    - [A Calculus of Mobile Agents (CONCUR '96)](https://dl.acm.org/citation.cfm?id=703841)
-    - [Mobile Ambients (FoSSaCS '98)](http://lucacardelli.name/Papers/MobileAmbientsETAPS98.A4.pdf)
+    - Cédric Fournet et al., [A Calculus of Mobile Agents (CONCUR '96)](https://dl.acm.org/citation.cfm?id=703841)
+    - Luca Cardelli and Andrew D. Gordon, [Mobile Ambients (FoSSaCS '98)](http://lucacardelli.name/Papers/MobileAmbientsETAPS98.A4.pdf)
   - ...material on early or pioneering distributed languages, such as:
-    - [Distribution and Abstract Types in Emerald (IEEE TSE 1987)](http://web.cecs.pdx.edu/~black/publications/Emerald%20IEEE%20TSE.pdf)
-    - [Distributed Programming in Argus (CACM 1988)](https://dl.acm.org/citation.cfm?id=42399)
-    - [A Language with Distributed Scope (POPL '95)](http://lucacardelli.name/Papers/Obliq.pdf)
-    - [Erlang (CACM 2010)](https://cacm.acm.org/magazines/2010/9/98014-erlang/fulltext)
-    - [Alice Through the Looking Glass (TFP '04)](https://people.mpi-sws.org/~rossberg/papers/Rossberg,%20Le%20Botlan,%20Tack,%20Brunklaus,%20Smolka%20-%20Alice%20Through%20the%20Looking%20Glass.pdf) (see also: [the Alice ML website](https://www.ps.uni-saarland.de/alice/))
+    - Andrew Black et al., [Distribution and Abstract Types in Emerald (IEEE TSE 1987)](http://web.cecs.pdx.edu/~black/publications/Emerald%20IEEE%20TSE.pdf)
+    - Barbara Liskov, [Distributed Programming in Argus (CACM 1988)](https://dl.acm.org/citation.cfm?id=42399)
+    - Luca Cardelli, [A Language with Distributed Scope (POPL '95)](http://lucacardelli.name/Papers/Obliq.pdf)
+    - Joe Armstrong, [Erlang (CACM 2010)](https://cacm.acm.org/magazines/2010/9/98014-erlang/fulltext)
+    - Andreas Rossberg et al., [Alice Through the Looking Glass (TFP '04)](https://people.mpi-sws.org/~rossberg/papers/Rossberg,%20Le%20Botlan,%20Tack,%20Brunklaus,%20Smolka%20-%20Alice%20Through%20the%20Looking%20Glass.pdf) (see also: [the Alice ML website](https://www.ps.uni-saarland.de/alice/))
   - ...material on extending languages for distribution, such as:
-    - [Towards Haskell in the Cloud (Haskell '11)](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/remote.pdf) (see also: [the Cloud Haskell website](http://haskell-distributed.github.io/))
+    - Jeff Epstein, Andrew P. Black, and Simon Peyton Jones, [Towards Haskell in the Cloud (Haskell '11)](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/remote.pdf) (see also: [the Cloud Haskell website](http://haskell-distributed.github.io/))
   - ...material on Dryad, Naiad, and all that, such as:
-    - [DryadLINQ: A System for General-Purpose Distributed Data-Parallel Computing Using a High-Level Language (OSDI '08)](https://www.usenix.org/legacy/events/osdi08/tech/full_papers/yu_y/yu_y.pdf)
-    - [Naiad: A Timely Dataflow System (SOSP '13)](http://sigops.org/sosp/sosp13/papers/p439-murray.pdf)
+    - Yuan Yu et al., [DryadLINQ: A System for General-Purpose Distributed Data-Parallel Computing Using a High-Level Language (OSDI '08)](https://www.usenix.org/legacy/events/osdi08/tech/full_papers/yu_y/yu_y.pdf)
+    - Derek G. Murray et al., [Naiad: A Timely Dataflow System (SOSP '13)](http://sigops.org/sosp/sosp13/papers/p439-murray.pdf)
   - ...more "systems-y" perspectives on mixing consistency levels, such as:
-    - [Consistency-based service level agreements for cloud storage (SOSP '13)](https://www.microsoft.com/en-us/research/publication/consistency-based-service-level-agreements-for-cloud-storage/)
+    - Douglas B. Terry et al., [Consistency-based service level agreements for cloud storage (SOSP '13)](https://www.microsoft.com/en-us/research/publication/consistency-based-service-level-agreements-for-cloud-storage/)
   - ...material on distributed programming models that facilitate testing, such as:
-    - [Compositional Programming and Testing of Dynamic Distributed Systems (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-compositional-programming-and-testing-of-dynamic-distributed-systems) (TODO: update with correct paper link)
+    - Ankush Desai et al., [Compositional Programming and Testing of Dynamic Distributed Systems (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-compositional-programming-and-testing-of-dynamic-distributed-systems) (TODO: update with correct paper link)
   - ...material on multitier programming, such as:
     - Ezra Cooper et al., [Links: web programming without tiers (FMCO '06)](http://links-lang.org/papers/links-fmco06.pdf)
     - Pascal Weisenburger, Mirko Köhler, and Guido Salvaneschi, [Distributed System Development with ScalaLoci (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-distributed-system-development-with-scalaloci) (TODO: update with correct paper link) (see also: [ScalaLoci website](https://scala-loci.github.io/) and [GitHub organization](https://github.com/scala-loci))
   - ...material on computation orchestration, such as:
-    - [Computation Orchestration: A Basis for Wide-Area Computing (JSSM 2007)](http://orc.csres.utexas.edu/papers/OrcJSSM.pdf)
-    - [The Orc Programming Language (FORTE '09)](http://orc.csres.utexas.edu/papers/forte09.pdf)
+    - Jayadev Misra and William R. Cook, [Computation Orchestration: A Basis for Wide-Area Computing (JSSM 2007)](http://orc.csres.utexas.edu/papers/OrcJSSM.pdf)
+    - David Kitchin et al., [The Orc Programming Language (FORTE '09)](http://orc.csres.utexas.edu/papers/forte09.pdf)
   - ...material on modal logic as a basis for distributed computing, such as:
-    - [Using Reasoning About Knowledge to Analyze Distributed Systems (1987)](https://www.cs.cornell.edu/home/halpern/papers/UsingRAK.pdf)
-    - [Modal Proofs as Distributed Programs (ESOP '04)](http://sip.cs.princeton.edu/pub/modal-esop04.pdf)
-    - [Type-Safe Distributed Programming in ML5 (TGC '07)](http://www.cs.cmu.edu/~tom7/papers/ml5_tgc2007_preproceedings.pdf) (see also: Murphy's dissertation, [_Modal Types for Mobile Code_](http://www.cs.cmu.edu/~tom7/papers/modal-types-for-mobile-code.pdf))
+    - Joseph Y. Halpern, [Using Reasoning About Knowledge to Analyze Distributed Systems (1987)](https://www.cs.cornell.edu/home/halpern/papers/UsingRAK.pdf)
+    - Limin Jia and David Walker, [Modal Proofs as Distributed Programs (ESOP '04)](http://sip.cs.princeton.edu/pub/modal-esop04.pdf)
+    - Tom Murphy VII, Karl Crary, and Robert Harper, [Type-Safe Distributed Programming with ML5 (TGC '07)](http://www.cs.cmu.edu/~tom7/papers/ml5_tgc2007_preproceedings.pdf) (see also: Murphy's dissertation, [_Modal Types for Mobile Code_](http://www.cs.cmu.edu/~tom7/papers/modal-types-for-mobile-code.pdf))
   - Etc., etc., etc.
