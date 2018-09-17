@@ -1,14 +1,36 @@
 # CMPS290S, Fall 2018: Languages and Abstractions for Distributed Programming
 
-_This page is a draft and subject to change._
+## Welcome
 
-Welcome to CMPS290S, fall 2018 edition!  This is a 5-unit graduate seminar course; the "S" stands for "systems".
+Welcome to CMPS290S, fall 2018 edition!
 
-Here's an "official" course description:
+This is a 5-unit graduate seminar course; the "S" stands for "systems".
 
-> This graduate seminar course explores the theory and practice of distributed programming from a programming languages perspective.  We will focus on programming models, language-level abstractions, and verification techniques that attempt to tame the many complexities of distributed systems: inevitable failures of the underlying hardware or network; communication latency resulting from the distance between nodes; the challenge of scaling to handle ever-larger amounts of work; and more.  Most of the work in the course will consist of reading classic and recent papers from the academic literature, writing short responses to the readings, and discussing them in class.  Furthermore, every participant in the class will contribute to a public group blog where we will share what we learn with a broader audience.
+## Course description
 
-There's more than one reasonable way to approach a seminar course on languages and abstractions for distributed programming.  We could spend all our time on process calculi and only make a small dent in the literature.  Or we could spend all our time on large-scale distributed data processing and only make a small dent in the literature.  In this course, we will be focusing a lot of attention on [consistency models](https://en.wikipedia.org/wiki/Consistency_model) and language-based approaches to specifying, implementing, and verifying them.  Of course, we will only make a small dent in the literature.
+This graduate seminar course explores the **theory and practice of distributed programming** from a **programming languages perspective**.
+
+We will focus on programming models, language-level abstractions, and verification techniques that attempt to tame the many complexities of distributed systems: inevitable failures of the underlying hardware or network; communication latency resulting from the distance between nodes; the challenge of scaling to handle ever-larger amounts of work; and more.
+
+Most of the work in the course will consist of **reading** classic and recent papers from the academic literature, **writing** short responses to the readings, and **discussing** them in class.
+
+Furthermore, every participant in the class will contribute to a **public group blog** where we will share what we learn with a broader audience.
+
+## A note on our approach
+
+There's more than one reasonable way to approach a seminar course on languages and abstractions for distributed programming.  We could spend all our time on process calculi and only make a small dent in the literature.  Or we could spend all our time on large-scale distributed data processing and only make a small dent in the literature.
+
+In this course, we will be focusing a lot of attention on [consistency models](https://en.wikipedia.org/wiki/Consistency_model) and language-based approaches to specifying, implementing, and verifying them.  Of course, we will only make a small dent in the literature.
+
+## Instructor
+
+.pull-left[![Lindsey Kuper](https://www.soe.ucsc.edu/people/lkuper/photo/1)]
+
+[Lindsey Kuper](https://users.soe.ucsc.edu/~lkuper/) (<lkuper@ucsc.edu>)
+
+  * Assistant Professor, Computer Science and Engineering
+  * Office: Engineering 2, Room 349B
+  * Research areas: Programming languages, distributed systems, parallelism, concurrency, verification
 
 ## Prerequisites
 
