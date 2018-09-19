@@ -1,6 +1,8 @@
-# Languages and Abstractions for Distributed Programming
+# Course overview
 
-Friday, October 29, 2018
+CMPS 290S, Fall 2018
+
+Languages and Abstractions for Distributed Programming
 
 ## Instructor
 
