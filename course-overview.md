@@ -120,10 +120,10 @@ A blog post requires substantial work (reading, writing, editing, programming, d
 
 As a rough guideline, you should be working on one post during October and the other one during November.  More specifically, aim to work within the following time frame:
 
-    - Monday, 10/29: Finished draft of first post; soliciting editor/instructor feedback
-    - Monday, 11/12: Hard deadline to have first post published
-    - Wednesday, 11/28: Finished draft of second post; soliciting editor/instructor feedback
-    - Wednesday, 12/12: Hard deadline to have second post published
+  - Monday, 10/29: Finished draft of first post; soliciting editor/instructor feedback
+  - Monday, 11/12: Hard deadline to have first post published
+  - Wednesday, 11/28: Finished draft of second post; soliciting editor/instructor feedback
+  - Wednesday, 12/12: Hard deadline to have second post published
 
 Note: You may want to do one 50-hour post instead of two 25-hour ones.  In that case, break it up into two chunks and publish them as "part one" and "part two".  You might not know something is a 50-hour project until you're in the middle of it, so play it by ear: if you put in 25 hours of focused work during October and you're still nowhere near done, then find a reasonable stopping point, call what you've done so far "part one", and then do the second part in November.
 
