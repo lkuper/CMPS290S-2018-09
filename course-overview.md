@@ -17,27 +17,33 @@ Hi, I'm [Lindsey Kuper](https://users.soe.ucsc.edu/~lkuper/)!
   - "S" in the course number stands for "systems", but don't read too much into it (we'll _mostly_ be reading papers from PL venues)
   - Class meets Mondays, Wednesdays, and Fridays, 1:20-2:25pm, Porter Acad 241 (in the Porter "D-Building", a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
   - No final exam, although you should save the time slot (8-11am on Wednesday, December 12) for a social event
-  - Topic: Theory and practice of distributed programming from a programming-languages perspective
-  - Particular emphasis on _consistency models_ and language-based approaches to specifying, implementing, and verifying them
-
   - Course web page: http://composition.al/CMPS290S-Fall-2018/
   - This document: http://composition.al/CMPS290S-Fall-2018/course-overview.html
 
-## What I want you to do in this course
+## What's this course about?
+
+  - Theory and practice of distributed programming from a programming-languages perspective
+  - Particular emphasis on [consistency models](https://en.wikipedia.org/wiki/Consistency_model) and language-based approaches to specifying, implementing, and verifying them
+  - Topics we'll spend significant time on:
+    - The CAP theorem
+    - Consistency models
+    - Replicated data types
+    - Verifying consistency
+    - Languages and frameworks for distribution
+    - Abstractions for configuration management
+
+## "Official" course description
+
+> This graduate seminar course explores the theory and practice of distributed programming from a programming-languages perspective.  We will focus on programming models, language-level abstractions, and verification techniques that attempt to tame the many complexities of distributed systems: inevitable failures of the underlying hardware or network; communication latency resulting from the distance between nodes; the challenge of scaling to handle ever-larger amounts of work; and more.  Most of the work in the course will consist of reading classic and recent papers from the academic literature, writing short responses to the readings, and discussing them in class.  Furthermore, every participant in the class will contribute to a public group blog where we will share what we learn with a broader audience.
+
+There's more than one reasonable way to approach a seminar course on languages and abstractions for distributed programming.  We could spend all our time on process calculi and only make a small dent in the literature.  Or we could spend all our time on large-scale distributed data processing and only make a small dent in the literature.  In this course, we will be focusing a lot of attention on consistency models and language-based approaches to specifying, implementing, and verifying them.  Of course, we will only make a small dent in the literature.
+
+## In this course, you will:
 
   - Become more comfortable with reading research papers (particularly PL papers, if you haven't read a lot of those)
   - Get a sense of how PL research and (distributed) systems research intersect
   - Identify some interesting research questions that fall in that intersection that you want to investigate, and start taking steps toward answering those questions
-  - Hone your technical writing and presenting skills, especially for a non-specialist audience (i.e., blog readers)
-
-## Topics we'll cover
-
-  - The CAP theorem
-  - Consistency models
-  - Replicated data types
-  - Verifying consistency
-  - Languages and frameworks for distribution
-  - Abstractions for configuration management
+  - Hone your technical writing and presenting skills, both for a specialist (i.e., each other) and non-specialist (i.e., blog readers) audience
 
 ## Background you'll need
 
@@ -75,30 +81,33 @@ _Free pass policy_: Because life throws unexpected challenges at each of us, you
     - Editors help by reading drafts, asking clarifying questions, spotting mistakes and rough spots, and giving constructive feedback
     - We'll pair up editors with writers as the quarter proceeds
   - I'll contribute editing effort to each post, too
+  - Lots of options for what to write about...
 
-## Possible blog post ideas (1)
+## Blog post ideas: The research investigation
 
-  - *The research investigation*
-    - Dig into one of the research questions that you identified while writing your [responses](https://composition.al/CMPS290S-Fall-2018/responses.html) to the readings
-    - Carry out one of the concrete steps that you identified toward answering it (which might involve writing code, taking measurements, writing proofs, and/or something else), and write about what you learned
-    - Negative or inconclusive results are fine!
-  - *The literature survey*
-    - Choose several (at least three, but no more than six or so) related readings that have something to do with the topic of the course, read them, and write a post surveying and analyzing them
-    - At most one of your selected readings should be one we're already covering in class
-    - The idea is to use something we read in class as a jumping-off point to go off on your own, explore the literature on a specific topic, and come back with new insights
-    - Good sources for papers include the related work sections of things we read for class, or the ["further reading" section of the readings page](https://composition.al/CMPS290S-Fall-2018/readings.html#further-reading).
+  - Dig into one of the research questions that you identify while writing your [responses](https://composition.al/CMPS290S-Fall-2018/responses.html) to the readings
+  - Carry out one of the concrete steps that you identified toward answering it (which might involve writing code, taking measurements, writing proofs, and/or something else), and write about what you learned
+  - Negative or inconclusive results are fine!
 
-## Possible blog post ideas (2)
+## Blog post ideas: The literature survey
 
-  - *The experience report*
-    - Try out one or more of the systems discussed in the course readings, and report on your experience
-    - For this kind of post, you should expect to write code
-    - Aim higher than just "I got it to compile and run" -- ideally, you'll use the system to accomplish something, and report on what worked and what didn't
-    - In many cases, it will be appropriate to try to reproduce performance results from the reading
-  - *Run someone's research*
-    - Choose a "lightweight language mechanization" tool, such as PLT Redex or K, and use it to mechanize and test a language or system model from one of the readings you did
-    - Report on what you learned from this process
-    - There's a [good chance](https://eecs.northwestern.edu/~robby/lightweight-metatheory/popl2012-kcdeffmrtf.pdf) you'll find bugs or infelicities in the on-paper semantics!
+  - Choose several (at least three, but no more than six or so) related readings that have something to do with the topic of the course, read them, and write a post surveying and analyzing them
+  - At most one of your selected readings should be one we're already covering in class
+  - The idea is to use something we read in class as a jumping-off point to go off on your own, explore the literature on a specific topic, and come back with new insights
+  - Good sources for papers include the related work sections of things we read for class, or the ["further reading" section of the readings page](https://composition.al/CMPS290S-Fall-2018/readings.html#further-reading).
+
+## Blog post ideas: The experience report
+
+  - Try out one or more of the systems discussed in the course readings, and report on your experience
+  - For this kind of post, you should expect to write code
+  - Aim higher than just "I got it to compile and run" -- ideally, you'll use the system to accomplish something, and report on what worked and what didn't
+  - In many cases, it will be appropriate to try to reproduce performance results from the reading
+
+## Blog post ideas: Run someone's research
+
+  - Choose a "lightweight language mechanization" tool, such as PLT Redex or K, and use it to mechanize and test a language or system model from one of the readings you did
+  - Report on what you learned from this process
+  - There's a [good chance](https://eecs.northwestern.edu/~robby/lightweight-metatheory/popl2012-kcdeffmrtf.pdf) you'll find bugs or infelicities in the on-paper semantics!
 
 ## Blog editing
 
