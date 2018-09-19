@@ -1,3 +1,6 @@
+name: "CMPS290S, Fall 2018"
+subtitle: "Languages and Abstractions for Distributed Programming"
+
 theme: jekyll-theme-minimal
 
 baseurl: "/CMPS290S-Fall-2018"
