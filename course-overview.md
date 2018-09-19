@@ -20,6 +20,7 @@ Hi, I'm [Lindsey Kuper](https://users.soe.ucsc.edu/~lkuper/)!
   - Class meets Mondays, Wednesdays, and Fridays, 1:20-2:25pm, Porter Acad 241 (in the Porter "D-Building", a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
   - No final exam, although you should save the time slot (8-11am on Wednesday, December 12) for a social event
   - Course web page: <http://composition.al/CMPS290S-Fall-2018/>
+  - Course GitHub repo: <https://github.com/lkuper/CMPS290S-Fall-2018>
   - This document: <http://composition.al/CMPS290S-Fall-2018/course-overview.html>
 
 ## What's this course about?
@@ -28,12 +29,12 @@ Theory and practice of distributed programming from a programming-languages pers
 
 Topics we'll spend significant time on:
 
-    - The CAP theorem
-    - Consistency models
-    - Replicated data types
-    - Verifying consistency
-    - Languages and frameworks for distribution
-    - Abstractions for configuration management
+  - The CAP theorem
+  - Consistency models
+  - Replicated data types
+  - Verifying consistency
+  - Languages and frameworks for distribution
+  - Abstractions for configuration management
 
 ## "Official" course description
 
@@ -171,7 +172,9 @@ Properly attribute any work that you use.  For instance, if you use a figure tha
   - **By EOD today**: If you haven't yet done so, email me your GitHub username so I can add you to the course repo.
     - Once you have repo access, push an empty file called `2018-10-01-cruzid.md` to the `responses` directory, replacing `cruzid` with your CruzID.  When you write your response to the first reading assignment, you'll update this file.
     - If you need help using GitHub, let me know.
-  - **By EOD today**: Look over the [list of readings](https://composition.al/CMPS290S-Fall-2018/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
-  - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response (remember that [responses](http://composition.al/CMPS290S-Fall-2018/responses.html) are due by 11am on the day of class)
+  - **By EOD today**: Look over the [list of readings](http://composition.al/CMPS290S-Fall-2018/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
+  - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](http://composition.al/CMPS290S-Fall-2018/responses.html) are due by 11am on the day of class)
 
 ## Questions?
+
+...
