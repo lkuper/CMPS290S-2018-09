@@ -57,8 +57,8 @@ There's more than one reasonable way to approach a seminar course on languages a
 ## Readings and responses
 
   - One goal of this class is to equip you to conduct research on languages and abstractions for distributed programming by absorbing a lot of papers on the topic
-  - Each participant in the class will write a [response](https://composition.al/CMPS290S-Fall-2018/responses.html) to each reading
-  - The [readings page](https://composition.al/CMPS290S-Fall-2018/readings.html) has the current schedule of readings
+  - Each participant in the class will write a [response](http://composition.al/CMPS290S-Fall-2018/responses.html) to each reading
+  - The [readings page](http://composition.al/CMPS290S-Fall-2018/readings.html) has the current schedule of readings
 
 _Free pass policy_: Because life throws unexpected challenges at each of us, you get four "free passes" to use during the quarter.  Using a free pass exempts you from having to submit a response for one reading.
 
@@ -87,7 +87,7 @@ _Free pass policy_: Because life throws unexpected challenges at each of us, you
 
 ## Blog post ideas: The research investigation
 
-  - Dig into one of the research questions that you identify while writing your [responses](https://composition.al/CMPS290S-Fall-2018/responses.html) to the readings
+  - Dig into one of the research questions that you identify while writing your [responses](http://composition.al/CMPS290S-Fall-2018/responses.html) to the readings
   - Carry out one of the concrete steps that you identified toward answering it (which might involve writing code, taking measurements, writing proofs, and/or something else), and write about what you learned
   - Negative or inconclusive results are fine!
 
@@ -96,7 +96,7 @@ _Free pass policy_: Because life throws unexpected challenges at each of us, you
   - Choose several (at least three, but no more than six or so) related readings that have something to do with the topic of the course, read them, and write a post surveying and analyzing them
   - At most one of your selected readings should be one we're already covering in class
   - The idea is to use something we read in class as a jumping-off point to go off on your own, explore the literature on a specific topic, and come back with new insights
-  - Good sources for papers include the related work sections of things we read for class, or the ["further reading" section of the readings page](https://composition.al/CMPS290S-Fall-2018/readings.html#further-reading).
+  - Good sources for papers include the related work sections of things we read for class, or the ["further reading" section of the readings page](http://composition.al/CMPS290S-Fall-2018/readings.html#further-reading).
 
 ## Blog post ideas: The experience report
 
@@ -168,6 +168,6 @@ Properly attribute any work that you use.  For instance, if you use a figure tha
     - Once you have repo access, push an empty file called `2018-10-01-cruzid.md` to the `responses` directory, replacing `cruzid` with your CruzID.  When you write your response to the first reading assignment, you'll update this file.
     - If you need help using GitHub, let me know.
   - **By EOD today**: Look over the [list of readings](https://composition.al/CMPS290S-Fall-2018/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
-  - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response (remember that [responses](https://composition.al/CMPS290S-Fall-2018/responses.html) are due by 11am on the day of class)
+  - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response (remember that [responses](http://composition.al/CMPS290S-Fall-2018/responses.html) are due by 11am on the day of class)
 
 ## Questions?
