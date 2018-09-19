@@ -1,4 +1,4 @@
-# CMPS290S, Fall 2018: Languages and Abstractions for Distributed Programming
+# Languages and Abstractions for Distributed Programming
 
 Friday, October 29, 2018
 
@@ -17,8 +17,8 @@ Hi, I'm [Lindsey Kuper](https://users.soe.ucsc.edu/~lkuper/)!
   - "S" in the course number stands for "systems", but don't read too much into it (we'll _mostly_ be reading papers from PL venues)
   - Class meets Mondays, Wednesdays, and Fridays, 1:20-2:25pm, Porter Acad 241 (in the Porter "D-Building", a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
   - No final exam, although you should save the time slot (8-11am on Wednesday, December 12) for a social event
-  - Course web page: http://composition.al/CMPS290S-Fall-2018/
-  - This document: http://composition.al/CMPS290S-Fall-2018/course-overview.html
+  - Course web page: <http://composition.al/CMPS290S-Fall-2018/>
+  - This document: <http://composition.al/CMPS290S-Fall-2018/course-overview.html>
 
 ## What's this course about?
 
