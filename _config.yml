@@ -2,5 +2,7 @@ theme: jekyll-theme-minimal
 
 baseurl: "/CMPS290S-Fall-2018"
 
+exclude: responses
+
 plugins:
   - jekyll-feed
