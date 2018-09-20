@@ -4,14 +4,12 @@ layout: single
 classes: wide
 ---
 
-_This page is a draft and subject to change._
-
-This page is neither sound (i.e., if it's listed here, that doesn't mean we'll read it) nor complete (i.e., if it's *not* listed here, that doesn't mean we *won't* read it).  So, don't read too much into what's listed here or how it's categorized.  I'm making it all up as I go along, y'all.
+This list is neither sound (i.e., if something's listed here, that doesn't mean we'll read it) nor complete (i.e., if something's *not* listed here, that doesn't mean we *won't* read it).  So, don't read too much into what's listed here or how it's categorized.
 
 | Date             | Topic                                        | Presenter            | Reading
 |------------------|----------------------------------------------|----------------------|-----------------------------------------------------
 | Friday, 9/28     | Overview and introduction                    | Lindsey              | (none)
-| Monday, 10/1     | The CAP theorem                              |                      | Seth Gilbert and Nancy Lynch, [Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (2002)](http://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)
+| Monday, 10/1     | The CAP theorem                              | Lindsey              | Seth Gilbert and Nancy Lynch, [Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (2002)](http://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)
 | Wednesday, 10/3  | CAP redux                                    |                      | Eric Brewer, [CAP Twelve Years Later: How the "Rules" Have Changed (IEEE Computer, 2012)](https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed)
 | Friday, 10/5     | Consistency models                           |                      | Maurice P. Herlihy and Jeannette M. Wing, [Linearizability: A Correctness Condition for Concurrent Objects (TOPLAS 1990)](http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf)
 | Monday, 10/8     | Consistency models                           |                      | Mustaque Ahamad et al., [Causal memory: definitions, implementation, and programming (Distributed Computing, 1995)](https://link.springer.com/article/10.1007/BF01784241)
