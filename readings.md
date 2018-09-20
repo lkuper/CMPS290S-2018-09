@@ -4,7 +4,9 @@ layout: single
 classes: wide
 ---
 
-This list is neither sound (i.e., if something's listed here, that doesn't mean we'll read it) nor complete (i.e., if something's *not* listed here, that doesn't mean we *won't* read it).  So, don't read too much into what's listed here or how it's categorized.
+## Current schedule of readings
+
+This list is neither sound (i.e., if something's listed here, that doesn't mean we'll read it) nor complete (i.e., if something's *not* listed here, that doesn't mean we *won't* read it).
 
 | Date             | Topic                                        | Presenter            | Reading
 |------------------|----------------------------------------------|----------------------|-----------------------------------------------------
