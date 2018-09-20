@@ -1,3 +1,7 @@
+---
+layout: single
+---
+
 # Course overview
 
 ## What's this?
