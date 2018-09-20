@@ -75,9 +75,15 @@ One of the best ways to absorb reading material is to write about what you read.
 
 ### What goes in a response?
 
-Responses should be in the ballpark of 500 words, which is about the minimum length that, say, a PLDI review should be.  But we'll be reading stuff that has (with a few possible exceptions) already been thoroughly peer-reviewed.  Your goal here is **not** to assess the quality of the papers.  Rather, your goal is to construct a rich mental map of existing work, which you will sooner or later be able to use as a foundation for your own research.
+Responses should be in the ballpark of 500 words, which is about the minimum length that, say, a PLDI review should be.
 
-To that end, you should structure your response around the following questions:
+But we'll be reading stuff that has (with a few possible exceptions) already been thoroughly peer-reviewed.  Your goal here is **not** to assess the quality of the papers.
+
+Rather, your goal is to construct a rich mental map of existing work, which you will sooner or later be able to use as a foundation for your own research.
+
+### How to structure your response
+
+You can structure your response around the following questions:
 
   1. What's this paper about?  (Summarize the paper and its contributions in your own words.)
   2. What's one thing I learned?
@@ -85,7 +91,9 @@ To that end, you should structure your response around the following questions:
   4. What's a research-level question I have after having read this paper?
   5. What's a concrete step I can take toward answering the research question?
 
-A "research-level" question is something deeper than "What did the Greek letters on page 4 mean?" or "What's the baseline in Figure 6?"  It might be something like, "The problem this paper addresses reminds me of the X problem, which is similar in ways A and B, but different in way C.  Could this paper's approach, or something like it, be used to tackle X?"
+A "research-level" question is something deeper than "What did the Greek letters on page 4 mean?" or "What's the baseline in Figure 6?"
+
+It might be something like, "The problem this paper addresses reminds me of the X problem, which is similar in ways A and B, but different in way C.  Could this paper's approach, or something like it, be used to tackle X?"
 
 ### Alternative response structures
 
