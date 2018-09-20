@@ -1,5 +1,6 @@
 ---
-layout: home
+title: "Languages and Abstractions for Distributed Programming"
+layout: single
 ---
 
 Welcome to CMPS290S, fall 2018 edition!
@@ -15,4 +16,5 @@ For more information, read the [first-day-of-class course overview](course-overv
     </li>
   {% endfor %}
 </ul>
+
 

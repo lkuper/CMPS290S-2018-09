@@ -3,6 +3,9 @@ description: "Languages and Abstractions for Distributed Programming"
 
 remote_theme: "mmistakes/minimal-mistakes"
 
+paginate: 5 # number of posts to show
+paginate_path: /page:num/
+
 baseurl: "/CMPS290S-2018-09"
 
 exclude: responses

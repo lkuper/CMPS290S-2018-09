@@ -1,8 +1,8 @@
 ---
+title: "Readings"
 layout: single
+classes: wide
 ---
-
-# Readings
 
 _This page is a draft and subject to change._
 
