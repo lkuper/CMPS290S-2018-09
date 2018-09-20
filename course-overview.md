@@ -1,8 +1,8 @@
 ---
+title: "Course overview"
 layout: single
+classes: wide
 ---
-
-# Course overview
 
 ## What's this?
 
