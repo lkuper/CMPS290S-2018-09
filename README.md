@@ -1,6 +1,6 @@
 # Languages and Abstractions for Distributed Programming
 
-Welcome to CMPS290S, fall 2018 edition!  For more information, read the [course overview](course-overview.html).
+Welcome to CMPS290S, fall 2018 edition!  For more information, read the [first-day-of-class course overview](course-overview.html), then check out the [reading list](readings.html).
 
 ## Blog posts
 
