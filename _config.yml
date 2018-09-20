@@ -2,6 +2,7 @@ title: "CMPS290S, Fall 2018"
 description: "Languages and Abstractions for Distributed Programming"
 
 remote_theme: "mmistakes/minimal-mistakes"
+minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "default", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 paginate: 5 # number of posts to show
 paginate_path: /page:num/
