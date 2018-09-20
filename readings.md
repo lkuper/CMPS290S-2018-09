@@ -10,7 +10,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 
 | Date             | Topic                                        | Presenter            | Reading
 |------------------|----------------------------------------------|----------------------|-----------------------------------------------------
-| Friday, 9/28     | Overview and introduction                    | Lindsey              | (none)
+| Friday, 9/28     | [Course overview](course-overview.html)      | Lindsey              | (none)
 | Monday, 10/1     | The CAP theorem                              | Lindsey              | Seth Gilbert and Nancy Lynch, [Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (2002)](http://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)
 | Wednesday, 10/3  | The CAP theorem                              |                      | Eric Brewer, [CAP Twelve Years Later: How the "Rules" Have Changed (IEEE Computer, 2012)](https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed)
 | Friday, 10/5     | Consistency models                           |                      | Maurice P. Herlihy and Jeannette M. Wing, [Linearizability: A Correctness Condition for Concurrent Objects (TOPLAS 1990)](http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf)
