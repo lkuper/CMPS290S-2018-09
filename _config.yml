@@ -3,7 +3,7 @@ description: "Languages and Abstractions for Distributed Programming"
 
 theme: jekyll-theme-minimal
 
-baseurl: "/CMPS290S-Fall-2018"
+baseurl: "/CMPS290S-2018-09"
 
 exclude: responses
 
