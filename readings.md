@@ -51,7 +51,7 @@ There's a vast amount of reading material that would be in scope for a course on
     - James R. Wilcox et al., [Verdi: A Framework for Implementing and Formally Verifying Distributed Systems (PLDI '15)](http://verdi.uwplse.org/verdi.pdf) (see also: [the Verdi website](http://verdi.uwplse.org/))
     - Ilya Sergey, James R. Wilcox, and Zachary Tatlock, [Programming and Proving with Distributed Protocols (POPL '18)](http://ilyasergey.net/papers/disel-popl18.pdf)
   - ...material on process calculi, such as:
-    - the pi-calculus (see [Jeannette Wing's FAQ](https://www.cs.columbia.edu/~wing/publications/Wing02a.pdf)
+    - the pi-calculus (see [Jeannette Wing's FAQ](https://www.cs.columbia.edu/~wing/publications/Wing02a.pdf))
     - Cédric Fournet et al., [A Calculus of Mobile Agents (CONCUR '96)](https://dl.acm.org/citation.cfm?id=703841)
     - Luca Cardelli and Andrew D. Gordon, [Mobile Ambients (FoSSaCS '98)](http://lucacardelli.name/Papers/MobileAmbientsETAPS98.A4.pdf)
   - ...material on early or pioneering distributed languages, such as:
