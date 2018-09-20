@@ -1,7 +1,7 @@
 title: "CMPS290S, Fall 2018"
 description: "Languages and Abstractions for Distributed Programming"
 
-theme: jekyll-theme-minimal
+remote_theme: "mmistakes/minimal-mistakes"
 
 baseurl: "/CMPS290S-2018-09"
 
