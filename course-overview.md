@@ -36,6 +36,7 @@ Topics we'll spend significant time on:
   - The CAP theorem
   - Consistency models
   - Replicated data types
+  - Combining consistencies
   - Verifying consistency
   - Languages and frameworks for distribution
   - Abstractions for configuration management
