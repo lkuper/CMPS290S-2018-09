@@ -47,16 +47,16 @@ The [readings page](http://composition.al/CMPS290S-2018-09/readings.html) has th
 
 > This graduate seminar course explores the theory and practice of distributed programming from a programming-languages perspective.  We will focus on programming models, language-level abstractions, and verification techniques that attempt to tame the many complexities of distributed systems: inevitable failures of the underlying hardware or network; communication latency resulting from the distance between nodes; the challenge of scaling to handle ever-larger amounts of work; and more.  Most of the work in the course will consist of reading classic and recent papers from the academic literature, writing short responses to the readings, and discussing them in class.  Furthermore, every participant in the course will contribute to a public group blog where we will share what we learn with a broader audience.
 
-There's more than one reasonable way to approach a seminar course on languages and abstractions for distributed programming.  We could spend all our time on process calculi and only make a small dent in the literature.  Or we could spend all our time on large-scale distributed data processing and only make a small dent in the literature.
+There's more than one reasonable way to approach such a course.  We could spend all our time on process calculi and only make a small dent in the literature.  Or we could spend all our time on large-scale distributed data processing and only make a small dent in the literature.
 
 In this course, we will be focusing a lot of attention on [consistency models](https://en.wikipedia.org/wiki/Consistency_model) and language-based approaches to specifying, implementing, and verifying them.  Of course, we will only make a small dent in the literature.
 
 ### In this course, you will:
 
-  - Become more comfortable with reading research papers (particularly PL papers, if you haven't read a lot of those)
-  - Get a sense of how PL research and (distributed) systems research intersect
-  - Identify some interesting research questions that fall in that intersection that you want to investigate, and start taking steps toward answering those questions
-  - Hone your technical writing and presenting skills, both for a specialist (i.e., each other) and non-specialist (i.e., blog reader) audience
+  - Become more comfortable with reading research papers (particularly PL papers, if you haven't read a lot of those).
+  - Get a sense of how PL research and (distributed) systems research intersect.
+  - Identify some interesting research questions that fall in that intersection that you want to investigate, and start taking steps toward answering those questions.
+  - Hone your technical writing and presenting skills, both for a specialist (i.e., each other) and non-specialist (i.e., blog reader) audience.
 
 ## Background you'll need
 
@@ -124,9 +124,7 @@ You may also be interested in time-tested paper-reading advice [from Michael Mit
 
 ### Response logistics
 
-Responses are due **by 11am on the day we discuss that reading in class** (see the [readings page](readings.md) for a schedule).  Late responses will not be accepted.
-
-Class is at 1:20PM, so you have a chance to glance over other people's responses after submitting yours, so you know what to <s>argue about</s> discuss with them in class.
+Responses for each reading are due **by 11am on the day we discuss that reading in class** (see the [readings page](readings.md) for a schedule).  Late responses will not be accepted.
 
 Responses should be written in Markdown format, with the filename `YYYY-MM-DD-cruzid.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses).  For example, if your CruzID is 'foobar' and you're submitting a response to the reading assignment for October 19, that response will go in a file called `2018-10-19-foobar.md`.
 
@@ -144,7 +142,7 @@ Presentations should be about 35 minutes long, leaving about 25 minutes for disc
 
 These presentations do not need to be as polished as conference talks.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides.  Practice your presentation before doing the real thing.
 
-By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](http://composition.al/CMPS290S-2018-09/readings.html) you'd like to present.  If you have trouble coming up with three to five readings you really want to present, pick from the ["further reading" section](http://composition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
+By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](http://composition.al/CMPS290S-2018-09/readings.html) you'd like to present.  I'll do my best to assign everyone readings they really want to present.  If you have trouble coming up with three to five readings you want to present, pick from the ["further reading" section](http://composition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
 
 ## Course blog
 
@@ -158,7 +156,7 @@ You have lots of options for what to write about!
 
 Dig into one of the research questions that you identify while writing your responses to the readings.
 
-Carry out one of the concrete steps that you identified toward answering it (which might involve writing code, taking measurements, writing proofs, and/or something else), and write about what you learned.
+Carry out one of the concrete steps toward answering it (which might involve writing code, taking measurements, writing proofs, and/or something else), and write about what you learn.
 
 Negative or inconclusive results are fine!
 
@@ -172,7 +170,7 @@ Good sources of papers for a literature survey include the related work sections
 
 ### Blog post idea: The experience report
 
-Try out one or more of the systems discussed in the course readings, and report on your experience.
+Try out one or more of the systems discussed in the readings, and report on your experience.
 
 For this kind of post, you should expect to write code.  Aim higher than just "I got it to compile and run" -- ideally, you'll use the system to accomplish something, and report on what worked and what didn't.
 
@@ -180,7 +178,7 @@ In many cases, it will be appropriate to try to reproduce performance results fr
 
 ### Blog post idea: Run someone's research
 
-Choose a "lightweight language mechanization" tool, such as [PLT Redex](https://redex.racket-lang.org/) or [the K framework](http://www.kframework.org/index.php/Main_Page), and use it to mechanize and test a language or system model from one of the readings you did. Report on what you learned from this process.
+Choose a "lightweight language mechanization" tool, such as [PLT Redex](https://redex.racket-lang.org/) or [the K framework](http://www.kframework.org/index.php/Main_Page), and use it to mechanize and test a language or system model from one of the readings you did.  Report on what you learn from this process.
 
 There's a [good chance](https://eecs.northwestern.edu/~robby/lightweight-metatheory/popl2012-kcdeffmrtf.pdf) you'll find bugs or infelicities in the on-paper semantics!
 
