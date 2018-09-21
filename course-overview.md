@@ -128,7 +128,7 @@ Responses are due **by 11am on the day we discuss that reading in class** (see t
 
 Class is at 1:20PM, so you have a chance to glance over other people's responses after submitting yours, so you know what to <s>argue about</s> discuss with them in class.
 
-Responses should be written in Markdown format, with the filename `YYYY-MM-DD-cruzid.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses).
+Responses should be written in Markdown format, with the filename `YYYY-MM-DD-cruzid.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses).  For example, if your CruzID is 'foobar' and you're submitting a response to the reading assignment for October 19, that response will go in a file called `2018-10-19-foobar.md`.
 
 You do not have to submit a response for readings that you're presenting (more about presentations in a minute).
 
