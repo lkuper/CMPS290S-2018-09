@@ -13,3 +13,6 @@ markdown-to-slides -d course-overview-slides.md -o course-overview-slides.html -
 # Open in browser
 open course-overview-slides.html
 
+# Clean up
+rm course-overview-slides.md
+
