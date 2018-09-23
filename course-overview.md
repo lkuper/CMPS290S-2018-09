@@ -138,11 +138,15 @@ _Free pass policy_: Because life throws unexpected challenges at each of us, you
 
 ## Presentations
 
-Each student will present two or three readings in class (the exact number will vary depending on how many students take the course).  As a rough guideline, expect to do one or two presentations in October and one or two in November.
+Each student will present two or three readings in class (the number could vary depending on how many students take the course and how many guest speakers we end up getting).  As a rough guideline, expect to do one or two presentations in October and one or two in November.
 
-Presentations should be about 35 minutes long, leaving about 25 minutes for discussion.  The format is up to you, but I suggest using slides unless you're very confident of your blackboard skills.  **You must email me a draft of your slides (or a detailed text outline, if not using slides) at least 24 hours before your presentation.**
+Presentations should be about 35 minutes long, leaving about 25 minutes for discussion, which the presenter will lead.  If you're the presenter, it's a good idea for you to make a list of suggested discussion questions to kick things off.  (You do not need to have the answers!)
+
+The presentation format is up to you, but I suggest using slides unless you're very confident of your blackboard skills.  **You must email me a draft of your slides (or detailed lecture notes, if not using slides) at least 24 hours before your presentation.**
 
 These presentations do not need to be as polished as conference talks.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides.  Practice your presentation before doing the real thing.
+
+**You must turn in a final copy of your slides or notes by EOD on the day you give your presentation.**  You can do so either by emailing me (if you'd prefer not to make your materials public), or by uploading to [the `presentations` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/presentations).
 
 ### Choosing topics to present
 
