@@ -126,7 +126,9 @@ You may also be interested in time-tested paper-reading advice [from Michael Mit
 
 Responses for each reading are due **by 11am on the day we discuss that reading in class** (see the [readings page](readings.md) for a schedule).  Late responses will not be accepted.
 
-Responses should be written in Markdown format, with the filename `YYYY-MM-DD-cruzid.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses).  For example, if your CruzID is 'foobar' and you're submitting a response to the reading assignment for October 19, that response will go in a file called `2018-10-19-foobar.md`.
+Responses should be written in Markdown format, with the filename `XXXX-response-YYYY-MM-DD.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses), where `XXXX` is a randomly generated unique ID number that I will provide to each of you today.
+
+For example, if your ID number is 3954 and you're submitting a response to the reading assignment for October 19, that response will go in a file called `3954-response-2018-10-19.md`.
 
 You do not have to submit a response for readings that you're presenting (more about presentations in a minute).
 
@@ -142,7 +144,11 @@ Presentations should be about 35 minutes long, leaving about 25 minutes for disc
 
 These presentations do not need to be as polished as conference talks.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides.  Practice your presentation before doing the real thing.
 
-By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](http://composition.al/CMPS290S-2018-09/readings.html) you'd like to present.  I'll do my best to assign everyone readings they really want to present.  If you have trouble coming up with three to five readings you want to present, pick from the ["further reading" section](http://composition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
+### Choosing topics to present
+
+By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](http://composition.al/CMPS290S-2018-09/readings.html) you'd like to present.  I'll do my best to assign everyone the readings they want to present.
+
+If you have trouble coming up with three to five readings you want to present, pick from the ["further reading" section](http://composition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
 
 ## Course blog
 
@@ -211,7 +217,7 @@ I'll contribute editing effort to each post as well, because I care and I want t
 
 ### Blogistics
 
-  - Each post will credit its author and editor, and you're also welcome to cross-post your individual posts to your own blog if you have one.
+  - Each post will credit its author and editor (unless you elect to remain anonymous), and you're also welcome to cross-post your individual posts to your own blog if you have one.
   - Posts will be in Markdown format (with LaTeX support via MathJax if needed), and the blog will live in the course GitHub repo and will be generated and hosted via GitHub Pages.
   - We'll be making the most of GitHub Pages' site generation automation (which uses Jekyll behind the scenes), so that all you have to do is write Markdown files.  You should not have to install Jekyll locally.
   - Draft posts will live in [the `_drafts` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/_drafts) until they're ready to go.  Feel free to start pushing ideas or notes to `_drafts` at any time.  These shouldn't have a date in the filename.
@@ -234,19 +240,27 @@ This is a graduate seminar; you're expected and encouraged to discuss your work 
 
 That said, **everything you write for this course (paper summaries, blog posts, presentation materials, code, etc.) must be your own original work.**
 
-If you discuss a reading with other people, add a note to your response giving the names of the people you discussed the reading with.  Among students in the course, these relationships should be symmetric: if student A discussed the reading with student B, then student B discussed the reading with student A, and each of them should name the other.
+If you discuss a reading with others in order to write your response, add a note to your response giving the names of the people you discussed the reading with.
 
-**Properly attribute any work that you use.**  For instance, if you use a figure that someone else created in one of your paper presentation, you should cite the original author.
+**Properly attribute any work that you use.**  For instance, if you use a figure that someone else created in one of your paper presentations, you should cite the original author.
 
 ## Similar courses
 
   - [Heather Miller's fall 2016 course at Northeastern on programming models for distributed computing](http://heather.miller.am/teaching/cs7680/) was structured similarly to this one and has some overlap in material.
   - There's also some overlap with the "programming models" part of [Peter Alvaro's winter 2016 edition of 290S](https://github.com/palvaro/CMPS290S-Winter16).
+  
+## A note on privacy
+
+US federal law (specifially, FERPA) and UC policy restrict the disclosure of information from student records.  In order to comply with those policies and protect your privacy:
+
+  - We're using the aforementioned random identifiers for response submissions, rather than CruzIDs or some other identification method that would make your identity publicly known.  No one knows your random ID other than you and me.
+  - You need to use GitHub for this course; however, if you prefer to keep your participation in the course private, you are welcome to create a GitHub account solely for use in the course that doesn't reveal any personal information (for instance, with a randomly generated username).
+  - You may opt out of contributing to the public blog.  (I'll set up a separate private blog for any students who opt out.)  Or you can choose to contribute to the public blog, but anonymously.
 
 ## To do
 
-  - **By EOD today**: If you haven't yet done so, email me your GitHub username so I can add you to the course repo.  (If you don't have a GitHub account, you should make one.)
-    - Once you have course repo access, push an empty file called `2018-10-01-cruzid.md` to the `responses` directory, replacing `cruzid` with your CruzID.  This is to make sure that you are able to push to the repo.  When you write your response to the first reading assignment, you'll update this file.
+  - **By EOD today**: If you haven't yet done so, email me the GitHub username you wish to use for the course so I can add you to the course repo.  (If you don't have a GitHub account, you should make one now.)
+    - Once you have course repo access, push an _empty file_ called `XXXX-response-2018-10-01.md` to the `responses` directory, replacing `XXXX` with your unique ID.  This is to make sure that you are able to push to the repo.  When you write your response to the first reading assignment, you'll update this file.
     - Once again, if you need help using Git or GitHub, let me know ASAP.
   - **By EOD today**: If you haven't yet done so, look over the [list of readings](http://composition.al/CMPS290S-2018-09/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
   - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](http://composition.al/CMPS290S-2018-09/responses.html) are due by 11am on the day of class).
