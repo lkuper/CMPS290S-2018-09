@@ -126,9 +126,7 @@ You may also be interested in time-tested paper-reading advice [from Michael Mit
 
 Responses for each reading are due **by 11am on the day we discuss that reading in class** (see the [readings page](readings.md) for a schedule).  Late responses will not be accepted.
 
-Responses should be written in Markdown format, with the filename `XXXX-response-YYYY-MM-DD.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses), where `XXXX` is a randomly generated unique ID number that I will provide to each of you today.
-
-For example, if your ID number is 3954 and you're submitting a response to the reading assignment for October 19, that response will go in a file called `3954-response-2018-10-19.md`.
+Responses should be written in Markdown format, with the filename `XXXX-response-YYYY-MM-DD.md`, and pushed to [the `responses` directory of the course GitHub repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/responses), where `XXXX` is a randomly generated unique ID number that I will provide to each of you today.  For example, if your ID number is 3954 and you're submitting a response to the reading assignment for October 19, that response will go in a file called `3954-response-2018-10-19.md`.
 
 You do not have to submit a response for readings that you're presenting (more about presentations in a minute).
 
@@ -146,7 +144,7 @@ The presentation format is up to you, but I suggest using slides unless you're v
 
 These presentations do not need to be as polished as conference talks.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides.  Practice your presentation before doing the real thing.
 
-**You must turn in a final copy of your slides or notes by EOD on the day you give your presentation.**  You can do so either by emailing me (if you'd prefer not to make your materials public), or by uploading to [the `presentations` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/presentations).
+**You must turn in a final copy of your slides or notes by EOD on the day you give your presentation**, either by emailing to me (if you'd prefer not to make your materials public), or by uploading to [the `presentations` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/presentations).
 
 ### Choosing topics to present
 
