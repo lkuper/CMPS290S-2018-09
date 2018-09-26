@@ -246,7 +246,9 @@ That said, **everything you write for this course (paper summaries, blog posts, 
 
 If you discuss a reading with others in order to write your response, add a note to your response giving the names of the people you discussed the reading with.
 
-**Properly attribute any work that you use.**  For instance, if you use a figure that someone else created in one of your paper presentations, you should cite the original author.
+**Properly attribute any work that you use.**  For instance, if you make a slide that uses a figure created by someone else, then say so explicitly.
+
+It is part of your job as a scholar to understand [what counts as plagiarism](https://guides.library.ucsc.edu/citesources/plagiarism), and make sure you avoid it.
 
 ## Similar courses
 
