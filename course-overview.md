@@ -62,9 +62,11 @@ In this course, we will be focusing a lot of attention on [consistency models](h
 
 We'll be reading a lot of papers that formally define mathematical models of computer systems, state properties about those models, and then prove those properties.
 
-About half the papers we read will be what I'd classify as "PL papers".  Although the ideas often aren't too complicated, there's a high notational overhead in many PL papers.
+About half the papers we read will be what I'd classify as "PL papers".  Although the ideas often aren't too complicated, there's a high notational overhead in many PL papers, and there are a few standard concepts you'll want to be familiar with.
 
 _At a minimum_, you should be familiar with the concepts in Jeremy Siek's ["Crash Course on Notation in Programming Language Theory"](http://siek.blogspot.com/2012/07/crash-course-on-notation-in-programming.html).  Take some time to read it next week and brush up on anything you're not familiar with already.
+
+If you're not familiar with operational semantics of programming languages (or maybe even if you are!), watch [David Van Horn's excellent 45-minute tutorial video](https://www.youtube.com/watch?v=TU16mA5-i-g).
 
 Ask questions early when you come across notation you don't understand.  If you're confused, you're probably not the only one!
 
