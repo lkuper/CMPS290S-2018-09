@@ -53,6 +53,7 @@ There's a vast amount of reading material that would be in scope for a course on
     - Prince Mahajan, Lorenzo Alvisi, and Mike Dahlin, [Consistency, Availability, and Convergence (2011)](http://www.cs.cornell.edu/lorenzo/papers/cac-tr.pdf)
   - ...yet more material on verif{ying, ied} distributed systems, such as:
     - James R. Wilcox et al., [Verdi: A Framework for Implementing and Formally Verifying Distributed Systems (PLDI '15)](http://verdi.uwplse.org/verdi.pdf) (see also: [the Verdi website](http://verdi.uwplse.org/))
+	- Victor B. F. Gomes et al., [Verifying Strong Eventual Consistency in Distributed Systems (OOPSLA '17)](https://dl.acm.org/citation.cfm?id=3133933)
     - Ilya Sergey, James R. Wilcox, and Zachary Tatlock, [Programming and Proving with Distributed Protocols (POPL '18)](http://ilyasergey.net/papers/disel-popl18.pdf)
   - ...material on process calculi, such as:
     - the pi-calculus (see [Jeannette Wing's FAQ](https://www.cs.columbia.edu/~wing/publications/Wing02a.pdf))
