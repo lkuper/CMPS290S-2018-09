@@ -10,7 +10,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 
 | Date             | Topic                                        | Presenter            | Reading
 |------------------|----------------------------------------------|----------------------|-----------------------------------------------------
-| Friday, 9/28     | [Course overview](course-overview.html)      | Lindsey              | (none)
+| Friday, 9/28     | [Course overview](course-overview.html)      | Lindsey              | 
 | Monday, 10/1     | The CAP theorem                              | Lindsey              | Seth Gilbert and Nancy Lynch, [Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (2002)](http://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)
 | Wednesday, 10/3  | The CAP theorem                              |                      | Eric Brewer, [CAP Twelve Years Later: How the "Rules" Have Changed (IEEE Computer, 2012)](https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed)
 | Friday, 10/5     | Consistency models                           |                      | Maurice P. Herlihy and Jeannette M. Wing, [Linearizability: A Correctness Condition for Concurrent Objects (TOPLAS 1990)](http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf)
@@ -23,7 +23,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 | Monday, 10/22    | Replicated data types                        |                      | Marc Shapiro et al., [A comprehensive study of Convergent and Commutative Replicated Data Types (2011)](https://hal.inria.fr/inria-00555588/document)
 | Wednesday, 10/24 | Replicated data types                        |                      | Sebastian Burckhardt et al., [Cloud Types for Eventual Consistency (ECOOP '12)](https://dl.acm.org/citation.cfm?id=2367183) (see also: Burckhardt's book, [_Principles of Eventual Consistency_](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/final-printversion-10-5-14.pdf))
 | Friday, 10/26    | Replicated data types                        |                      | Sebastian Burckhardt et al., [Replicated Data Types: Specification, Verification, Optimality (POPL '14)](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/)
-| Monday, 10/29    | \*pause for breath\* **(aim to be done with a draft of your first blog post and soliciting editor/instructor feedback by today)** | | (none)
+| Monday, 10/29    | \*pause for breath\* **(aim to be done with a draft of your first blog post and soliciting editor/instructor feedback by today)** | |
 | Wednesday, 10/31 | Combining consistencies                      |                      | Alexey Gotsman et al., ['Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (POPL '16)](http://software.imdea.org/~gotsman/papers/logic-popl16.pdf)
 | Friday, 11/2     | Combining consistencies                      |                      | Brandon Holt et al., [Disciplined Inconsistency with Consistency Types (SoCC '16)](http://bholt.org/gen/ipa.pdf)
 | Monday, 11/5     | Combining consistencies                      |                      | Matthew Milano and Andrew C. Myers, [MixT: a Language for Mixing Consistency in Geodistributed Transactions (PLDI '18)](http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf)
