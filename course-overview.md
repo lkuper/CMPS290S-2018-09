@@ -33,7 +33,7 @@ Theory and practice of distributed programming from a programming-languages pers
 
 Topics we'll spend significant time on:
 
-  - The CAP theorem
+  - The CAP trade-off
   - Consistency models
   - Replicated data types
   - Combining consistencies
