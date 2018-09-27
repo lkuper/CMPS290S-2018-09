@@ -6,7 +6,7 @@ classes: wide
 
 ## What's this?
 
-This is an overview of the fall 2018 edition of CMPS290S ("Languages and Abstractions for Distributed Programming"), a graduate seminar course in the Computer Science and Engineering Department at the UC Santa Cruz Baskin School of Engineering.
+This is a first-day-of-class overview of the fall 2018 edition of CMPS290S ("Languages and Abstractions for Distributed Programming"), a graduate seminar course in the Computer Science and Engineering Department at the UC Santa Cruz Baskin School of Engineering.
 
 ## Instructor
 
@@ -97,14 +97,6 @@ You can structure your response around the following questions:
 A "research-level" question is something deeper than "What did the Greek letters on page 4 mean?" or "What's the baseline in Figure 6?"
 
 It might be something like, "The problem this paper addresses reminds me of the X problem, which is similar in ways A and B, but different in way C.  Could this paper's approach, or something like it, be used to tackle X?"
-
-### Alternative response structures
-
-You may find that what you have to say about the reading doesn't fit neatly into answers to those five questions.  In that case, feel free to try structuring your response differently.
-
-For instance, you could try using the [five questions suggested by Heather Miller](http://heather.miller.am/teaching/cs7680/reading-papers.html), [eight questions suggested by William Griswold](https://cseweb.ucsd.edu/~wgg/CSE210/paperform.pdf), or [four questions suggested by Ethan Miller](https://courses.soe.ucsc.edu/courses/cmps290s/Fall11/01/pages/syllabus).
-
-Find an approach you like!
 
 ### Further advice on how to read papers
 
@@ -257,7 +249,7 @@ It is part of your job as a scholar to understand [what counts as plagiarism](ht
   
 ## A note on privacy
 
-US federal law (specifially, FERPA) and UC policy restrict the disclosure of information from student records.  In order to comply with those policies and protect your privacy:
+US federal law (specifically, FERPA) and UC policy restrict the disclosure of information from student records.  In order to comply with those policies and protect your privacy:
 
   - We're using the aforementioned random identifiers for response submissions, rather than CruzIDs or some other identification method that would make your identity publicly known.  No one knows your random ID other than you and me.
   - You need to use GitHub for this course; however, if you prefer to keep your participation in the course private, you are welcome to create a GitHub account solely for use in the course that doesn't reveal any personal information (for instance, with a randomly generated username).
@@ -265,9 +257,7 @@ US federal law (specifially, FERPA) and UC policy restrict the disclosure of inf
 
 ## To do
 
-  - **By EOD today**: If you haven't yet done so, email me the GitHub username you wish to use for the course so I can add you to the course repo.  (If you don't have a GitHub account, you should make one now.)
-    - Once you have course repo access, push an _empty file_ called `XXXX-response-2018-10-01.md` to the `responses` directory, replacing `XXXX` with your unique ID.  This is to make sure that you are able to push to the repo.  When you write your response to the first reading assignment, you'll update this file.
-    - Once again, if you need help using Git or GitHub, let me know ASAP.
+  - **Once you have course repo access**: Make sure that you are able to push to the repo.  One way to do this is by pushing an _empty file_ called `XXXX-response-2018-10-01.md` to the `responses` directory, replacing `XXXX` with your unique ID.  When you submit your response to the first reading assignment, you'll update this file.
   - **By EOD today**: If you haven't yet done so, look over the [list of readings](http://composition.al/CMPS290S-2018-09/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
   - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](http://composition.al/CMPS290S-2018-09/responses.html) are due by 11am on the day of class).
 
