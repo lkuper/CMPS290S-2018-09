@@ -132,11 +132,11 @@ _Free pass policy_: Because life throws unexpected challenges at each of us, you
 
 Each student will present two or three readings in class (the number could vary depending on how many students take the course and how many guest speakers we end up getting).  As a rough guideline, expect to do one or two presentations in October and one or two in November.
 
-Presentations should be about 35 minutes long, leaving about 25 minutes for discussion, which the presenter will lead.  If you're the presenter, it's a good idea for you to make a list of suggested discussion questions to kick things off.  (You do not need to have the answers!)
+Presentations should be about 35 minutes long, leaving about 25 minutes for discussion, which the presenter will lead.  If you're the presenter, it's a good idea to have some suggested discussion questions to kick things off.  (You do not need to have the answers!)
 
-The presentation format is up to you, but I suggest using slides unless you're very confident of your blackboard skills.  **You must email me a draft of your slides (or detailed lecture notes, if not using slides) at least 24 hours before your presentation.**
+The presentation format is up to you, but I suggest using slides unless you're confident of your blackboard skills.  **You must email me a draft of your slides (or detailed notes, if not using slides) at least 24 hours before your presentation.**
 
-These presentations do not need to be as polished as conference talks.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides.  Practice your presentation before doing the real thing.
+These presentations do not need to be highly polished performances, like conference talks do.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides or notes.  Practice your presentation before doing the real thing.
 
 **You must turn in a final copy of your slides or notes by EOD on the day you give your presentation**, either by emailing to me (if you'd prefer not to make your materials public), or by uploading to [the `presentations` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/presentations).
 
@@ -145,6 +145,17 @@ These presentations do not need to be as polished as conference talks.  Neverthe
 By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](http://composition.al/CMPS290S-2018-09/readings.html) you'd like to present.  I'll do my best to assign everyone the readings they want to present.
 
 If you have trouble coming up with three to five readings you want to present, pick from the ["further reading" section](http://composition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
+
+### Advice on giving good talks
+
+You're here to do research, and as Simon Peyton Jones says, "Research is communication."  Check out [his excellent advice](https://www.microsoft.com/en-us/research/academic-program/give-great-research-talk/) on how to give a great research talk; much of it is relevant for in-class presentations.
+
+Michael Ernst has [lots of good advice](https://homes.cs.washington.edu/~mernst/advice/giving-talk.html), too, including some specifically on giving in-class presentations.
+
+My most high-leverage tips:
+
+  - Do the reading well in advance, and soak in it for a while.  **Give yourself time to be confused.**
+  - Don't present everything that's in the paper.  Figure out what the big ideas are that you want to convey.  What did you find the most interesting and important?  What would you tell a good friend who asked you what the paper is about?
 
 ## Course blog
 
@@ -158,7 +169,7 @@ You have lots of options for what to write about!
 
 Dig into one of the research questions that you identify while writing your responses to the readings.
 
-Carry out one of the concrete steps toward answering it (which might involve writing code, taking measurements, writing proofs, and/or something else), and write about what you learn.
+Carry out one of the concrete steps toward answering it (which might involve writing code, measuring performance, writing proofs, and/or something else), and write about what you learn.
 
 Negative or inconclusive results are fine!
 
@@ -190,7 +201,7 @@ A blog post requires substantial work (reading, writing, editing, programming, d
 
 Warning: 30 hours isn't actually that much time -- don't aim too high!
 
-As a rough guideline, you should be working on one post during October and the other one during November.  More specifically, aim to work within the following time frame:
+Most of you will want to be working on one post during October and the other one during November.  More specifically, aim to work within the following time frame:
 
   - Monday, 10/29: Finished draft of first post; soliciting editor/instructor feedback
   - Monday, 11/12: Hard deadline to have first post published
@@ -244,8 +255,14 @@ It is part of your job as a scholar to understand [what counts as plagiarism](ht
 
 ## Similar courses
 
-  - [Heather Miller's fall 2016 course at Northeastern on programming models for distributed computing](http://heather.miller.am/teaching/cs7680/) was structured similarly to this one and has some overlap in material.
+  - [Heather Miller's fall 2016 course at Northeastern on programming models for distributed computing](http://heather.miller.am/teaching/cs7680/) has some overlap in material with this course.
   - There's also some overlap with the "programming models" part of [Peter Alvaro's winter 2016 edition of 290S](https://github.com/palvaro/CMPS290S-Winter16).
+  
+## A note on accessibility
+
+If you have a disability and you require accommodations to achieve equal access in this course, please submit your Accommodation Authorization Letter from the [Disability Resource Center (DRC)](https://drc.ucsc.edu/index.html) to me privately during my office hours or by appointment, preferably within the first two weeks of the quarter.  I am eager to discuss ways we can ensure your full participation in the course.
+
+I encourage all students who may benefit from learning more about DRC services to [contact the DRC](https://drc.ucsc.edu/about/contact-us/index.html).
   
 ## A note on privacy
 
