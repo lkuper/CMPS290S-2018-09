@@ -20,7 +20,7 @@ Hi, I'm [Lindsey Kuper](https://users.soe.ucsc.edu/~lkuper/)!
 ## A few essential details about the course
 
   - 5-unit graduate seminar course (i.e., a course where we read, present, and discuss research papers)
-  - The "S" in the course number stands for "systems", but don't read too much into it (roughly half the papers we read will be from PL venues)
+  - The "S" in the course number stands for "systems", but don't read too much into it (roughly half the papers we read will be from programming-languages venues)
   - Class meets Mondays, Wednesdays, and Fridays, 1:20-2:25pm, Porter Acad 241 (in the Porter "D-Building", a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
   - No final exam, although you should save the time slot (8-11am on Wednesday, December 12) for a social event
   - Course web page: <http://composition.al/CMPS290S-2018-09/>
@@ -53,7 +53,7 @@ In this course, we will be focusing a lot of attention on [consistency models](h
 
 ### In this course, you will:
 
-  - Become more comfortable with reading research papers (particularly PL papers, if you haven't read a lot of those).
+  - Become more comfortable with reading research papers, perhaps especially PL papers.
   - Get a sense of how PL research and (distributed) systems research intersect.
   - Identify some interesting research questions that fall in that intersection that you want to investigate, and start taking steps toward answering those questions.
   - Hone your technical writing and presenting skills, both for a specialist (i.e., each other) and non-specialist (i.e., blog reader) audience.
