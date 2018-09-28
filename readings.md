@@ -28,7 +28,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 | Friday, 11/2     | Combining consistencies                      | Guest speaker: [Brandon Holt](http://bholt.org/) | Brandon Holt et al., [Disciplined Inconsistency with Consistency Types (SoCC '16)](http://bholt.org/gen/ipa.pdf)
 | Monday, 11/5     | Combining consistencies                      |                      | Matthew Milano and Andrew C. Myers, [MixT: a Language for Mixing Consistency in Geodistributed Transactions (PLDI '18)](http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf)
 | Wednesday, 11/7  | Verifying consistency                        |                      | Mohsen Lesani, Christian J. Bell, and Adam Chlipala, [Chapar: Certified Causally Consistent Distributed Key-Value Stores (POPL '16)](http://www.cs.ucr.edu/~lesani/companion/popl16/POPL16.pdf)
-| Friday, 11/9     | Verifying consistency                        |                      | Gowtham Kaki et al., [Safe Replication through Bounded Concurrency Verification (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-safe-replication-through-bounded-concurrency-verification) (TODO: update with correct paper link)
+| Friday, 11/9     | Verifying consistency                        |                      | Gowtham Kaki et al., [Safe Replication through Bounded Concurrency Verification (OOPSLA '18)](http://gowthamk.github.io/docs/q9.pdf)
 | Monday, 11/12    | No class (Veterans Day) **(hard deadline to have your first of two blog posts published)**
 | Wednesday, 11/14 | Languages and frameworks for distribution    |                      | Peter Alvaro et al., [Consistency Analysis in Bloom: a CALM and Collected Approach (CIDR '11)](http://db.cs.berkeley.edu/papers/cidr11-bloom.pdf)
 | Friday, 11/16    | Languages and frameworks for distribution    |                      | Neil Conway et al., [Logic and Lattices for Distributed Programming (SOCC '15)](https://dl.acm.org/citation.cfm?id=2391230)
@@ -73,7 +73,7 @@ There's a vast amount of reading material that would be in scope for a course on
   - ...more "systems-y" perspectives on mixing consistency levels, such as:
     - Douglas B. Terry et al., [Consistency-based service level agreements for cloud storage (SOSP '13)](https://www.microsoft.com/en-us/research/publication/consistency-based-service-level-agreements-for-cloud-storage/)
   - ...material on distributed programming models that facilitate testing, such as:
-    - Ankush Desai et al., [Compositional Programming and Testing of Dynamic Distributed Systems (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-compositional-programming-and-testing-of-dynamic-distributed-systems) (TODO: update with correct paper link)
+    - Ankush Desai et al., [Compositional Programming and Testing of Dynamic Distributed Systems (OOPSLA '18)](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2018/EECS-2018-95.pdf)
   - ...material on multitier programming, such as:
     - Ezra Cooper et al., [Links: web programming without tiers (FMCO '06)](http://links-lang.org/papers/links-fmco06.pdf)
     - Pascal Weisenburger, Mirko Köhler, and Guido Salvaneschi, [Distributed System Development with ScalaLoci (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-distributed-system-development-with-scalaloci) (TODO: update with correct paper link) (see also: [ScalaLoci website](https://scala-loci.github.io/) and [GitHub organization](https://github.com/scala-loci))
