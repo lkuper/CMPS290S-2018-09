@@ -138,7 +138,7 @@ The presentation format is up to you, but I suggest using slides unless you're c
 
 These presentations do not need to be highly polished performances, like conference talks do.  Nevertheless, **take them seriously**.  Don't show up with sloppy or incomplete slides or notes, and practice your presentation.
 
-**You must turn in a final copy of your slides or notes by EOD on the day you give your presentation**, either by emailing to me (if you'd prefer not to make your materials public), or by uploading to [the `presentations` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/presentations).
+**You must turn in a final copy of your slides or notes by EOD on the day you present**, either by emailing to me (if you'd prefer not to make your materials public), or by uploading to [the `presentations` directory in our course repo](https://github.com/lkuper/CMPS290S-2018-09/tree/master/presentations).
 
 ### Choosing topics to present
 
