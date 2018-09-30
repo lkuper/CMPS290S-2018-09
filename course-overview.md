@@ -275,8 +275,8 @@ US federal law (specifically, FERPA) and UC policy restrict the disclosure of in
 ## To do
 
   - **Once you have course repo access**: Make sure that you are able to push to the repo.  One way to do this is by pushing an _empty file_ called `XXXX-response-2018-10-01.md` to the `responses` directory, replacing `XXXX` with your unique ID.  When you submit your response to the first reading assignment, you'll update this file.
-  - **By EOD today**: If you haven't yet done so, look over the [list of readings](http://composition.al/CMPS290S-2018-09/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
-  - **For next Monday**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](http://composition.al/CMPS290S-2018-09/responses.html) are due by 11am on the day of class).
+  - **For Monday, October 1**: If you haven't yet done so, look over the [list of readings](http://composition.al/CMPS290S-2018-09/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
+  - **For Monday, October 1**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](http://composition.al/CMPS290S-2018-09/responses.html) are due by 11am on the day of class).
 
 ## Questions?
 
