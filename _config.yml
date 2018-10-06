@@ -15,3 +15,4 @@ exclude: responses
 
 plugins:
   - jekyll-feed
+  - jekyll-include-cache
