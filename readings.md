@@ -40,7 +40,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 | Friday, 11/30    | Languages and frameworks for distribution    | [unclaimed]         | Sebastian Burckhardt and Tim Coppieters, [Reactive Caching for Composed Services: Polling at the Speed of Push (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-reactive-caching-for-composed-services) (TODO: update with correct paper link)
 | Monday, 12/3     | Abstractions for configuration management    | Aldrin              | Sameer Ajmani, Barbara Liskov, and Liuba Shrira, [Modular Software Upgrades for Distributed Systems (ECOOP '06)](http://pmg.csail.mit.edu/pubs/ajmani06modular-abstract.html)
 | Wednesday, 12/5  | Abstractions for configuration management    | Austen              | Mark Reitblatt et al., [Abstractions for Network Update (SIGCOMM '12)](http://reitblatt.com/papers/consistent-updates-sigcomm12.pdf)
-| Friday, 12/7     | Abstractions for configuration management    | [unclaimed]         | Rian Shambaugh, Aaron Weiss, and Arjun Guha, [Rehearsal: A Configuration Verification Tool for Puppet (PLDI '16)](https://people.cs.umass.edu/~arjun/papers/2016-rehearsal.html)
+| Friday, 12/7     | Abstractions for configuration management    | Guest speaker: [Arjun Guha](https://people.cs.umass.edu/~arjun/home/) | Rian Shambaugh, Aaron Weiss, and Arjun Guha, [Rehearsal: A Configuration Verification Tool for Puppet (PLDI '16)](https://people.cs.umass.edu/~arjun/papers/2016-rehearsal.html)
 | Wednesday, 12/12 | ~~final exam~~ end-of-quarter celebration **(hard deadline to have your second of two blog posts published)**
 
 ## Further reading
