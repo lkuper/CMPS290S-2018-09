@@ -37,7 +37,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 | Friday, 11/23    | No class (Thanksgiving)
 | Monday, 11/26    | Languages and frameworks for distribution    | Guest speaker: [Ankush Desai](http://people.eecs.berkeley.edu/~ankush/) | Ankush Desai et al., [P: Safe Asynchronous Event-Driven Programming (PLDI '13)](https://dl.acm.org/citation.cfm?id=2462184) (see also: [P on GitHub](https://github.com/p-org/P))
 | Wednesday, 11/28 | Languages and frameworks for distribution **(aim to be done with a draft of your second blog post and soliciting editor/instructor feedback by today)**  | Natasha                | Sergey Bykov et al., [Orleans: Cloud Computing for Everyone (SoCC '11)](https://www.microsoft.com/en-us/research/wp-content/uploads/2011/10/socc125-print.pdf)
-| Friday, 11/30    | Languages and frameworks for distribution    | [unclaimed]         | Sebastian Burckhardt and Tim Coppieters, [Reactive Caching for Composed Services: Polling at the Speed of Push (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-reactive-caching-for-composed-services) (TODO: update with correct paper link)
+| Friday, 11/30    | Languages and frameworks for distribution    | Guest speaker: [Michael Isard](https://ai.google/research/people/MichaelIsard) | Derek G. Murray et al., [Naiad: A Timely Dataflow System](http://sigops.org/s/conferences/sosp/2013/papers/p439-murray.pdf)
 | Monday, 12/3     | Abstractions for configuration management    | Aldrin              | Sameer Ajmani, Barbara Liskov, and Liuba Shrira, [Modular Software Upgrades for Distributed Systems (ECOOP '06)](http://pmg.csail.mit.edu/pubs/ajmani06modular-abstract.html)
 | Wednesday, 12/5  | Abstractions for configuration management    | Guest speaker: [Arjun Guha](https://people.cs.umass.edu/~arjun/home/) | Rian Shambaugh, Aaron Weiss, and Arjun Guha, [Rehearsal: A Configuration Verification Tool for Puppet (PLDI '16)](https://people.cs.umass.edu/~arjun/papers/2016-rehearsal.html)
 | Friday, 12/7     | Abstractions for configuration management    | Austen              | Mark Reitblatt et al., [Abstractions for Network Update (SIGCOMM '12)](http://reitblatt.com/papers/consistent-updates-sigcomm12.pdf)
@@ -67,9 +67,6 @@ There's a vast amount of reading material that would be in scope for a course on
     - Andreas Rossberg et al., [Alice Through the Looking Glass (TFP '04)](https://people.mpi-sws.org/~rossberg/papers/Rossberg,%20Le%20Botlan,%20Tack,%20Brunklaus,%20Smolka%20-%20Alice%20Through%20the%20Looking%20Glass.pdf) (see also: [the Alice ML website](https://www.ps.uni-saarland.de/alice/))
   - ...material on extending languages for distribution, such as:
     - Jeff Epstein, Andrew P. Black, and Simon Peyton Jones, [Towards Haskell in the Cloud (Haskell '11)](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/remote.pdf) (see also: [the Cloud Haskell website](http://haskell-distributed.github.io/))
-  - ...material on Dryad, Naiad, and all that, such as:
-    - Yuan Yu et al., [DryadLINQ: A System for General-Purpose Distributed Data-Parallel Computing Using a High-Level Language (OSDI '08)](https://www.usenix.org/legacy/events/osdi08/tech/full_papers/yu_y/yu_y.pdf)
-    - Derek G. Murray et al., [Naiad: A Timely Dataflow System (SOSP '13)](http://sigops.org/sosp/sosp13/papers/p439-murray.pdf)
   - ...more "systems-y" perspectives on mixing consistency levels, such as:
     - Douglas B. Terry et al., [Consistency-based service level agreements for cloud storage (SOSP '13)](https://www.microsoft.com/en-us/research/publication/consistency-based-service-level-agreements-for-cloud-storage/)
   - ...material on distributed programming models that facilitate testing, such as:
