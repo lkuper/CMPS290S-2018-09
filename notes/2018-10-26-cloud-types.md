@@ -97,7 +97,7 @@ I think these are described as "more synchronous" than the Yield rules because t
 
 ## 4.1
 
-Figure 11:
+### Figure 11
 
 Now for the flush operations.
 
@@ -121,9 +121,9 @@ Fork-join automata look a bit like state-based CRDTs.  But they provide both `fo
 
 ## 5.1
 
-It's instructive to think about how CInt is different from a state-based PN-Counter CRDT.  Notice that we *don't* have to store a version vector, just a base value and an offset.  I *think* that this optimization is possible because of the way concurrent revisions work, specifically, the "join rule" mentioned on p. 296 that "joiners must be downstream from the fork that forked the joinee" -- in other words, you need to either rejoin with whoever forked you (fork-join parallelism, or nested fork-join parallelism), or you need do do one of the other legal "join rule" options shown in figure 1(a) in the "Eventually Consistent Transactions" paper.
+It's instructive to think about how CInt is different from a state-based PN-Counter CRDT.  Notice that we *don't* have to store a version vector, just a base value and an offset.  I *think* that this optimization is possible because of the way concurrent revisions work, specifically, the "join rule" mentioned on p. 296 that "joiners must be downstream from the fork that forked the joinee" -- in other words, you need to either rejoin with whoever forked you (fork-join parallelism, or nested fork-join parallelism), or you need do do one of the other legal "join rule" options shown in figure 1(a) in [the "Eventually Consistent Transactions" paper](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/msr-tr-2011-11728229.pdf)
 
-Actually, I don't understand why the non-series-parallel example in the [ECT paper](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/msr-tr-2011-11728229.pdf) follows the rule!  OK, let's think about this more: the ECT paper states the join rule (which it calls the "join condition" or "join property"), which is a rule about  this way:
+Actually, I don't understand why the non-series-parallel example in the ECT paper follows the rule!  OK, let's think about this more: the ECT paper states the join rule (which it calls the "join condition" or "join property"), which is a rule about  this way:
 
 > The join condition expresses that the terminal t (the “joiner”) must be reachable from the fork vertex that started the revision that contains t' (the “joinee”).
 
