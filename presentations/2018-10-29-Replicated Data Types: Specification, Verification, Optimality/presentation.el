@@ -1,16 +1,36 @@
-0.
+(require 'demo-it)
+(require 'package-demo)
+;; requires rust-mode for step0/syntax highlighting
+;; makes a flycheck-mode call too, to turn it off — this is not at all valid rust code, so
+;; we don't want flychecking
 
-* Specification
-* Verification
-* (Optimality)
+(package-demo-define-action call-noninteractively (fn &rest args)
+  (apply fn args))
 
-1.
+(package-demo-define-action save (pt)
+  (funcall 'point-to-register pt))
 
-```rust
-struct ReplicaId(i32);
+(package-demo-define-action load (pt)
+  (funcall 'jump-to-register pt))
+
+(defun step0 ()
+  (interactive)
+  (let ((buffer (generate-new-buffer "svo-presentation")))
+    (switch-to-buffer buffer)
+    (rust-mode)
+    (flycheck-mode 0)
+  ))
+
+(package-demo-define-demo step1
+  (typewriter
+   "struct ReplicaId(i32);
 struct ObjectId(i32);
 struct Timestamp(i32);
-
+")
+  (save ?a)
+  (pause 3)
+  (typewriter
+   "
 trait RDT {
     type Value;
     type Operation;
@@ -21,58 +41,68 @@ trait RDT {
     fn do_(&mut self, op: Self::Operation, ts: Timestamp) -> Self::Value;
     fn send(&mut self) -> Self::Message;
     fn recv(&mut self, msg: Self::Message);
-}
 
-```
-* Basic specifications
-* Three associated types, three methods
-* Note that all the methods are allowed to change local state,
-  * though only do and recv are really expected to
+")
+  (save ?r)
+  (typewriter "}"))
 
+(package-demo-define-demo step2
+  (typewriter "
 
-2.
-
-``` rust
 struct Counter {
     replica: ReplicaId,
     last_known_counts: Map<ReplicaId, i32>
-}
-```
+}"))
 
-* State-based counter
-* Sort-of a vector clock
+(package-demo-define-demo step3
+  (typewriter "
 
-3-6.
-
-``` rust
-enum CounterOp {
+")
+  (save ?b)
+  (typewriter "
+impl RDT for Counter {
+    type Value = i32;
+    type Operation = ")
+  (save ?c)
+  (pause 1)
+  (load ?b)
+  (typewriter "enum CounterOp {
     Read,
     Inc
 }
-
-impl RDT for Counter {
-    type Value = i32;
-    type Operation = CounterOp;
+")
+  (load ?c)
+  (typewriter "CounterOp;
     type Message = Map<ReplicaId, i32>;
 
     fn initial_state(replica: ReplicaId) -> Counter {
         let last_known_counts = Map::new();
         Counter { replica, last_known_counts }
-    }
+    }")
+  )
+
+(package-demo-define-demo step4
+  (typewriter "
 
     fn do_(&mut self, op: CounterOp, _ts: Timestamp) -> i32 {
         match op {
-            CounterOp::Read => self.last_known_counts.values().sum(),
-            CounterOp::Inc  => {
+            Read => self.last_known_counts.values().sum(),
+            Inc  => {
                 let local_count = self.last_known_counts.entry(self.replica).or_insert(0);
                 *local_count += 1;
             }
         }
-    }
+    }" :speed 30))
+
+(package-demo-define-demo step5
+  (typewriter "
 
     fn send(&mut self) -> Map<ReplicaId, i32> {
         self.last_known_counts.clone()
-    }
+    }" :speed 30))
+
+(package-demo-define-demo step6
+  (typewriter "
 
     fn recv(&mut self, msg: Map<ReplicaId, i32>) {
         for (replica, count) in msg {
@@ -80,59 +110,51 @@ impl RDT for Counter {
             *local_count = max(*local_count, count);
         }
     }
-}
-```
 
-* Nothing surprising, standard distributed counter
-* Note how it's defined _just_ by defining the types and methods we stated
+" :speed 30)
+  (save ?d)
+  (typewriter "
+}" :speed 30)
+  (save ?e))
 
-7.
+(package-demo-define-demo step7
+  (load ?r)
+  (kbd "C-l")
+  (typewriter "
 
-``` rust
+")
+  (load ?r)
+  (typewriter "
 
-trait RDT {
-    struct Event {
+    fn spec(op: Self::Operation, history: Set<Self::Event>,
+            visibility: Relation<Self::Event>,
+            arbitration: Relation<Self::Event>) -> Self::Value;")
+  (load ?r)
+  (typewriter
+   "    struct Event {
         replica: ReplicaId,
         object: ObjectId,
         operation: Operation,
         return_value: Value
-    }
+    }"))
 
-    fn spec(op: Self::Operation, history: Set<Self::Event>,
-            visibility: Relation<Self::Event>,
-            arbitration: Relation<Self::Event>) -> Self::Value;
-}
-```
-
-* So how do we spec this?
-* We describe a spec as just a condition it has to meet on an operation,
-  * given a history
-  * a visibility relation
-  * and an arbitration relation
-* on events in the history
-
-8.
-
-``` rust
-impl RDT for Counter {
-    fn spec(op: CounterOp, history: Set<Self::Event>,
+(package-demo-define-demo step8
+  (load ?d)
+  (typewriter
+   "    fn spec(op: CounterOp, history: Set<Self::Event>,
             _visibility: Relation<…>,
             _arbitration: Relation<…>) -> i32 {
         match op {
             Read => history.filter(|&ev| ev.operation == Inc).len()
         }
     }
-}
-```
+" :speed 33))
 
-* The history is already implicitly just the history that's visible to this operation
-* (That's what a large chunk of the “abstract execution” machinery is buying us)
-* So it might end up that you don't need to appeal to visibility/arbitration at all
-* That said, they're important, because you still need them to make the specs _deterministic_
+(package-demo-define-demo step9
+  (load ?e)
+  (typewriter
+   "
 
-9.
-
-``` rust
 struct Register {
     data: i32,
     timestamp: Option<Timestamp>
@@ -172,17 +194,17 @@ impl RDT for Register {
             self.timestamp = msg.timestamp;
         }
     }
-}
+" :speed 40) (save ?f) (typewriter "}" :speed 40))
 
-```
+(package-demo-define-demo step10
+  (load ?f)
+  (typewriter "
 
-* LWW register.
-* Not especially surprising.
+")
+  (load ?f)
+  (typewriter
+   "
 
-10.
-
-``` rust
-impl RDT for Register {
     fn spec(_op: RegisterOp, history: Set<Self::Event>,
             _visibility: impl Relation<…>,
             arbitration: impl Relation<Self::Event>) -> i32 {
@@ -190,18 +212,7 @@ impl RDT for Register {
         let last_write_event = writes.max_by(|&a,&b| arbitration.cmp(a, b));
         let Write(last_write) = last_write_event.operation
         last_write
-}
+    }" :speed 40))
 
-```
-
-* Need arbitration relation to make this spec deterministic
-* All events that have happened in our history
-  * ordered by how we're meant to break ties
-    * with the timestamps, in this case
-* Without the arbitration relation, there'd be no deterministic spec here
-
-9.
-
-* This lets you specify local properties
-* Global properties need to be specified too
-* They essentially reduce them all to broad network-level properties and prove them separately
+(demo-it-create step0 step1 step2 step3 step4 step5 step6 step7 step8 step9 step10)
+(demo-it-start)
