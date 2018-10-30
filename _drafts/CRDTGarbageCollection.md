@@ -1,3 +1,5 @@
+Note: This is not yet complete, I just need somewhere to put it so I can work on it from multiple machines.
+
 Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
 
 # Introduction
