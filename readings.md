@@ -41,7 +41,7 @@ This list is neither sound (i.e., if something's listed here, that doesn't mean 
 | Monday, 12/3     | Abstractions for configuration management    | Aldrin              | Sameer Ajmani, Barbara Liskov, and Liuba Shrira, [Modular Software Upgrades for Distributed Systems (ECOOP '06)](http://pmg.csail.mit.edu/pubs/ajmani06modular-abstract.html)
 | Wednesday, 12/5  | Abstractions for configuration management    | Guest speaker: [Arjun Guha](https://people.cs.umass.edu/~arjun/home/) **(special location: Engineering 2, Room 280)** | Rian Shambaugh, Aaron Weiss, and Arjun Guha, [Rehearsal: A Configuration Verification Tool for Puppet (PLDI '16)](https://people.cs.umass.edu/~arjun/papers/2016-rehearsal.html) (see also: Aaron Weiss, Arjun Guha, and Yuriy Brun, [Tortoise: Interactive System Configuration Repair (ASE '17)](https://people.cs.umass.edu/~arjun/papers/2017-weiss-tortoise.html)
 | Friday, 12/7     | Abstractions for configuration management    | Austen              | Mark Reitblatt et al., [Abstractions for Network Update (SIGCOMM '12)](http://reitblatt.com/papers/consistent-updates-sigcomm12.pdf)
-| Wednesday, 12/12 | ~~final exam~~ end-of-quarter celebration **(hard deadline to have your second of two blog posts published)**
+| Wednesday, 12/12 | ~~final exam~~ end-of-quarter celebration at 10am **(hard deadline to have your second of two blog posts published)** | Guest speaker: [Mohsen Lesani](https://www.cs.ucr.edu/~lesani/) **(special location: TBD)** | Mohsen will be telling us about his new work on [replication coordination analysis and synthesis](https://www.cs.ucr.edu/~lesani/companion/popl19/).  No required reading.
 
 ## Further reading
 
