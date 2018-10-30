@@ -1,5 +1,7 @@
 Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
 
+# Introduction
+
 # Background
 
 ## The Add-Remove Partial Order
