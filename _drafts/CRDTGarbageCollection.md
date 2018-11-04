@@ -1,10 +1,11 @@
 Note: Almost done. Feel free to make comments. I know, it still needs citations. Missing some more background information and implementation details.
 
 Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
+Note: This implementation is a gross abuse of the interface{} construct in Go. Mostly just because I was curious if I could use it for everything.
 
 # Introduction
 
-While CRDTs are a promising solution to the problem of building an eventaully consistent distributed system they are not without their flaws and drawbacks. To deal with issues that arise when processing concurrent operations many CRDT specifications rely on simply marking items deleted with the use of something called a tombstone. These tombstones can accumulate over time and necessitate the use of a garbage collection system. Although these garbage collection systems can prove to be difficult to implement in practice when the full scope of the task comes into focus. This blog post chronicles my brief research, reasoning about, and attempts to implement a CRDT with garbage collection from the specifications provided in *A Comprehensive Study of Convergent and Commutative Replicated Data Types* by Shapiro et al.
+While CRDTs are a promising solution to the problem of building an eventaully consistent distributed system they are not without their flaws and drawbacks. To deal with issues that arise when processing concurrent operations many CRDT specifications rely on simply marking items deleted with the use of something called a tombstone. These tombstones can accumulate over time and necessitate the use of a garbage collection system. Although these garbage collection systems can prove to be difficult to implement in practice when the full scope of the task comes into focus. This blog post chronicles my brief research, reasoning about, and attempts to implement a CRDT with garbage collection from the specifications provided in *A Comprehensive Study of Convergent and Commutative Replicated Data Types* by Shapiro et al[1].
 
 # Background
 
@@ -40,7 +41,7 @@ Due to the incomplete nature of the ARPO specification I decided to complete wha
 
 Reasoning about the ARPO on paper in general works for the purposes for Shapiro et al. without the missing edge operations. In fact many of the same challenges that exist for garbage collectiona and implementation of a CRDT also exist for edges. The lack of essential functions poses a challenge to actually implementing a working ARPO. Edge addition is clearly required to maintain a connected graph and avoid partitions. Next the question of whether or not edge removal is necessary comes to mind. In a rather naive implementation where edges exist as a seperate data structure (in my naive ARPO implementation they are their own instance of a Gset) it becomes necessary to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. While in a different implementation of a directed graph where edges are represented by a list of references contained in each vertex one must clean up the relevant references during a vertex removal. With removing vertices proving necessary we end up requiring another set of tombstones to avoid the same problems with concurrent operations (only if we allow edge addition and removal independent of vertices) that were faced with vertices. So in the end the programmer is essentially left with a 2P2P graph as described in Shapiro's Specification 16 but with a different initial state, a few new preconditions, and a *Before* function to show transitive relations. This is not even getting into the potential preconditions for edge addition and removal. Those preconditions in the previously linked implementation being concerned with the existence of an edge when removing one, prevention of duplicate edges, and when adding edges the existence of both endpoint vertices. Further testing and prodding the implementation should reveal if there is the need for further preconditions.
 
-To summarize this rant, the fact that a programmer must infer properties and construct their own operations shows how inadequate specification 18 is for actually writing a working piece of code. It lends some credance to the claims of Burkhardt et al. that existing replicated data type specifications are lacking. Similarly to a the 2Pset CRDT it is possible to represent the removal set with a simple bitmap in order to save space.
+To summarize this rant, the fact that a programmer must infer properties and construct their own operations shows how inadequate specification 18 is for actually writing a working piece of code. It lends some credance to the claims of Burckhardt et al. that existing replicated data type specifications are lacking[2]. Similarly to a the 2Pset CRDT it is possible to represent the removal set with a simple bitmap in order to save space.
 
 ## Implementing Garbage Collection on a CRDT
 
@@ -52,7 +53,7 @@ When adding the class of commitment problems to the already mounting pile of dil
 
 It should be noted that the implementation provided above is as of this post not fully tested nor contains any garbage collection functionality. Further research is necessary to determine what methods for garbage collection are in use for other implementations (preferably production code) or if there are any alternative metadata schemes that lower the overhead costs.
 
-All of this said if the programmer does not wish to delve headlong into some of the hardest problems in distributed systems the easiest solution to the unbounded growth of a CRDT via tombstones is to use the Ostrich Algorithm. If the CRDT one wishes to implement does not involve using tombstones then that programmer should be grateful.
+All of this said if the programmer does not wish to delve headlong into some of the hardest problems in distributed systems the easiest solution to the unbounded growth of a CRDT via tombstones is to use the Ostrich Algorithm[4]. If the CRDT one wishes to implement does not involve using tombstones then that programmer should be grateful.
 
 # Future Work
 
@@ -65,14 +66,14 @@ As the 30 hour limit for work on this individual post nears it becomes necessary
 
 
 # Citations (need to finish adding these and format them correctly)
-Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski. A comprehensive study of Conver-
+1. Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski. A comprehensive study of Conver-
 gent and Commutative Replicated Data Types.  [Research Report] RR-7506, Inria – Centre Paris-
 Rocquencourt; INRIA. 2011, pp.50. <inria-00555588>
 
-Burkhardt, Replicated Data Types: Specification, Verification, Optimality
+2. Sebastian Burckhardt, Alexey Gotsman, Hongseok Yang, and Marek Zawirski. 2014. Replicated data types: specification, verification, optimality. In Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL '14). ACM, New York, NY, USA, 271-284. DOI: https://doi.org/10.1145/2535838.2535848 
 
-http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/
+3. http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/
 
-https://en.wikipedia.org/wiki/Ostrich_algorithm
+4. https://en.wikipedia.org/wiki/Ostrich_algorithm
 
 
