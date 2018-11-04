@@ -1,6 +1,7 @@
 Note: Almost done. Feel free to make comments. I know, it still needs citations. Missing some more background information and implementation details.
 
 Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
+
 Note: This implementation is a gross abuse of the interface{} construct in Go. Mostly just because I was curious if I could use it for everything.
 
 # Introduction
