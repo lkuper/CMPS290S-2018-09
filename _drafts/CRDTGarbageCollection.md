@@ -58,7 +58,7 @@ All of this said if the programmer does not wish to delve headlong into some of 
 
 # Future Work
 
-As the 30 hour limit for work on this individual post nears it becomes necessary to stop and take stock of what still needs to be done. First it is necessary to perform further research into current garbage collection solutions currently in use with CRDTs. Some interesting whispers of something called ORDTs (likely related to operational CRDTs), Causal Trees, and Delta State CRDTs will be investigated. Also some methods for reducing the space costs of vector clocks could prove useful in lowering garbage collection metadata overhead. Once a method for garbage collection is decided upon it will have to be implemented and integrated with the ARPO implmentation. From there performance evaluations can be started.
+As the 30 hour limit for work on this individual post nears it becomes necessary to stop and take stock of what still needs to be done. First it is necessary to perform further research into current garbage collection solutions currently in use with CRDTs. Some interesting whispers of something called ORDTs (likely related to operational CRDTs)[5], Causal Trees[5], and Delta State CRDTs[6] will be investigated. Also some methods for reducing the space costs of vector clocks could prove useful in lowering garbage collection metadata overhead. Once a method for garbage collection is decided upon it will have to be implemented and integrated with the ARPO implmentation. From there performance evaluations can be started.
 
 # Conclusion
 
@@ -76,5 +76,10 @@ Rocquencourt; INRIA. 2011, pp.50. <inria-00555588>
 3. http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/
 
 4. https://en.wikipedia.org/wiki/Ostrich_algorithm
+
+5. http://archagon.net/blog/2018/03/24/data-laced-with-history/#garbage-collection
+
+6. Paulo Sergio Almeida, Ali Shoker, Carlos Baquero. Delta State Replicated Data Types. Journal of Parallel and Distributed Computing, Volume 111, January 2018, Pages 162-173. https://arxiv.org/pdf/1603.01529.pdf
+
 
 
