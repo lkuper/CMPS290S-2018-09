@@ -2,7 +2,7 @@ Note: Almost done. Feel free to make comments. I know, it still needs citations.
 
 Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
 
-Note: This implementation is a gross abuse of the interface{} construct in Go. Mostly just because I was curious if I could use it for everything.
+Note: This implementation is a gross and horrifying abuse of the interface{} construct in Go. Those who care about proper use of the Go language probably should not read the code. I created this abomination because I want to see if I could.
 
 # Introduction
 
