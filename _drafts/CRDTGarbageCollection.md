@@ -18,7 +18,7 @@ The Add-Remove Partial Order CRDT (ARPO) presented in the paper is introduced as
 
 In section 4 the authors bring up the necessity of garbage collection when using a CRDT that maintains tombstones. Such as the state based 2Pset and the ARPO. These tombstones could potentially pile up and cause considerable unnecessary bloat. The difficulty with adding some form of garbage collection is that it will often require some degree of synchronisation. The paper presents two challenges related to garbage collection that are described as stability and commitment.
 
-The purpose of the tombstone is to help resolve conflicts between concurrent operations by having a record of removed elements. Eventually this tombstone is no longer required when all concurrent updates have been "delivered" and an update can be considered stable. (insert formal definition reference here).  The paper applies a modified form of Wuu and Bernstein's stability algorithm (cite) that requires the replicas to maintain a set of all the other replicas and for there to be some mechanism to detect when a replica crashes. Concurrency of updates is determined via the use of vector clocks.
+The purpose of the tombstone is to help resolve conflicts between concurrent operations by having a record of removed elements. Eventually this tombstone is no longer required when all concurrent updates have been "delivered" and an update can be considered stable.  The paper applies a modified form of Wuu and Bernstein's stability algorithm[7] that requires the replicas to maintain a set of all the other replicas and for there to be some mechanism to detect when a replica crashes. Concurrency of updates is determined via the use of vector clocks.
 
 The commitment problems are described in a more vague and lackluster manner than stability problems but provide a much more interesting challenge for implementation. Commitment issues arise when one needs to perform an operation with a need for greater synchronization. Examples given by the authors are removing tombstones from a 2Pset or resetting all the replica payloads. The obvious conclusion is to require some atomic agreement between all replicas concerning the application of the desired operation.
 
@@ -85,6 +85,8 @@ Rocquencourt; INRIA. 2011, pp.50. <inria-00555588>
 5. http://archagon.net/blog/2018/03/24/data-laced-with-history/#garbage-collection
 
 6. Paulo Sergio Almeida, Ali Shoker, Carlos Baquero. Delta State Replicated Data Types. Journal of Parallel and Distributed Computing, Volume 111, January 2018, Pages 162-173. https://arxiv.org/pdf/1603.01529.pdf
+
+7. Gene T.J. Wuu and Arthur J. Bernstein. 1984. Efficient solutions to the replicated log and dictionary problems. In Proceedings of the third annual ACM symposium on Principles of distributed computing (PODC '84). ACM, New York, NY, USA, 233-242. DOI: http://dx.doi.org/10.1145/800222.806750 
 
 
 
