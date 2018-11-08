@@ -2,6 +2,8 @@ Note: Almost done. Feel free to make comments. I know, it still needs citations.
 
 Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
 
+Note: This implementation is a gross and horrifying abuse of the interface{} construct in Go. Those who care about proper use of the Go language probably should not read the code. I created this abomination because I want to see if I could.
+
 # Introduction
 
 Conflict Free Replicated Data Types (CRDTs) are a class of specialized data structures designed to be replicated across a distributed system while providing eventual consistency and high availability. These can be modified concurrently without coordination while providing a means to reconcile conflicts between replicas. While CRDTs are a promising solution to the problem of building an eventually consistent distributed system they are not without their flaws and tradeoffs. To deal with issues such as conflicting additions and removals that arise when processing concurrent operations many CRDT specifications rely on simply marking items deleted with the use of something called a tombstone. These tombstones can accumulate over time and necessitate the use of a garbage collection system in order to avoid unacceptably costly growth of underlying data structures. Although these garbage collection systems can prove to be difficult to implement in practice when the full scope of the task comes into focus. This blog post chronicles my brief research, reasoning about, and attempts to implement a CRDT with garbage collection from the specifications provided in *A Comprehensive Study of Convergent and Commutative Replicated Data Types* by Shapiro et al.
@@ -46,6 +48,7 @@ Reasoning about the ARPO on paper in general works for the purposes for Shapiro 
 
 To summarize this rant, the fact that a programmer must infer properties and construct their own operations shows how inadequate specification 18 is for actually writing a working piece of code. It lends some creedance to the claims of Burkhardt et al. that existing replicated data type specifications are lacking. Similarly to a the 2Pset CRDT it is possible to represent the removal set with a simple bitmap in order to save space.
 
+
 ## Implementing Garbage Collection on a CRDT
 
 At a passing glance implementing garbage collection on a CRDT seems rather easy from reading section 4 from Shapiro et al. but once one starts exploring all that needs to be done to meet the guarantees and assumptions discussed the effort becomes rather daunting. It also becomes rather difficult to generalize the situation for CRDT garbage collection as it is very use case specific. For instance how often one must run garbage collection can greatly impact availability.
@@ -56,11 +59,12 @@ When adding the class of commitment problems to the already mounting pile of dil
 
 It should be noted that the implementation provided above is as of this post not fully tested nor contains any garbage collection functionality. Further research is necessary to determine what methods for garbage collection are in use for other implementations (preferably production code) or if there are any alternative metadata schemes that lower the overhead costs.
 
-All of this said if the programmer does not wish to delve headlong into some of the hardest problems in distributed systems the easiest solution to the unbounded growth of a CRDT via tombstones is to use the Ostrich Algorithm. If the CRDT one wishes to implement does not involve using tombstones then that programmer should be grateful.
+All of this said if the programmer does not wish to delve headlong into some of the hardest problems in distributed systems the easiest solution to the unbounded growth of a CRDT via tombstones is to use the Ostrich Algorithm[4]. If the CRDT one wishes to implement does not involve using tombstones then that programmer should be grateful.
 
 # Future Work
 
 Over the course of implementing select CRDTs and analyzing the resulting challenges available time became the major limiting factor. As such a second blog post will continue the work described above. First it is necessary to perform further research into current garbage collection solutions currently in use with CRDTs. Some interesting whispers of something called ORDTs (likely related to operational CRDTs), Causal Trees, and Delta State CRDTs will be investigated. Also methods for reducing the space costs of vector clocks could prove useful in lowering garbage collection metadata overhead. Once a method for garbage collection is decided upon it will have to be implemented and integrated with the ARPO implmentation. From there performance evaluations can be started.
+
 
 # Conclusion
 
@@ -68,14 +72,19 @@ While it would seem simple at first glance garbage collection on CRDTs is anythi
 
 
 # Citations (need to finish adding these and format them correctly)
-Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski. A comprehensive study of Conver-
+1. Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski. A comprehensive study of Conver-
 gent and Commutative Replicated Data Types.  [Research Report] RR-7506, Inria – Centre Paris-
 Rocquencourt; INRIA. 2011, pp.50. <inria-00555588>
 
-Burkhardt, Replicated Data Types: Specification, Verification, Optimality
+2. Sebastian Burckhardt, Alexey Gotsman, Hongseok Yang, and Marek Zawirski. 2014. Replicated data types: specification, verification, optimality. In Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL '14). ACM, New York, NY, USA, 271-284. DOI: https://doi.org/10.1145/2535838.2535848 
 
-http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/
+3. http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/
 
-https://en.wikipedia.org/wiki/Ostrich_algorithm
+4. https://en.wikipedia.org/wiki/Ostrich_algorithm
+
+5. http://archagon.net/blog/2018/03/24/data-laced-with-history/#garbage-collection
+
+6. Paulo Sergio Almeida, Ali Shoker, Carlos Baquero. Delta State Replicated Data Types. Journal of Parallel and Distributed Computing, Volume 111, January 2018, Pages 162-173. https://arxiv.org/pdf/1603.01529.pdf
+
 
 
