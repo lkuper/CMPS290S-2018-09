@@ -47,10 +47,8 @@ func NewGset() *Gset {
         return &Gset{BaseSet: baseSet{}}
 }
 
-
-func (g *Gset) Add(element, contents interface{}) error{
+func (g *Gset) Add(element, contents interface{}){
         g.BaseSet[element] = contents
-        return nil
 }
 
 func (g *Gset) Fetch(element interface{}) interface{}{
@@ -58,21 +56,23 @@ func (g *Gset) Fetch(element interface{}) interface{}{
         return contents
 }
 
+//Checks if a given element exists
 func (g *Gset) Query(element interface{}) bool{
         _, isThere := g.BaseSet[element]
         return isThere
 }
 
-func (g *Gset) List()  ([]interface{}, error){
+//Lists the contents of a Gset
+func (g *Gset) List()  ([]interface{}){
         elements := make([]interface{}, 0, len(g.BaseSet))
         for element := range g.BaseSet{
                 elements = append(elements, element)
         }
-        return elements, nil
+        return elements
 }
 
-//merge two sets
-func Merge(s, t *Gset) (*Gset, error){
+//merge two sets (perform a union)
+func Merge(s, t *Gset) (*Gset){
         newGset := NewGset()
         for k, v := range s.BaseSet{
                 newG-Set.BaseSet[k] = v
@@ -80,12 +80,12 @@ func Merge(s, t *Gset) (*Gset, error){
         for k, v := range t.BaseSet{
                 newG-Set.BaseSet[k] = v
         }
-        return newGset, nil
+        return newGset
 }
 ```
 One interesting thing to note is that most of the implementation of the G-Set is the same regardless of whether it is a state or operation based CRDT. The only thing that I added to the implementation was an *ApplyOps* function that will apply a list of operations in order to the G-Set (although these are only add's). The same was not true with the 2P-Set, where the biggest difference existed when removing elements. As concurrent add and remove operations are commutative the tombstone set is really only necessary when implementing a state based 2P-Set with the trade off being a few additional checks. We can also re-use the function from the G-Set implementation to handle applying operations to another 2P-Set, as the op-based 2P-Set is simply a G-Set with a removal function. 
 
-A naive implementation of the 2P-Set is not very space-efficient, as it can in the worst case require double the space of a G-Set with the same number of elements. This bloat could be curtailed by maintaining the removal set as a bitmap. Each entry in the bitmap would correspond to an entry in the add set. The merge function for a 2P-Set with a bitmap would use a bitwise OR operation between the bitmaps. This technique could also be applicable to other CRDTs that utilize tombstones.   
+A naive implementation of the state-based 2P-Set is not very space-efficient, as it can in the worst case require double the space of a G-Set with the same number of elements. This bloat could be curtailed by maintaining the removal set as a bitmap. Each entry in the bitmap would correspond to an entry in the add set. The merge function for a 2P-Set with a bitmap would use a bitwise OR operation between the bitmaps. This technique could also be applicable to other CRDTs that utilize tombstones.   
 
 The tombstones in the state-based 2P-Set implementation make it a good candidate for experimention with CRDT garbage collection. Although it would be significantly more interesting to do so with a more complicated structure such as a Graph.
 
