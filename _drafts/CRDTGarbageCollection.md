@@ -34,7 +34,7 @@ Initially I decided to attempt an implementation of the ARPO design in Python to
 ## ARPO Building Blocks
 
 In order to implement the ARPO specification (or any of the graphs) it became necessary to first implement both 2P-Sets and G-Sets as state based CRDTs rather easily from specifications 11 and 12. A G-Set was implemented as a simple key/value mapping with a merge operation being a union between the two maps. The G-Set had only trivial operation rules and only required basic single set operations such as add and union. The 2P-Set implementation is then built with two G-Sets. One for added elements and one for removed elements. I used maps of key-value pairs to represent sets. Where the key is of type interface and the value is another 'interface'. The interface construct in is an easy way to achieve polymorphism and allows the implementation to use practically anything as a key or value. The drawback is that it is up to the programmer to make sure data from the interface is processed properly. 
-```
+```go
 //map interfaces (key) to interfaces (value) in our set
 type baseSet map[interface{}]interface{}
 
