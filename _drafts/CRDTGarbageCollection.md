@@ -3,10 +3,6 @@
 Author: Austen Barker
 Editors: Natasha Mittal and Linsey Kuper 
 
-Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
-
-Note: This implementation is a gross and horrifying abuse of the interface{} construct in Go. Those who care about proper use of the Go language probably should not read the code. I created this abomination because I want to see if I could.
-
 ## Introduction
 
 Conflict Free Replicated Data Types (CRDTs) are a class of specialized data structures designed to be replicated across a distributed system while providing eventual consistency and high availability. These can be modified concurrently without coordination while providing a means to reconcile conflicts between replicas. While CRDTs are a promising solution to the problem of building an eventually consistent distributed system, numerous practical implementation challenges remain. To deal with issues such as conflicting additions and removals that arise when processing concurrent operations, many CRDT specifications rely on simply marking items deleted with the use of something called a tombstone. These tombstones can accumulate over time and necessitate the use of a garbage collection system in order to avoid unacceptably costly growth of underlying data structures. These garbage collection systems can prove to be difficult to implement in practice. This blog post chronicles my brief research, reasoning about, and attempts to implement a CRDT with garbage collection from the specifications provided in [Shapiro et al.'s _A Comprehensive Study of Convergent and Commutative Replicated Data Types_ ](https://hal.inria.fr/inria-00555588/document).
@@ -93,6 +89,10 @@ The tombstones in the state-based 2P-Set implementation make it a good candidate
 
 Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges.  Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary:  in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own  G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. What we are left  with is a 2P2P-Graph as described in Shapiro’s Specification 16, but with a different initial state, a few new preconditions, and a Before function to show transitive relations.
 
+```
+
+```
+
 The preconditions for edge addition and removal are concerned with the existence of an edge when removing one, prevention of duplicate edges, and the existence of both endpoint vertices when adding edges. Further testing and prodding the implementation could reveal a need for more preconditions.
 
 
@@ -100,7 +100,7 @@ The preconditions for edge addition and removal are concerned with the existence
 
 Having implemented the ARPO specification (and then some), my next step was to investigate garbage collection Implementing garbage collection for a CRDT like this one is a challenge. First, establishing the stability of an update (whether it has been received by all replicas) as described in the paper assumes that the set of all replicas is known and that they do not crash permanently. Thus the implementation must include a way to detect crashed replicas (in practice, a timeout)  and a way to communicate the failure of a replica reliably to all other replicas.
 
-Another issue is the metadata storage requirements for implementing garbage collection.  Assuming causal delivery of updates requires the use of vector clocks or some similar mechanism to establish causality. Vector clocks are specifically mentioned in section 4.1 for determining stability. As the definition of stability depends on causality, one can use the same vector clocks to establish both. However, the paper's scheme for determining stability requires each replica to store a copy of the last received vector clock from every other known replica. Therefore, the space complexity required to store the vector clocks locally for N replicas is O(N^2), and cross the whole system of replicas, O(N^3) -- considerably worse than the usual O(N) necessary to store a single vector clock at each replica for tracking causal relationships, and enough to make programmers uneasy. 
+Another issue is the metadata storage requirements for implementing garbage collection.  Assuming causal delivery of updates requires the use of vector clocks or some similar mechanism to establish causality. Vector clocks are specifically mentioned in section 4.1 for determining stability. As the definition of stability depends on causality, one can use the same vector clocks to establish both. However, the paper's scheme for determining stability requires each replica to store a copy of the last received vector clock from every other known replica. Therefore, the space complexity required to store the vector clocks locally for N replicas is O(N^2), and total space consumption across the whole set of replicas, O(N^3) -- considerably worse than the usual O(N) necessary to store a single vector clock at each replica for tracking causal relationships, and enough to make programmers uneasy. 
 
 When adding the class of commitment problems to the already mounting pile of dilemmas, the programmer loses hope for the availability and performance of their system. The solutions discussed by Shapiro et al. include [Paxos Commit](https://lamport.azurewebsites.net/video/consensus-on-transaction-commit.pdf) and Two-Phase Commit protocols, which add considerably to the complexity of the implementation along with sacrificing availability. Shapiro et al. suggest performing operations requiring strong synchronization during periods when network partitions are rare; it may also help to limit such operations to when the availability of a system is not paramount. For example, one could run a garbage collection job during a scheduled server maintenance window.
 
@@ -115,10 +115,10 @@ For a future blog post, I plan to investigate  garbage collection solutions curr
 
 ## Conclusion
 
-While it would seem simple at first glance garbage collection on CRDTs is anything but easy. Notwithstanding the difficulty of actually implementing one from a specification in an more theory focused paper. While this post does not verify the performance effects of garbage collection it does confirm that both implementing CRDTs is difficult and balancing availability with the stronger synchronization seemingly needed for garbage collection is a task that takes longer than 30 hours.
-
-2. Sebastian Burckhardt, Alexey Gotsman, Hongseok Yang, and Marek Zawirski. 2014. Replicated data types: specification, verification, optimality. In Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL '14). ACM, New York, NY, USA, 271-284. DOI: https://doi.org/10.1145/2535838.2535848
-
-5. http://archagon.net/blog/2018/03/24/data-laced-with-history/#garbage-collection
+While it would seem simple at first glance garbage collection on CRDTs is anything but easy. Notwithstanding the difficulty of actually implementing one from a specification in an more theory focused paper. While this post does not verify the performance effects of garbage collection it does confirm that both implementing CRDTs is difficult and balancing availability with the stronger synchronization seemingly needed for garbage collection is a nontrivial task.
 
 
+
+Attempted basic implementations are available here: https://github.com/atbarker/CRDTexperiments
+
+Note: This implementation is a gross and horrifying abuse of the interface{} construct in Go. Those who care about proper use of the Go language probably should not read the code. I created this abomination because I want to see if I could.
