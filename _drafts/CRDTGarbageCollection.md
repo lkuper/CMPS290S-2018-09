@@ -1,4 +1,4 @@
-#Implementing a Garbage Collected Graph CRDT (part 1 of 2)
+# Implementing a Garbage Collected Graph CRDT (part 1 of 2)
 
 Author: Austen Barker
 Editors: Natasha Mittal and Linsey Kuper 
