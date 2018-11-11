@@ -34,7 +34,64 @@ Initially I decided to attempt an implementation of the ARPO design in Python to
 ## ARPO Building Blocks
 
 In order to implement the ARPO specification (or any of the graphs) it became necessary to first implement both 2Psets and Gsets as state based CRDTs rather easily from specifications 11 and 12. A Gset was implemented as a simple key/value mapping with a merge operation being a union between the two maps. The Gset had only trivial operation rules and only required basic single set operations such as add and union. The 2Pset implementation is then built with two Gsets. One for added elements and one for removed elements. I used maps of key-value pairs to represent sets. Where the key is of type interface and the value is another 'interface'. The interface construct in is an easy way to achieve polymorphism and allows the implementation to use practically anything as a key or value. The drawback is that it is up to the programmer to make sure data from the interface is processed properly. 
+```
+//map interfaces (key) to interfaces (value) in our set
+type baseSet map[interface{}]interface{}
 
+//all our Gset has to contain is a single set that grows monotonically
+type Gset struct {
+        BaseSet baseSet
+}
+
+func NewGset() *Gset {
+        return &Gset{BaseSet: baseSet{}}
+}
+
+
+func (g *Gset) Add(element, contents interface{}) error{
+        g.BaseSet[element] = contents
+        return nil
+}
+
+func (g *Gset) Fetch(element interface{}) interface{}{
+        contents := g.BaseSet[element]
+        return contents
+}
+
+func (g *Gset) Query(element interface{}) bool{
+        _, isThere := g.BaseSet[element]
+        return isThere
+}
+
+func (g *Gset) List()  ([]interface{}, error){
+        elements := make([]interface{}, 0, len(g.BaseSet))
+        for element := range g.BaseSet{
+                elements = append(elements, element)
+        }
+        return elements, nil
+}
+
+func (g *Gset) Length() (int, error){
+        return len(g.BaseSet), nil
+}
+
+//check if S.A is a subset of T.A
+func Compare(s, t *Gset) error{
+        return nil
+}
+
+//merge two sets
+func Merge(s, t *Gset) (*Gset, error){
+        newGset := NewGset()
+        for k, v := range s.BaseSet{
+                newGset.BaseSet[k] = v
+        }
+        for k, v := range t.BaseSet{
+                newGset.BaseSet[k] = v
+        }
+        return newGset, nil
+}
+```
 One interesting thing to note is that most of the implementation of the Gset is the same regardless of whether it is a state or operation based CRDT. The only thing that I added to the implementation was an *ApplyOps* function that will apply a list of operations in order to the Gset (although these are only add's). The same was not true with the 2Pset, where the biggest difference existed when removing elements. As concurrent add and remove operations are commutative the tombstone set is really only necessary when implementing a state based 2Pset with the trade off being a few additional checks. We can also re-use the function from the Gset implementation to handle applying operations to another 2Pset, as the op-based 2Pset is simply a Gset with a removal function. 
 
 A naive implementation of the 2Pset is not very space-efficient, as it can in the worst case require double the space of a Gset with the same number of elements. This bloat could be curtailed by maintaining the removal set as a bitmap. Each entry in the bitmap would correspond to an entry in the add set. The merge function for a 2Pset with a bitmap would use a bitwise OR operation between the bitmaps. This technique could also be applicable to other CRDTs that utilize tombstones.   
