@@ -89,8 +89,170 @@ The tombstones in the state-based 2P-Set implementation make it a good candidate
 
 Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges.  Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary:  in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own  G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. What we are left  with is a 2P2P-Graph as described in Shapiro’s Specification 16, but with a different initial state, a few new preconditions, and a Before function to show transitive relations.
 
-```
+```go
+type Node struct{
+	ID interface{}
+}
 
+//here we represent the element being added as an array
+//0 is the element to add or remove (v)
+//1 is the first element in an addbetween (u)
+//2 is the last element in an addbetween (w)
+type OpList struct {
+	Operation string
+	Element   []interface{}
+	contents  struct{}
+}
+
+//an edge points from the origin to the destination
+//so left to right
+type Edge struct{
+	left *Node
+	right *Node
+}
+
+type AddRemove struct{
+	vectorClock *vclock.VClock
+	externalVectorClocks []vclock.VClock
+	V *Twopset.Twopset
+	E *Twopset.Twopset
+}
+
+func NewNode(id interface{}) *Node{
+	return &Node{
+		ID: id,
+	}
+}
+
+func NewAddRemove() *AddRemove{
+	AR := &AddRemove{
+		vectorClock: vclock.New(),
+		V: Twopset.Newtwopset(),
+		E: Twopset.Newtwopset(),
+	}
+	leftSentinel := NewNode("leftSentinel")
+	rightSentinel := NewNode("rightSentinel")
+	AR.V.Add("leftSentinel", leftSentinel)
+	AR.V.Add("rightSentinel", rightSentinel)
+	AR.AddEdge("leftSentinel", "rightSentinel")
+	return AR
+}
+
+func (a *AddRemove) Lookup (element interface{}) bool{
+	if a.V.Query(element){
+		return true
+	}
+	return false
+}
+
+//depth first search to establish transitive relationship
+func (a *AddRemove) QueryBefore(u, v interface{}) bool{
+	isBefore := false
+	if a.V.Query(u) && a.V.Query(v){
+		if edgeExists := a.FetchEdge(u, v); edgeExists!= nil {
+			return true
+		}
+		if u.(*Node).ID == "leftSentinel" && v.(*Node).ID == "rightSentinel" {
+			return true
+		}
+		edges := a.GetEdges(u)
+		for k := range edges{
+			isBefore = a.QueryBeforeRecurse(edges[k].(*Edge).right, v)
+		}
+	}
+	return isBefore
+}
+
+func (a *AddRemove) QueryBeforeRecurse(u, v interface{}) bool{
+	edges := a.GetEdges(u)
+	isBefore := false
+	//if we have hit the sentinel then we are done
+	if len(edges) == 1 && edges[0].(*Edge).right.ID == "rightSentinel" {
+		isBefore = false
+	}
+	for k := range edges{
+		if edgeExists := a.FetchEdge(u, v); edgeExists != nil {
+			isBefore = true
+		}else{
+			isBefore = a.QueryBeforeRecurse(edges[k].(*Edge).right, v)
+		}
+	}
+	return isBefore
+}
+
+func (a *AddRemove) FetchNode(v interface{}) *Node{
+	node := a.V.Fetch(v).(*Node)
+	return node
+}
+
+//will return all edges in the set that contain a given node
+func (a *AddRemove) FetchEdge(u interface{}, v interface{}) *Edge{
+	edgeList := a.E.List()
+	for k := range edgeList {
+		if edgeList[k].(*Edge).left == u.(*Node) && edgeList[k].(*Edge).right == v.(*Node) {
+			return edgeList[k].(*Edge)
+		}
+	}
+	return nil
+}
+
+//get all edges originating at a node
+func (a *AddRemove) GetEdges(u interface{}) []interface{}{
+	edges := a.E.List()
+	returnEdges := make([]interface{}, 0)
+	for k := range edges{
+		if edges[k].(*Edge).left == u.(*Node){
+			returnEdges = append(returnEdges, edges[k])
+		}
+	}
+	return returnEdges
+
+}
+
+func (a *AddRemove) AddEdge(u, v interface{}){
+	if a.V.Query(u) && a.V.Query(v){
+		newEdge := &Edge{
+			left: a.FetchNode(u),
+			right: a.FetchNode(v),
+		}
+		a.E.Add(newEdge, nil)
+	}
+}
+
+func (a *AddRemove) AddBetween(u, v, w interface{}) {
+	if !a.Lookup(v) && a.QueryBefore(u, w){
+		a.V.Add(v, NewNode(v))
+		a.AddEdge(u, v)
+		a.AddEdge(v, w)
+	}
+}
+
+//needs a check to remove dangling edges, could possibly be done during garbage collection
+func (a *AddRemove) Remove(v interface{}){
+	if a.Lookup(v) && (v != "left" || v != "right"){
+		a.V.Remove(v)
+	}
+}
+
+func (a *AddRemove) RemoveEdge(v interface{}){
+	if a.LookupEdge(v){
+		a.E.Remove(v)
+	}
+}
+
+func (a *AddRemove) ApplyOps(opslist *list.List) error{
+	for e := opslist.Front(); e != nil; e = e.Next(){
+		oplistElement := e.Value.(*OpList)
+		if oplistElement.Operation == "AddBetween"{
+			a.AddBetween(oplistElement.Element[1], oplistElement.Element[0], oplistElement.Element[2])
+		}else if oplistElement.Operation == "Remove"{
+			a.Remove(oplistElement.Element[0])
+		}else{
+			return nil
+		}
+	}
+	return nil
+}
 ```
 
 The preconditions for edge addition and removal are concerned with the existence of an edge when removing one, prevention of duplicate edges, and the existence of both endpoint vertices when adding edges. Further testing and prodding the implementation could reveal a need for more preconditions.
