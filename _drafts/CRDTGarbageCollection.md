@@ -94,6 +94,7 @@ type Node struct{
 	ID interface{}
 }
 
+//A struct representing a single operation on the ARPO
 //here we represent the element being added as an array
 //0 is the element to add or remove (v)
 //1 is the first element in an addbetween (u)
@@ -118,12 +119,14 @@ type AddRemove struct{
 	E *Twopset.Twopset
 }
 
+//return a new node
 func NewNode(id interface{}) *Node{
 	return &Node{
 		ID: id,
 	}
 }
 
+//create a new partial order
 func NewAddRemove() *AddRemove{
 	AR := &AddRemove{
 		vectorClock: vclock.New(),
@@ -138,6 +141,7 @@ func NewAddRemove() *AddRemove{
 	return AR
 }
 
+//check if a vertex exists
 func (a *AddRemove) Lookup (element interface{}) bool{
 	if a.V.Query(element){
 		return true
@@ -145,6 +149,7 @@ func (a *AddRemove) Lookup (element interface{}) bool{
 	return false
 }
 
+//check if an edge exists
 func (a *AddRemove) LookupEdge (element interface{}) bool{
 	if a.E.Query(element){
 		return true
@@ -187,6 +192,7 @@ func (a *AddRemove) QueryBeforeRecurse(u, v interface{}) bool{
 	return isBefore
 }
 
+//Fetch a node by interface/ID
 func (a *AddRemove) FetchNode(v interface{}) *Node{
 	node := a.V.Fetch(v).(*Node)
 	return node
@@ -213,9 +219,9 @@ func (a *AddRemove) GetEdges(u interface{}) []interface{}{
 		}
 	}
 	return returnEdges
-
 }
 
+//adds an edge between two vertices
 func (a *AddRemove) AddEdge(u, v interface{}){
 	if a.V.Query(u) && a.V.Query(v){
 		newEdge := &Edge{
@@ -226,11 +232,14 @@ func (a *AddRemove) AddEdge(u, v interface{}){
 	}
 }
 
+//adds a vertex between two other vertices, adds edges where needed
 func (a *AddRemove) AddBetween(u, v, w interface{}) {
 	if !a.Lookup(v) && a.QueryBefore(u, w){
 		a.V.Add(v, NewNode(v))
 		a.AddEdge(u, v)
 		a.AddEdge(v, w)
+		remove := a.FetchEdge(u, w)
+		a.RemoveEdge(remove)
 	}
 }
 
@@ -241,12 +250,14 @@ func (a *AddRemove) Remove(v interface{}){
 	}
 }
 
+//remove an edge
 func (a *AddRemove) RemoveEdge(v interface{}){
 	if a.LookupEdge(v){
 		a.E.Remove(v)
 	}
 }
 
+//apply operations from the operation list
 func (a *AddRemove) ApplyOps(opslist *list.List) error{
 	for e := opslist.Front(); e != nil; e = e.Next(){
 		oplistElement := e.Value.(*OpList)
