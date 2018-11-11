@@ -15,15 +15,15 @@ Conflict Free Replicated Data Types (CRDTs) are a class of specialized data stru
 
 As presented by Shapiro et al. CRDTs come in two major varieties, state based (CvRDTs) and operation based (CmRDTs). The difference comes from how the replicas propagate updates to one another. In the state based model the entire local state is transmitted to other replicas which then reconcile inconsistencies through a commutative, associative, and idempotent operation. As seen later in this blog post a merge operation between two states can often be represent by a union between two sets. Operation based CRDTs transmit their state by sending only the update operations performed to other replicas. So each operation is individually replayed on the recipient replica. In this model the operations must be commutative but not necessarily idempotent. CmRDTs are more particular about the messaging protocol between replicas but offer a lower bandwidth overhead than a CvRDT which must transmit the entire local state instead of small operations. CvRDTs on the other hand provides an associative merge operation.
 
-The paper presents a multitude of different CRDT examples along with formal specifications and operation semantics for each. Among these are basic constructs for sets, counters, registers, and graphs. This blog post is primarily concerned with the implementation of sets and graphs. The two simplest sets specified are the Growth Only Set (Gset) and the badly named Two Phase Set (2Pset). The Gset is simply a set of elements that is monotonically increasing with no removal operation. In the case of a state based 2Pset conflicts between add and remove operations during a merge necessitates some record of which elements have been removed from the set. In order to add the ability to remove elements we must add an additional Gset that maintains markers or tombstones denoting removed elements. 2Psets and Gsets can then be used to construct sets of vertices and edges in a directed graph. The Montonic Directed Acyclic Graph (Monotonic DAG) is simply two Gsets, one for the vertices and one for the edges. In this data structure there is no operation for removing vertices and its contents are monotonically increasing.
+The paper presents a multitude of different CRDT examples along with formal specifications and operation semantics for each. Among these are basic constructs for sets, counters, registers, and graphs. This blog post is primarily concerned with the implementation of sets and graphs. The two simplest sets specified are the Growth Only Set (G-Set) and the badly named Two Phase Set (2P-Set). The G-Set is simply a set of elements that is monotonically increasing with no removal operation. In the case of a state based 2P-Set conflicts between add and remove operations during a merge necessitates some record of which elements have been removed from the set. In order to add the ability to remove elements we must add an additional G-Set that maintains markers or tombstones denoting removed elements. 2P-Sets and G-Sets can then be used to construct sets of vertices and edges in a directed graph. The Montonic Directed Acyclic Graph (Monotonic DAG) is simply two G-Sets, one for the vertices and one for the edges. In this data structure there is no operation for removing vertices and its contents are monotonically increasing.
 
-Shapiro et al. introduce Add-Remove Partial Order (ARPO) graph CRDT as a solution to the mess that arises when one attempts to include vertex removals in their Operation based Monotonic DAG specification. They define the ARPO as a combination of two other CRDTs: a 2Pset to represent vertices and a Gset to represent edges. An example of a situation in which garbage collection is useful is when an update to an Add-Remove Partial Order is applied and considered stable. At that point, one can discard the set of removed vertices.
+Shapiro et al. introduce Add-Remove Partial Order (ARPO) graph CRDT as a solution to the mess that arises when one attempts to include vertex removals in their Operation based Monotonic DAG specification. They define the ARPO as a combination of two other CRDTs: a 2P-Set to represent vertices and a G-Set to represent edges. An example of a situation in which garbage collection is useful is when an update to an Add-Remove Partial Order is applied and considered stable. At that point, one can discard the set of removed vertices.
 
-For any CRDT that maintains tombstones, such as the state-based 2Pset and the ARPO, the tombstones could potentially pile up and cause unnecessary bloat. The difficulty with adding garbage collection is that it will often require some degree of synchronisation. The paper presents two challenges related to garbage collection, _stability_ and _commitment_.
+For any CRDT that maintains tombstones, such as the state-based 2P-Set and the ARPO, the tombstones could potentially pile up and cause unnecessary bloat. The difficulty with adding garbage collection is that it will often require some degree of synchronisation. The paper presents two challenges related to garbage collection, _stability_ and _commitment_.
 
 The purpose of tombstones is to help resolve conflicts between concurrent operations by having a record of removed elements. Eventually a tombstone is no longer required when all concurrent updates have been "delivered" and an update can be considered stable.  The paper applies a modified form of [Wuu and Bernstein's stability algorithm](http://dx.doi.org/10.1145/800222.806750), which requires each replica to maintain a set of all the other replicas and for there to be some mechanism to detect when a replica crashes. The algorithm uses vector clocks to determine concurrency of updates.
 
-Commitment issues arise when one needs to perform an operation with a need for greater synchronization, such as removing tombstones from a 2Pset or resetting all the replica payloads. Shapiro et al's conclusion is to require some atomic agreement between all replicas concerning the application of the desired operation.
+Commitment issues arise when one needs to perform an operation with a need for greater synchronization, such as removing tombstones from a 2P-Set or resetting all the replica payloads. Shapiro et al's conclusion is to require some atomic agreement between all replicas concerning the application of the desired operation.
 
 CRDTs may seem simple on paper, but any real implementation has to account for message (un)reliability, replica failure, performance, and memory usage.
 
@@ -33,12 +33,12 @@ Initially I decided to attempt an implementation of the ARPO design in Python to
 
 ## ARPO Building Blocks
 
-In order to implement the ARPO specification (or any of the graphs) it became necessary to first implement both 2Psets and Gsets as state based CRDTs rather easily from specifications 11 and 12. A Gset was implemented as a simple key/value mapping with a merge operation being a union between the two maps. The Gset had only trivial operation rules and only required basic single set operations such as add and union. The 2Pset implementation is then built with two Gsets. One for added elements and one for removed elements. I used maps of key-value pairs to represent sets. Where the key is of type interface and the value is another 'interface'. The interface construct in is an easy way to achieve polymorphism and allows the implementation to use practically anything as a key or value. The drawback is that it is up to the programmer to make sure data from the interface is processed properly. 
+In order to implement the ARPO specification (or any of the graphs) it became necessary to first implement both 2P-Sets and G-Sets as state based CRDTs rather easily from specifications 11 and 12. A G-Set was implemented as a simple key/value mapping with a merge operation being a union between the two maps. The G-Set had only trivial operation rules and only required basic single set operations such as add and union. The 2P-Set implementation is then built with two G-Sets. One for added elements and one for removed elements. I used maps of key-value pairs to represent sets. Where the key is of type interface and the value is another 'interface'. The interface construct in is an easy way to achieve polymorphism and allows the implementation to use practically anything as a key or value. The drawback is that it is up to the programmer to make sure data from the interface is processed properly. 
 ```
 //map interfaces (key) to interfaces (value) in our set
 type baseSet map[interface{}]interface{}
 
-//all our Gset has to contain is a single set that grows monotonically
+//all our G-Set has to contain is a single set that grows monotonically
 type Gset struct {
         BaseSet baseSet
 }
@@ -71,32 +71,23 @@ func (g *Gset) List()  ([]interface{}, error){
         return elements, nil
 }
 
-func (g *Gset) Length() (int, error){
-        return len(g.BaseSet), nil
-}
-
-//check if S.A is a subset of T.A
-func Compare(s, t *Gset) error{
-        return nil
-}
-
 //merge two sets
 func Merge(s, t *Gset) (*Gset, error){
         newGset := NewGset()
         for k, v := range s.BaseSet{
-                newGset.BaseSet[k] = v
+                newG-Set.BaseSet[k] = v
         }
         for k, v := range t.BaseSet{
-                newGset.BaseSet[k] = v
+                newG-Set.BaseSet[k] = v
         }
         return newGset, nil
 }
 ```
-One interesting thing to note is that most of the implementation of the Gset is the same regardless of whether it is a state or operation based CRDT. The only thing that I added to the implementation was an *ApplyOps* function that will apply a list of operations in order to the Gset (although these are only add's). The same was not true with the 2Pset, where the biggest difference existed when removing elements. As concurrent add and remove operations are commutative the tombstone set is really only necessary when implementing a state based 2Pset with the trade off being a few additional checks. We can also re-use the function from the Gset implementation to handle applying operations to another 2Pset, as the op-based 2Pset is simply a Gset with a removal function. 
+One interesting thing to note is that most of the implementation of the G-Set is the same regardless of whether it is a state or operation based CRDT. The only thing that I added to the implementation was an *ApplyOps* function that will apply a list of operations in order to the G-Set (although these are only add's). The same was not true with the 2P-Set, where the biggest difference existed when removing elements. As concurrent add and remove operations are commutative the tombstone set is really only necessary when implementing a state based 2P-Set with the trade off being a few additional checks. We can also re-use the function from the G-Set implementation to handle applying operations to another 2P-Set, as the op-based 2P-Set is simply a G-Set with a removal function. 
 
-A naive implementation of the 2Pset is not very space-efficient, as it can in the worst case require double the space of a Gset with the same number of elements. This bloat could be curtailed by maintaining the removal set as a bitmap. Each entry in the bitmap would correspond to an entry in the add set. The merge function for a 2Pset with a bitmap would use a bitwise OR operation between the bitmaps. This technique could also be applicable to other CRDTs that utilize tombstones.   
+A naive implementation of the 2P-Set is not very space-efficient, as it can in the worst case require double the space of a G-Set with the same number of elements. This bloat could be curtailed by maintaining the removal set as a bitmap. Each entry in the bitmap would correspond to an entry in the add set. The merge function for a 2P-Set with a bitmap would use a bitwise OR operation between the bitmaps. This technique could also be applicable to other CRDTs that utilize tombstones.   
 
-The tombstones in the state-based 2Pset implementation make it a good candidate for experimention with CRDT garbage collection. Although it would be significantly more interesting to do so with a more complicated structure such as a Graph.
+The tombstones in the state-based 2P-Set implementation make it a good candidate for experimention with CRDT garbage collection. Although it would be significantly more interesting to do so with a more complicated structure such as a Graph.
 
 ## Implementing the Add-Remove Partial Order CRDT
 
