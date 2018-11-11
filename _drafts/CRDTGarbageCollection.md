@@ -145,6 +145,13 @@ func (a *AddRemove) Lookup (element interface{}) bool{
 	return false
 }
 
+func (a *AddRemove) LookupEdge (element interface{}) bool{
+	if a.E.Query(element){
+		return true
+	}
+	return false
+}
+
 //depth first search to establish transitive relationship
 func (a *AddRemove) QueryBefore(u, v interface{}) bool{
 	isBefore := false
