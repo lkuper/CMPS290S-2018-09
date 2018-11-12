@@ -47,6 +47,143 @@ To describe operational transformation in its most basic form, let’s say we ha
 
 But merely sharing operations performed by both users and applying those operations at their ends is not sufficient for the text to by synchronized. If *A* received `OPb1` and decided to delete index `2` at its end, the text would read `ABMDEFGH`. If *B* received `OPa1` and inserted `"M"` at `3`, the text `Tb` would read `ABDMEFGH`. Clearly, this is a problem. The solution is arrived at when both *A* and *B* take cognisance of the operations performed at their end and not just apply new operations on the results of previous operations. 
 
+#### Implementation of Operational Transformation
+
+A rudimentary implementation of Operational Transformation can be checked [here](https://bitbucket.org/alfredd/collabalgos). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+
+```go
+func TestOTEditor_Transformation(t *testing.T) {
+	ot := OTEditor{Data: "yabcd", Ops: []Op{
+		{Data: "abcd", Index: 0, Type: LOCAL, Op: INSERT},
+		{Data: "y", Index: 0, Type: LOCAL, Op: INSERT},
+	},
+	}
+	fmt.Println("Test 1. remote insert 'x' at index 2")
+    ot.AppendOperation(INSERT, "x", 2, REMOTE)
+
+	fmt.Println("Test 2. remote delete char at index 1")
+	ot.AppendOperation(DELETE, "", 1, REMOTE)
+
+    fmt.Println("Test 3. insert 'f' at index 1")
+	ot.AppendOperation(INSERT, "f", 1, LOCAL)
+
+    fmt.Println("Test 4. delete char at index 3")
+	ot.AppendOperation(DELETE, "", 3, REMOTE)
+}
+```
+
+TODO: Explain Test cases.
+
+Now that expectations are set, we implement a simplified Operational Transformation Editor.
+
+```go
+type Operation string
+
+const (
+	INSERT Operation = "1"
+	DELETE Operation = "2"
+	APPEND Operation = "3"
+	PRINT  Operation = "4"
+)
+
+type OpType int
+
+const (
+	LOCAL  OpType = 0
+	REMOTE OpType = 1
+)
+
+type Op struct {
+	Op    Operation
+	Data  string
+	Index int
+	Type  OpType
+}
+
+type OTEditor struct {
+	Data string
+	Ops  []Op
+}
+
+func NewCollab() *OTEditor {
+	collab := &OTEditor{
+		Data: "",
+		Ops:  make([]Op, 10), // Keeps list of operations executed on the data.
+	}
+	return collab
+}
+
+func (c *OTEditor) AppendOperation(op Operation, data string, index int, optype OpType) {
+	operation := Op{Op: op, Data: data, Index: index, Type: optype}
+	log.Printf("Existing Data: %v\n", *c)
+	log.Printf("New Operation received: %v\n", operation)
+	c.exec(operation)
+}
+
+func (c *OTEditor) exec(operation Op) {
+	log.Printf("Executing new operation: %v, current data: %s\n", operation, c.Data)
+	//if operation.Type == REMOTE {
+	//}
+	c.performTransformation(&operation)
+	b := []byte(c.Data)
+	status := false
+	switch operation.Op {
+	case INSERT:
+		if len(b) <= operation.Index {
+			log.Printf("Cannot perform operation %v, index out of bounds.", operation)
+		} else {
+			b1 := b[0:operation.Index]
+			b2 := []byte(operation.Data)
+			b3 := b[operation.Index:]
+			var b0 []byte
+			finalData := append(b0, b1...)
+			finalData = append(finalData, b2...)
+			finalData = append(finalData, b3...)
+			c.Data = string(finalData)
+			status = true
+		}
+	case APPEND:
+		b2 := []byte(operation.Data)
+		finalData := append(b, b2...)
+		c.Data = string(finalData)
+		status = true
+
+	case DELETE:
+		if len(b) <= operation.Index {
+			log.Printf("Cannot perform operation %v, index out of bounds.", operation)
+		} else {
+			// TODO: Check logic
+			b1 := b[0:operation.Index]
+			b3 := b[operation.Index:]
+			var b0 []byte
+			finalData := append(b0, b1...)
+			finalData = append(finalData, b3[1:]...)
+			c.Data = string(finalData)
+			status = true
+		}
+	}
+	if status {
+		ops := append(c.Ops, operation)
+		c.Ops = ops
+		log.Printf("Current value of data: %v", *c)
+	}
+
+}
+
+func (c *OTEditor) performTransformation(op *Op) {
+	l := len(c.Ops)
+	lastOp := c.Ops[l-1]
+	if lastOp.Type == LOCAL && lastOp.Type != op.Type { // Transformation required only when synchronizing user changes.
+		if op.Index > lastOp.Index {
+			if lastOp.Op == DELETE {
+				op.Index -= 1
+			} else if lastOp.Op == INSERT {
+				op.Index += len(lastOp.Data)
+			}
+		}
+	}
+}
+```
 
 
 ### Two-way, Three-way and k-way merge
