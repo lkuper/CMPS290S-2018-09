@@ -4,7 +4,7 @@
 src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
 </script>
 
-Author: Austen Barker
+Author: Austen Barker\
 Editors: Natasha Mittal and Lindsey Kuper
 
 ## Introduction
