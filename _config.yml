@@ -16,3 +16,11 @@ exclude: responses
 plugins:
   - jekyll-feed
   - jekyll-include-cache
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      author_profile: true

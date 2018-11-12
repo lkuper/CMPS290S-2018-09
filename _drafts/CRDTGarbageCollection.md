@@ -1,22 +1,25 @@
 # Implementing a Garbage-Collected Graph CRDT (Part 1 of 2)
 
-Author: Austen Barker
+<script type="text/javascript"
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
+</script>
 
+Author: Austen Barker\
 Editors: Natasha Mittal and Lindsey Kuper
 
 ## Introduction
 
 [Conflict-Free Replicated Data Types](https://hal.inria.fr/inria-00609399v1/document) (CRDTs) are a class of specialized data structures designed to be replicated across a distributed system while providing eventual consistency and high availability. CRDTs can be modified concurrently without coordination while providing a means to reconcile conflicts between replicas.
 
-While CRDTs are a promising solution to the problem of building an eventually consistent distributed system, numerous practical implementation challenges remain. To deal with issues that arise when processing concurrent operations such as, for example, conflicting additions and removals of elements in a set, many CRDT specifications rely on the use of _tombstones_, which are markers to represent deleted items. These tombstones can accumulate over time and necessitate the use of a garbage collection system in order to avoid unacceptably costly growth of underlying data structures. These garbage collection systems can prove to be difficult to implement in practice. This blog post chronicles my brief research, reasoning about, and attempts to implement a CRDT with garbage collection from the specifications provided in [Shapiro et al.'s _A Comprehensive Study of Convergent and Commutative Replicated Data Types_](https://hal.inria.fr/inria-00555588/document).
+While CRDTs are a promising solution to the problem of building an eventually consistent distributed system, numerous practical implementation challenges remain. To deal with issues that arise when processing concurrent operations such as, for example, conflicting additions and removals of elements in a set, many CRDT specifications rely on the use of _tombstones_, which are markers to represent deleted items. These tombstones can accumulate over time and necessitate the use of a garbage collection system in order to avoid unacceptably costly growth of underlying data structures. These garbage collection systems can prove to be difficult to implement in practice. This series of two posts will chronicle my exploration of garbage collection in the context of CRDTs, and my attempts to implement a non-trivial garbage-collected CRDT based on the specifications in [Shapiro et al.'s _A Comprehensive Study of Convergent and Commutative Replicated Data Types_](https://hal.inria.fr/inria-00555588/document).
 
 ## Background
 
-Shapiro et al. present two styles of specifying CRDTs: state-based and _operation-based_. The difference comes from how the replicas propagate updates to one another. In the state-based model, replicas transmit their  entire local state is transmitted to other replicas, which then reconcile inconsistencies through a commutative, associative, and idempotent _merge_ operation. As seen later in this blog post, a merge operation can often be represented by a union between two sets.
+Shapiro et al. present two styles of specifying CRDTs: _state-based_ and _operation-based_. The difference comes from how the replicas propagate updates to one another. In the state-based model, replicas transmit their  entire local state is transmitted to other replicas, which then reconcile inconsistencies through a commutative, associative, and idempotent _merge_ operation. As seen later in this blog post, a merge operation can often be represented by a union between two sets.
 
 Operation-based, or op-based, CRDTs transmit their state by sending only the update operations performed to other replicas, so each operation is individually replayed on the recipient replica. In this model, the operations must be commutative but not necessarily idempotent. Op-based CRDTs are more particular about the messaging protocol between replicas, but require less bandwidth than a state-based CRDT,  which must transmit the entire local state instead of small operations. State-based CRDTs, on the other hand, provide an associative merge operation.
 
-Shapiro et al. give specifications for a variety of CRDT data structures, inclucing  sets, counters, registers, and graphs. This blog post is primarily concerned with the implementation of sets and graphs. The two simplest sets specified are the Grow-only Set (G-Set) and the so-called Two-Phase Set (2P-Set). The G-Set is a set of elements that is monotonically increasing with no removal operation. 2P-Sets, on the other hand, support removing items from the set.  In the case of a state-based 2P-Set, conflicts between add and remove operations during a merge necessitate some record of which elements have been removed from the set; an additional G-Set, sometimes called the _tombstone set_, that maintains markers or tombstones denoting removed elements.
+Shapiro et al. give specifications for a variety of CRDT data structures, including sets, counters, registers, and graphs. This blog post is primarily concerned with the implementation of sets and graphs. The two simplest sets specified are the Grow-only Set (G-Set) and the so-called Two-Phase Set (2P-Set). The G-Set is a set of elements that is monotonically increasing with no removal operation. 2P-Sets, on the other hand, support removing items from the set.  In the case of a state-based 2P-Set, conflicts between add and remove operations during a merge necessitate some record of which elements have been removed from the set; an additional G-Set, sometimes called the _tombstone set_, that maintains markers or tombstones denoting removed elements.
 
 Shapiro et al. then use 2P-Sets and G-Sets to represent sets of vertices and edges in a directed graph. The Montonic Directed Acyclic Graph (Monotonic DAG) CRDT is simply two G-Sets, one for the vertices and one for the edges. In this data structure there is no operation for removing vertices, and its contents are monotonically increasing.
 
@@ -24,20 +27,19 @@ Finally, Shapiro et al. introduce the Add-Remove Partial Order (ARPO) graph CRDT
 
 ## The need for garbage collection
 
-An example of a situation in which garbage collection is useful is when an update to an Add-Remove Partial Order is applied and considered stable; at that point, one can discard the set of removed vertices.
-
-For any CRDT that maintains tombstones, such as the state-based 2P-Set and the ARPO, the tombstones might pile up and cause unnecessary bloat. The difficulty with implementing garbage collection is that it will often require synchronization. Shapiro et al. present two challenges related to garbage collection: _stability_ and _commitment_.
+An example of a situation in which garbage collection is useful is when an update to an ARPO is applied and considered stable; at that point, one can discard the set of removed vertices.  For any CRDT that maintains tombstones, such as the state-based 2P-Set and the ARPO, the tombstones might pile up and cause unnecessary bloat. The difficulty with implementing garbage collection is that it will often require synchronization. Shapiro et al. present two challenges related to garbage collection: _stability_ and _commitment_.
 
 The purpose of tombstones is to help resolve conflicts between concurrent operations by having a record of removed elements. Eventually, a tombstone is no longer required when all concurrent updates have been “delivered” and an update can be considered _stable_. The paper applies a modified form of [Wuu and Bernstein’s stability algorithm](https://dl.acm.org/citation.cfm?id=806750), which requires each replica to maintain a set of all the other replicas and for there to be a mechanism to detect when a replica crashes. The algorithm uses vector clocks to determine concurrency of updates.
 
 Commitment issues arise when one needs to perform an operation with a need for synchronization, such as removing tombstones from a 2P-Set or resetting all the replicas of an object to their initial values. Shapiro et al’s conclusion is to require atomic agreement between all replicas concerning the application of the desired operation.
 
-
 ## ARPO building blocks
 
 To implement the ARPO CRDT specification, I had to first implement both 2P-Sets and G-Sets. I implemented both as state-based CRDTs rather easily from Shapiro et al.'s specifications.
 
-After some initial experiments with Python, I did the implementation in Go so I could easily run garbage collection on its own thread and core, and garbage collection thread would not compete with the actual CRDT for CPU resources.
+After some initial experiments with Python, I did the [implementation](https://github.com/atbarker/CRDTexperiments) in Go so I could easily run garbage collection on its own thread and core, and the garbage collection thread would not compete with the actual CRDT for CPU resources.
+
+The first set I implemented was the G-set which is borderline trivial but is reused for almost every other set or graph that Shapiro et al. describe. The current G-Set implementation is as follows:
 
 ```go
 //map interfaces (key) to interfaces (value) in our set
@@ -52,22 +54,24 @@ func NewGset() *Gset {
         return &Gset{BaseSet: baseSet{}}
 }
 
-
-func (g *Gset) Add(element, contents interface{}) error{
+//Adds a key-value pair to the map. Contents can be left null if desired.
+func (g *Gset) Add(element, contents interface{}){
         g.BaseSet[element] = contents
-        return nil
 }
 
+//Returns the value when given a key. 
 func (g *Gset) Fetch(element interface{}) interface{}{
         contents := g.BaseSet[element]
         return contents
 }
 
+//Does an element exist?
 func (g *Gset) Query(element interface{}) bool{
         _, isThere := g.BaseSet[element]
         return isThere
 }
 
+//A list of all elements
 func (g *Gset) List()  ([]interface{}, error){
         elements := make([]interface{}, 0, len(g.BaseSet))
         for element := range g.BaseSet{
@@ -76,7 +80,7 @@ func (g *Gset) List()  ([]interface{}, error){
         return elements, nil
 }
 
-//merge two sets
+//merge two sets by performing a Union
 func Merge(s, t *Gset) (*Gset, error){ 
         newGset := NewGset()
         for k, v := range s.BaseSet{
@@ -101,33 +105,25 @@ The tombstones in the state-based 2P-Set implementation make it a good candidate
 
 ## Implementing the Add-Remove Partial Order CRDT
 
-Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges. Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary: in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. What we are left with less an ARPO than it is what Shapiro et al. call a 2P2P-Graph (that is, it has a tombstone set for both vertices and edges), but with a different initial state, a few new preconditions, and a `before` function to compute transitive relations.
+Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges. Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary: in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. The [implementation we are left with](https://github.com/atbarker/CRDTexperiments/blob/master/addremove/addremove.go) resembles what Shapiro et al. call a 2P2P-Graph (that is, it has a tombstone set for both vertices and edges), but with a different initial state, a few new preconditions, and a `before` function to compute transitive relations.
 
 ```go
-//A struct for a single operation on an ARPO
-//here we represent the operands as an array
-//0 is the element to add or remove (v)
-//1 is the first element in an addbetween (u)
-//2 is the last element in an addbetween (w)
-type OpList struct {
-    Operation string
-    Element   []interface{}
-    contents  struct{}
-}
-
 //an edge points from the origin to the destination
 type Edge struct{
     left *Node
     right *Node
 }
 
+//vector clocks are used to determine causal relations and the current “version” of the ARPO
 type AddRemove struct{
     vectorClock *vclock.VClock
-    externalVectorClocks []vclock.VClock
+    causalVectorClocks []vclock.VClock
     V *Twopset.Twopset
     E *Twopset.Twopset
 }
 
+
+//Initializes the  ARPO with left and right sentinels and a single edge
 func NewAddRemove() *AddRemove{
     AR := &AddRemove{
         vectorClock: vclock.New(),
@@ -142,6 +138,7 @@ func NewAddRemove() *AddRemove{
     return AR
 }
 
+//Checks if a vertex exists.
 func (a *AddRemove) Lookup (element interface{}) bool{
     if a.V.Query(element){
         return true
@@ -149,14 +146,7 @@ func (a *AddRemove) Lookup (element interface{}) bool{
     return false
 }
 
-func (a *AddRemove) LookupEdge (element interface{}) bool{
-    if a.E.Query(element){
-        return true
-    }
-    return false
-}
-
-//depth first search to establish transitive relationship
+//Depth-first search to establish transitive relationship
 func (a *AddRemove) QueryBefore(u, v interface{}) bool{
     isBefore := false
     if a.V.Query(u) && a.V.Query(v){
@@ -174,6 +164,7 @@ func (a *AddRemove) QueryBefore(u, v interface{}) bool{
     return isBefore
 }
 
+//Recursive helper for the depth-first search
 func (a *AddRemove) QueryBeforeRecurse(u, v interface{}) bool{
     edges := a.GetEdges(u)
     isBefore := false
@@ -203,16 +194,7 @@ func (a *AddRemove) GetEdges(u interface{}) []interface{}{
     return returnEdges
 }
 
-func (a *AddRemove) AddEdge(u, v interface{}){
-    if a.V.Query(u) && a.V.Query(v){
-        newEdge := &Edge{
-            left: a.FetchNode(u),
-            right: a.FetchNode(v),
-        }
-        a.E.Add(newEdge, nil)
-    }
-}
-
+//Adds a vertex between two others.
 func (a *AddRemove) AddBetween(u, v, w interface{}) {
     if !a.Lookup(v) && a.QueryBefore(u, w){
         a.V.Add(v, NewNode(v))
@@ -227,11 +209,43 @@ func (a *AddRemove) Remove(v interface{}){
         a.V.Remove(v)
     }
 }
+```
+I also wrote a few functions to handle adding and removing edges that perform almost the same functions as their vertex counterparts.
+```go
+func (a *AddRemove) LookupEdge (element interface{}) bool{
+    if a.E.Query(element){
+        return true
+    }
+    return false
+}
+
+func (a *AddRemove) AddEdge(u, v interface{}){
+    if a.V.Query(u) && a.V.Query(v){
+        newEdge := &Edge{
+            left: a.FetchNode(u),
+            right: a.FetchNode(v),
+        }
+        a.E.Add(newEdge, nil)
+    }
+}
 
 func (a *AddRemove) RemoveEdge(v interface{}){
     if a.LookupEdge(v){
         a.E.Remove(v)
     }
+}
+```
+The specification leaves out details on how to handle transmitting and applying operations. So I added a structure to represent a single operation and function to apply a linked list of these operations to the ARPO. Messaging is not currently implemented but it is assumed that the operations are added to the linked list in causal order.
+```go
+//A struct for a single operation on an ARPO
+//here we represent the operands as an array
+//0 is the element to add or remove (v)
+//1 is the first element in an addbetween (u)
+//2 is the last element in an addbetween (w)
+type OpList struct {
+    Operation string
+    Element   []interface{}
+    contents  struct{}
 }
 
 func (a *AddRemove) ApplyOps(opslist *list.List) error{
@@ -262,6 +276,4 @@ To sum up, distributed garbage collection requires confronting some of the harde
 
 ## Next steps
 
-For a future blog post, I plan to investigate garbage collection approaches currently in use with CRDTs. Some interesting avenues to explore include [pure operation-based CRDTs](https://arxiv.org/abs/1710.04469), , Victor Grishchenko's [causal trees](https://github.com/gritzko/ctre), and [delta-state CRDTs](https://arxiv.org/pdf/1603.01529.pdf). Also, [methods for reducing the space costs of vector clocks](http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/) could prove useful in lowering garbage collection metadata overhead. After investigating the options, I'll hopefully be able to choose a garbage collection method to implement, integrate it with my existing ARPO implementation, and evaluate its performance.
-
-The full set of implementations are available here: https://github.com/atbarker/CRDTexperiments
+For a future blog post, I plan to investigate garbage collection approaches currently in use with CRDTs. Some interesting avenues to explore include [pure operation-based CRDTs](https://arxiv.org/abs/1710.04469), Victor Grishchenko's [causal trees](https://github.com/gritzko/ctre), and [delta-state CRDTs](https://arxiv.org/pdf/1603.01529.pdf). Also, [methods for reducing the space costs of vector clocks](http://www.bailis.org/blog/causality-is-expensive-and-what-to-do-about-it/) could prove useful in lowering garbage collection metadata overhead. After investigating the options, I'll hopefully be able to choose a garbage collection method to implement, integrate it with my existing ARPO implementation, and evaluate its performance.
