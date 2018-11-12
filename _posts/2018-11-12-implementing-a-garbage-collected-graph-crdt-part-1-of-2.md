@@ -1,11 +1,15 @@
-# Implementing a Garbage-Collected Graph CRDT (Part 1 of 2)
+---
+title: Implementing a Garbage-Collected Graph CRDT (Part 1 of 2)
+author: Austen Barker
+layout: single
+classes: wide
+---
 
 <script type="text/javascript"
 src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
 </script>
 
-Author: Austen Barker\
-Editors: Natasha Mittal and Lindsey Kuper
+by Austen Barker &middot; edited by Natasha Mittal and Lindsey Kuper
 
 ## Introduction
 
@@ -39,7 +43,7 @@ To implement the ARPO CRDT specification, I had to first implement both 2P-Sets 
 
 After some initial experiments with Python, I did the [implementation](https://github.com/atbarker/CRDTexperiments) in Go so I could easily run garbage collection on its own thread and core, and the garbage collection thread would not compete with the actual CRDT for CPU resources.
 
-The first set I implemented was the G-set which is borderline trivial but is reused for almost every other set or graph that Shapiro et al. describe. The current G-Set implementation is as follows:
+The first set CRDT I implemented was the G-Set, which is straightforward and is reused for almost every other set or graph CRDT that Shapiro et al. describe. The current G-Set implementation is as follows:
 
 ```go
 //map interfaces (key) to interfaces (value) in our set
@@ -105,7 +109,7 @@ The tombstones in the state-based 2P-Set implementation make it a good candidate
 
 ## Implementing the Add-Remove Partial Order CRDT
 
-Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges. Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary: in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. The [implementation we are left with](https://github.com/atbarker/CRDTexperiments/blob/master/addremove/addremove.go) resembles what Shapiro et al. call a 2P2P-Graph (that is, it has a tombstone set for both vertices and edges), but with a different initial state, a few new preconditions, and a `before` function to compute transitive relations.
+Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges. Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary: in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. The [implementation we are left with](https://github.com/atbarker/CRDTexperiments/blob/master/addremove/addremove.go) resembles what Shapiro et al. call a 2P2P-Graph (that is, it has a tombstone set for both vertices and edges), but with a different initial state, a few new preconditions, and a `QueryBefore` function to compute transitive relations.
 
 ```go
 //an edge points from the origin to the destination
@@ -122,8 +126,7 @@ type AddRemove struct{
     E *Twopset.Twopset
 }
 
-
-//Initializes the  ARPO with left and right sentinels and a single edge
+//Initializes the ARPO with left and right sentinels and a single edge
 func NewAddRemove() *AddRemove{
     AR := &AddRemove{
         vectorClock: vclock.New(),
@@ -138,7 +141,7 @@ func NewAddRemove() *AddRemove{
     return AR
 }
 
-//Checks if a vertex exists.
+//Checks if a vertex exists
 func (a *AddRemove) Lookup (element interface{}) bool{
     if a.V.Query(element){
         return true
