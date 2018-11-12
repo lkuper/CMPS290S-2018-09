@@ -23,8 +23,8 @@ knowledge is assumed for the class):
 
 And then we explore our main topics of interest in these sections:
 
-* [consistency type systems](consistency/consistency-type-systems.md)
-* [consistency as a property](consistency/consistency-as-a-property.md)
+* [consistency type systems](#consistency-type-systems)
+* [consistency as a property](#consistency-as-a-property)
 
 And, for convenience, there is a [glossary](#glossary) at the end of this blog post.
 
@@ -167,35 +167,60 @@ declarative programmable storage.
 <!-- ------------------------------>
 <!-- SECTION -->
 # Consistency
-This section provides background on:
-* What is consistency
-* What are consistency models
-* What is a consistency type system
 
-# Consistency Models
-This subsection defines the various consistency models as well as terminology
-for distinguishing between them and understanding relevant constraints.
+<!-- TODO: fill this in later -->
+## Consistency Models
+Consistency is an interesting property of data. We usually define an **A**bstract
+**D**ata **T**ype (ADT) by the operations that we can invoke on them. From this
+perspective, not only is consistency a property of data--does every client in
+my system agree on the state of this data value--but it is inherently affected
+by operations. The more complete our information about a data type is, the
+easier it is to know if the relevant data value is *correct*. When we consider
+this property in a distributed system, complete information becomes more
+difficult to accumulate **efficiently**. So, we define correctness of our data
+in a distributed system, as constraints with respect to complete, relevant
+information. This definition of correctness given some set of constraints, is
+what we call a *consistency model*. That is, given information about our *way
+of thinking about consistency*, is a data value, or the state of a data type,
+**consistent**.
 
-## Linearizabilty
+In this section, we describe formal definitions of various consistency models
+and intuitions for what they mean. We will also define terminology as
+accessibly as possible in the [glossary](#glossary). Ultimately, formal
+definitions of consistency models are necessary for distinguishing between them
+and reasoning over them.
 
-## Sequential Consistency
+### NOTE
+Since our class, [CMPS290S][course-website], has been spending a lot of time
+reading about consistency models up to this point, I will fill this section in
+later and assume that initial readers of this blog post are well acquainted
+with the relevant consistency models.
 
-## Causal Consistency
+#### Linearizabilty
 
-## Eventual Consistency
+#### Sequential Consistency
 
-## Weak Consistency
-# Consistency Types
-As described in the [Consistency Models](consistency-models.md) section, a consistency model is a
-framework for defining what consistency is. Because there are many consistency models, it is useful
-to understand how to compare them, but especially how to verify and enforce them. Consistency type
-systems associate data types with the consistency model we would like the data types to conform to.
-The consistency model is defined by consistency constraints (or requirements), in a way that the
-programming language or system can enforce. The association of data types with consistency models
-allows the developer, and the system, to explicitly reason over consistency constraints in
-applications.
+#### Causal Consistency
 
-## Related Work
+#### Eventual Consistency
+
+#### Weak Consistency
+
+<!-- ------------------------------>
+<!-- SECTION -->
+## Consistency Types
+As described in the [Consistency Models](#consistency-models) section, there
+are many consistency models that are meaningful for developers working in
+distributed systems. From the perspective of a consistency type system, we are
+interested in how to verify and enforce them for associated data types.
+To do this, Consistency type systems associate data types with the consistency
+model we would like the data types to conform to. The consistency model is
+defined by consistency constraints (or requirements), in a way that the
+programming language or system can enforce. The association of data types with
+consistency models allows the developer, and the system, to explicitly reason
+over consistency constraints in applications.
+
+### Related Work
 In [CMPS290S][course-website], we have been reading a handful of papers that discuss various tools
 for understanding, analyzing, and reasoning about consistency in a distributed system. There are a
 few categories that I would group related work into:
