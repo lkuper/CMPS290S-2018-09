@@ -1,5 +1,10 @@
 # Implementing a Garbage-Collected Graph CRDT (Part 1 of 2)
 
+<script type="text/javascript"
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
+</script>
+
+
 Author: Austen Barker
 
 Editors: Natasha Mittal and Lindsey Kuper
