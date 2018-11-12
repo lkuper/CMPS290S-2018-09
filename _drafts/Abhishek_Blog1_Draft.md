@@ -53,26 +53,44 @@ A rudimentary implementation of Operational Transformation can be checked [here]
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
-	ot := OTEditor{Data: "yabcd", Ops: []Op{
+	ot := OTEditor { Data: "yabcd", Ops: []Op{
 		{Data: "abcd", Index: 0, Type: LOCAL, Op: INSERT},
 		{Data: "y", Index: 0, Type: LOCAL, Op: INSERT},
-	},
+		},
 	}
-	fmt.Println("Test 1. remote insert 'x' at index 2")
-    ot.AppendOperation(INSERT, "x", 2, REMOTE)
 
+	// Testcase #1
+	fmt.Println("Test 1. remote insert 'x' at index 2")
+	ot.AppendOperation(INSERT, "x", 2, REMOTE)
+	assertEquals(ot.Data, "yaxbcd")
+
+	// Testcase #2
 	fmt.Println("Test 2. remote delete char at index 1")
 	ot.AppendOperation(DELETE, "", 1, REMOTE)
+	assertEquals(ot.Data, "yxbcd")
 
-    fmt.Println("Test 3. insert 'f' at index 1")
+	// Testcase #3
+	fmt.Println("Test 3. insert 'f' at index 1")
 	ot.AppendOperation(INSERT, "f", 1, LOCAL)
+	assertEquals(ot.Data, "yfxbcd")
 
-    fmt.Println("Test 4. delete char at index 3")
+	// Testcase #4
+	fmt.Println("Test 4. delete char at index 3")
 	ot.AppendOperation(DELETE, "", 3, REMOTE)
+	assertEquals(ot.Data, "yfxcd")
 }
 ```
 
-TODO: Explain Test cases.
+Each test case shown above adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
+
+1. Initially the data is `abcd` inserted locally.
+2. A `y` is inserted next locally and the data becomes `yabcd`.
+3. Concurrently the remote users adds `x` at index `2` and sends this operation to be synced with the local copy. The data is modified to `yaxbcd`.
+4. The remote user then deletes the character at index `1`. The data becomes `yxbcd`
+5. The local user then inserts `f` at index `1`. The data is now `yfxbcd`.
+6. The remote user then deletes the character at index `3` with the data finally becoming `yfxcd`.
+
+The important thing to note here is that each modification to the data is performed as a series of operations.
 
 Now that expectations are set, we implement a simplified Operational Transformation Editor.
 
@@ -188,6 +206,9 @@ func (c *OTEditor) performTransformation(op *Op) {
 
 ### Two-way, Three-way and k-way merge
 
+### Patch Theory
+
+### Semantic Merge
 
 ## References
 
