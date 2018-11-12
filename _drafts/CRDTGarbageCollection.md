@@ -234,7 +234,7 @@ func (a *AddRemove) RemoveEdge(v interface{}){
     }
 }
 ```
-The specification leaves out details on how to handle transmitting and applying operations. So I added a structure to represent a single operation and function to apply a linked list of these operations to the ARPO.
+The specification leaves out details on how to handle transmitting and applying operations. So I added a structure to represent a single operation and function to apply a linked list of these operations to the ARPO. Messaging is not currently implemented but it is assumed that the operations are added to the linked list in causal order.
 ```go
 //A struct for a single operation on an ARPO
 //here we represent the operands as an array
