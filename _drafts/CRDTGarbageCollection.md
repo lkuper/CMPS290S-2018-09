@@ -108,7 +108,6 @@ The tombstones in the state-based 2P-Set implementation make it a good candidate
 Shapiro et al.'s ARPO specification leaves out the `addEdge` and `removeEdge` operations.  In my implementation, I attempted to add the missing operations.  Many of the same challenges that exist for garbage collection of vertex tombstones also exist for edges. Edge addition is necessary to maintain a connected graph and avoid partitions. Edge removal also turns out to be necessary: in a naïve implementation, where edges are represented as a separate data structure (in my naïve ARPO implementation, for instance, edges are represented by their own G-Set), we have to remove edges along with their vertices to avoid cluttering the data structure with unneeded objects. In an implementation where edges are represented by a list of references in each vertex, one must clean up the relevant references during a vertex removal. With removing edges proving necessary, and if we allow edge addition and removal independent of vertices, we end up requiring another set of tombstones to avoid the same problems with concurrent operations that we had with vertex removal. The [implementation we are left with](https://github.com/atbarker/CRDTexperiments/blob/master/addremove/addremove.go) resembles what Shapiro et al. call a 2P2P-Graph (that is, it has a tombstone set for both vertices and edges), but with a different initial state, a few new preconditions, and a `before` function to compute transitive relations.
 
 ```go
-
 //an edge points from the origin to the destination
 type Edge struct{
     left *Node
@@ -139,6 +138,7 @@ func NewAddRemove() *AddRemove{
     return AR
 }
 
+//Checks if a vertex exists.
 func (a *AddRemove) Lookup (element interface{}) bool{
     if a.V.Query(element){
         return true
@@ -194,6 +194,7 @@ func (a *AddRemove) GetEdges(u interface{}) []interface{}{
     return returnEdges
 }
 
+//Adds a vertex between two others.
 func (a *AddRemove) AddBetween(u, v, w interface{}) {
     if !a.Lookup(v) && a.QueryBefore(u, w){
         a.V.Add(v, NewNode(v))
