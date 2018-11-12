@@ -1,21 +1,34 @@
 # Supporting mixed consistency in a Declarative Programmable Storage System
 
+<!-- ------------------------------>
+<!-- SECTION -->
 ## Introduction
-In this blog post, I explore how to enforce various consistency models in a **D**eclarative
-**P**rogrammable **S**torage (DPS) system. I analyze implementations of consistency type systems
-(e.g. [IPA][ipa-paper], [MixT][mixt-paper]) and declarative programming models (e.g.
-[QUELEA][quelea-paper]) for explicitly accommodating, and reasoning over, a variety of consistency
-models.
+In this blog post, we explore how to enforce various consistency models in a **D**eclarative
+**P**rogrammable **S**torage (DPS) system. In the following sections, we describe what we mean by
+DPS systems:
 
-Necessary background information can be found in the following sections:
+* [*programmable storage* systems](#programmable-storage)
 * [**D**eclarative **P**rogrammable **S**torage](#declarative-programmable-storage):
-    * [*programmable storage* systems](#programmable-storage)
-    * [glossary of DPS system terminology](#glossary)
-* [Consistency](#consistency)
-    * [consistency models](#consistency-models)
-    * [consistency type systems](#consistency-type-systems)
-    * [consistency as a property](#consistency-as-a-property)
 
+Once we know what a DPS system is, and what type of backend data store we are using, We analyze
+implementations of consistency type systems (e.g. [IPA][ipa-paper], [MixT][mixt-paper]) and
+declarative programming models (e.g. [QUELEA][quelea-paper]) for explicitly accommodating, and
+reasoning over, a variety of consistency models. Background for understanding what consistency
+means and what consistency models are, can be found in these sections (TBD later, since this
+knowledge is assumed for the class):
+
+<!-- TODO later -->
+* [Consistency](#consistency)
+* [consistency models](#consistency-models)
+
+And then we explore our main topics of interest in these sections:
+
+* [consistency type systems](consistency/consistency-type-systems.md)
+* [consistency as a property](consistency/consistency-as-a-property.md)
+
+And, for convenience, there is a [glossary](#glossary) at the end of this blog post.
+
+### Overview
 For a DPS system, There are 2 major features that I explore to allow developers specify
 consistency requirements over data types:
 1. Mechanisms for supporting weaker consistency models in the backend storage system.
@@ -54,70 +67,12 @@ enforce pre- and post-conditions and reason over general properties of data seem
 useful. This is a secondary motivation of this blog post, to explore a generalization of
 consistency types to data type properties.
 
-[ipa-paper]: https://homes.cs.washington.edu/~luisceze/publications/ipa-socc16.pdf
-[mixt-paper]: http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf
-[quelea-paper]: http://kcsrk.info/papers/quelea_pldi15.pdf
-[noah-dissertation]: https://cloudfront.escholarship.org/dist/prd/content/qt72n6c5kq/qt72n6c5kq.pdf?t=pcfodf
+<!-- ------------------------------>
+<!-- SECTION -->
 
-[cassandra-datastore]: http://cassandra.apache.org/
-[postgres-dbms]: https://www.postgresql.org/docs/9.4/release-9-4.html
+# Programmable Storage
 
-[hacky-comment-1]: reason_about_consistency_from_a_dataflow_perspective.
-
-# TODO:
-* Describe Declarative Programmable Storage:
-    * how does it interact with Ceph?
-    * how could consistency level be specified
-    * how could consistency level be enforced
-
-# Declarative Programmable Storage
-
-# Glossary
-For conciseness in other areas, many definitions are provided here.
-
-## Programmable Storage
-
-### Ceph
-
-##### OSD
-[**O**bject **S**torage **D**aemon][osd-doc] is a daemon that is responsible for storing objects on
-a local file system and providing access to them over the network.
-
-#### PG
-A [**P**lacement **G**roup][pg-docs] is a logical collection of objects that are replicated by the
-same set of devices. An object's PG is determined by:
-    * a hash of the object name
-    * the level of replication
-    * a bit mask, representing the total number of PGs in the system.
-
-#### CRUSH
-[**C**ontrolled **R**eplication **U**nder **S**calable **H**ashing][crush-paper] is a pseudo-random
-data distribution algorithm that efficiently and robustly distributes object replicas across a
-heterogenous, structured storage cluster[^crush-fn].
-
-#### Metadata Server
-The [**M**eta**d**ata **S**erver][mds-docs] (MDS) daemons maange the file system namespace.
-
-#### Cluster Map
-Set of 5 maps that represent the toplogy of the ceph storage cluster:
-
-1. Monitor
-2. [OSD](#osd)
-3. [PG](#pg)
-4. [CRUSH](#crush)
-5. [MDS](#metadata-service)
-
-#### fsid
-A unique identifier for an OSD. The "fsid" term is used interchangeably with "uuid".
-
-## Declarative Programmable Storage
-
-[osd-doc]: http://docs.ceph.com/docs/mimic/man/8/ceph-osd/
-[crush-paper]: https://ceph.com/wp-content/uploads/2016/08/weil-crush-sc06.pdf
-[pg-docs]: http://docs.ceph.com/docs/mimic/rados/operations/placement-groups/
-[mds-docs]: http://docs.ceph.com/docs/master/man/8/ceph-mds/
-[^crush-fn]: This is defined in the abstract and introduction of the [CRUSH paper][crush-paper]
-# TODO
+<!-- TODO
 * Describe Ceph:
     * what is Ceph?
     * Why only strong consistency?
@@ -126,8 +81,7 @@ A unique identifier for an OSD. The "fsid" term is used interchangeably with "uu
         * What granularity
         * How is it tunable
         * Quorum?
-
-# Programmable Storage
+-->
 
 ## [Ceph][ceph-intro]
 Ceph is an open source, distributed, large-scale storage system. Some quotes that nicely summarize
@@ -149,77 +103,17 @@ enforcing consistency types on top of Ceph, then Noah's [programmable storage wo
 Ceph][noah-zlog] could benefit. Then, this carries over nicely into assessing the utility of
 sequential, causal, or weaker consistency for a programmable storage system.
 
-Ceph's architecture is designed around the
-[**R**eliable **A**utonomous **D**istributed **O**bject **S**tore (RADOS)][rados-paper].
-This data store is a unified system that provides storage interfaces for objects,
-blocks, and files. A Ceph storage cluster consists of two types of daemons:
+Ceph's architecture is designed around the [RADOS data store](#rados). This data store is a unified
+system that provides storage interfaces for objects, blocks, and files. A Ceph storage cluster
+consists of two types of daemons:
+* [Ceph Monitor](#ceph-monitor)
+* [Ceph OSD](#ceph-object-storage-daemon)
 
-* Ceph Monitor
-* Ceph **O**bject **S**torage **D**aemon (OSD)
-
-The Monitor daemon maintains a master copy of [*the cluster map*](#cluster-map)
-including:
-
-* cluster members
-* state
-* changes
-* overall health of the storage cluster
-
-*The cluster map* is a set of 5 maps that altogether represent the storage
-cluster topology:
-
-1. [Monitor Map](#monitor-map)
-2. [OSD Map](#object-storage-daemon-map)
-3. [**P**lacement **G**roup Map](#placement-group-map)
-4. [**C**ontrolled **R**eplication **U**nder **S**calable **H**ashing Map](#controlled-replication-under-scalable-hashing-map)
-5. [**M**eta **D**ata **S**oftware Map](#meta-data-software-map)
-
-#### Monitor Map
-A map of Ceph Monitor daemons to their:
-* fsid
-* position
-* name address
-* port
-* current epoch
-* creation timestamp (of the map)
-* timestamp of last update (of the map)
-
-#### **Object** **S**torage **D**aemon Map
-A map of OSD damones to their:
-* fsid
-* creation timestamp (of the map)
-* timestamp of the last update (of the map)
-* list of pools
-* replica sizes
-* PG numbers
-* list of OSDs and their status
-
-
-#### **P**lacement **G**roup Map
-A map containing:
-* PG version
-* PG timestamp
-* last (previous?) OSD map epoch
-* full ratios
-* details on each placement group
-* PG ID
-* Up Set
-* Acting Set
-* PG State (e.g. active + clean)
-* data usage statistics for each pool
-
-#### **C**ontrolled **R**eplication **U**nder **S**calable **H**ashing Map
-TODO
-
-
-
-#### **M**eta **D**ata **S**oftware Map
-TODO
-
-
+### Ceph Monitor
+The [Ceph Monitor](#monitor) ... TODO.
 
 ### Ceph **O**bject **S**torage **D**aemon
-The Ceph OSD relies upon the stability and performance of the underlying
+The [Ceph OSD](#osd) relies upon the stability and performance of the underlying
 filesystem[^osd-fs-fn] when using [the filestore
 backend][ceph-backend-filestore]. The file system currently recommended for
 production systems is XFS, although btrfs is supported. On the other hand, the
@@ -234,6 +128,7 @@ OSD will not acknowledge the write to the client until the secondary OSDs have
 written the replicas synchronously. Ceph [achieves
 scalability][ceph-cuttlefish-arch] through "intelligent data replication."
 
+<!-- TODO edit -->
 The Ceph community is working to ensure that OSD/monitor heartbeats and peering
 processes operate effectively with the additional latency that may occur when
 deploying hardware in different geographic locations. See Monitor/OSD
@@ -251,33 +146,32 @@ for disaster recovery purposes. This will work with data read and written via
 the Object Gateway only. Work is also starting on a similar capability for Ceph
 Block devices which are managed via the various cloudstacks.
 
-[^osd-fs-fn]: This is mentioned in [recommendations for the RADOS configuration][ceph-fs-recommendation]
+<!-- ------------------------------>
+<!-- SECTION -->
 
-[disorderlylabs]: https://disorderlylabs.github.io/
-[maltzahn-website]: https://users.soe.ucsc.edu/~carlosm/UCSC/Home/Home.html
-[programmable-storage]: http://programmability.us/
-[noah-dissertation]: https://cloudfront.escholarship.org/dist/prd/content/qt72n6c5kq/qt72n6c5kq.pdf?t=pcfodf
-[noah-zlog]: https://github.com/cruzdb/zlog
-[ceph-intro]: https://ceph.com/ceph-storage/
-[ceph-intro-blog]: https://ceph.com/geen-categorie/ceph-storage-introduction/
-[ceph-cuttlefish-arch]: http://docs.ceph.com/docs/cuttlefish/architecture/#how-ceph-scales
-[ceph-fs-recommendation]: http://docs.ceph.com/docs/jewel/rados/configuration/filesystem-recommendations/#filesystems
-[ceph-backend-bluestore]: http://docs.ceph.com/docs/mimic/rados/configuration/storage-devices/#osd-backends
-[ceph-backend-filestore]: http://docs.ceph.com/docs/mimic/rados/configuration/storage-devices/#filestore
-[data-center-faq]: http://docs.ceph.com/docs/cuttlefish/faq/#can-ceph-support-multiple-data-centers
-[rados-paper]: https://ceph.com/wp-content/uploads/2016/08/weil-rados-pdsw07.pdf
-[crush-paper]: https://ceph.com/wp-content/uploads/2016/08/weil-crush-sc06.pdf
+<!-- TODO
+* Describe Declarative Programmable Storage:
+    * how does it interact with Ceph?
+    * how could consistency level be specified
+    * how could consistency level be enforced
+-->
+
+# Declarative Programmable Storage
+Programmable storage tends to be a low-level task that requires lots of code and detailed knowledge
+of storage subsystem implementations. Even when carefully written, storage systems built on top of
+reusable components can still expose dependencies that make maintenance prohibitively expensive. By
+using a declarative language for specifying storage systems, implementations over reusable
+components can be made more tractable and flexible. [DeclStore][declstore-paper] is a step towards
+declarative programmable storage. 
+
+<!-- ------------------------------>
+<!-- SECTION -->
 # Consistency
-This blog post groups background information into three subsections:
-1. [Consistency Models](consistency-models.md)
-2. [Consistency Types](consistency-type-systems.md)
-3. [Declarative Programmable Storage](declarative-programmable-storage.md)
+This section provides background on:
+* What is consistency
+* What are consistency models
+* What is a consistency type system
 
-Subsections 1 and 2 provide background information necessary to talk about what
-a consistency model is and the various models of consistency that have been
-defined and studied. Subsection 3 then describes and defines declarative
-programmable storage and then details how consistency models and consistency
-types are relevant to declarative programmable storage.
 # Consistency Models
 This subsection defines the various consistency models as well as terminology
 for distinguishing between them and understanding relevant constraints.
@@ -327,6 +221,124 @@ category, this blog post is influenced by:
 
 ## Analysis of consistent, distributed logic
 
+<!-- ------------------------------>
+<!-- SECTION -->
+# Glossary
+For conciseness in other areas, many definitions are provided here.
+
+#### Monitor
+The Ceph Monitor service maintains a master copy of [*the cluster map*](#cluster-map) including:
+* cluster members
+* state
+* changes
+* overall health of the storage cluster
+
+#### RADOS
+The RADOS ([**R**eliable **A**utonomous **D**istributed **O**bject **S**tore][rados-paper]) data
+store is the backend subsystem of Ceph that handles distributed data storage.
+
+#### OSD
+A Ceph OSD ([**O**bject **S**torage **D**aemon][osd-doc]) is a daemon that is responsible for
+storing objects on a local file system and providing access to them over the network.
+
+#### PG
+A [**P**lacement **G**roup][pg-docs] is a logical collection of objects that are replicated by the
+same set of devices. An object's PG is determined by:
+    * a hash of the object name
+    * the level of replication
+    * a bit mask, representing the total number of PGs in the system.
+
+#### CRUSH
+[**C**ontrolled **R**eplication **U**nder **S**calable **H**ashing][crush-paper] is a pseudo-random
+data distribution algorithm that efficiently and robustly distributes object replicas across a
+heterogenous, structured storage cluster[^crush-fn].
+
+#### Metadata Server
+The [**M**eta**d**ata **S**erver][mds-docs] (MDS) daemons maange the file system namespace.
+
+#### Cluster Map
+Set of 5 maps that represent the toplogy of the ceph storage cluster:
+
+1. [Monitor Map](#monitor-map)
+2. [OSD Map](#osd-map)
+3. [PG](#pg-map)
+4. [CRUSH](#crush)
+5. [MDS](#metadata-service)
+
+#### Monitor Map
+A map containing [Ceph Monitor](#monitor) information for the storage cluster:
+* fsid
+* position
+* name address
+* port
+* current epoch
+* creation timestamp (of the map)
+* timestamp of last update (of the map)
+
+#### OSD Map
+A map containing [**O**bject **S**torage **D**aemon](#osd) information for the storage cluster:
+* [fsid](#fsid)
+* creation timestamp (of the map)
+* timestamp of the last update (of the map)
+* list of pools
+* replica sizes
+* PG numbers
+* list of OSDs and their status
+
+
+#### PG Map
+A map containing [**P**lacement **G**roup](#pg) information for the storage cluster:
+* PG version
+* PG timestamp
+* last (previous?) OSD map epoch
+* full ratios
+* details on each placement group
+* PG ID
+* Up Set
+* Acting Set
+* PG State (e.g. active + clean)
+* data usage statistics for each pool
+
+#### fsid
+A unique identifier for an OSD. The "fsid" term is used interchangeably with "uuid".
+
+<!-- footnotes -->
+[^crush-fn]: This is defined in the abstract and introduction of the [CRUSH paper][crush-paper]
+[^osd-fs-fn]: This is mentioned in [recommendations for the RADOS configuration][ceph-fs-recommendation]
+
+<!-- intro links -->
+[ipa-paper]: https://homes.cs.washington.edu/~luisceze/publications/ipa-socc16.pdf
+[mixt-paper]: http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf
+[quelea-paper]: http://kcsrk.info/papers/quelea_pldi15.pdf
+[noah-dissertation]: https://cloudfront.escholarship.org/dist/prd/content/qt72n6c5kq/qt72n6c5kq.pdf?t=pcfodf
+
+[cassandra-datastore]: http://cassandra.apache.org/
+[postgres-dbms]: https://www.postgresql.org/docs/9.4/release-9-4.html
+
+<!-- DPS links -->
+[osd-doc]: http://docs.ceph.com/docs/mimic/man/8/ceph-osd/
+[crush-paper]: https://ceph.com/wp-content/uploads/2016/08/weil-crush-sc06.pdf
+[pg-docs]: http://docs.ceph.com/docs/mimic/rados/operations/placement-groups/
+[mds-docs]: http://docs.ceph.com/docs/master/man/8/ceph-mds/
+[declstore-paper]: https://www.usenix.org/conference/hotstorage17/program/presentation/watkins
+
+<!-- programmable storage links -->
+[disorderlylabs]: https://disorderlylabs.github.io/
+[maltzahn-website]: https://users.soe.ucsc.edu/~carlosm/UCSC/Home/Home.html
+[programmable-storage]: http://programmability.us/
+[noah-dissertation]: https://cloudfront.escholarship.org/dist/prd/content/qt72n6c5kq/qt72n6c5kq.pdf?t=pcfodf
+[noah-zlog]: https://github.com/cruzdb/zlog
+[ceph-intro]: https://ceph.com/ceph-storage/
+[ceph-intro-blog]: https://ceph.com/geen-categorie/ceph-storage-introduction/
+[ceph-cuttlefish-arch]: http://docs.ceph.com/docs/cuttlefish/architecture/#how-ceph-scales
+[ceph-fs-recommendation]: http://docs.ceph.com/docs/jewel/rados/configuration/filesystem-recommendations/#filesystems
+[ceph-backend-bluestore]: http://docs.ceph.com/docs/mimic/rados/configuration/storage-devices/#osd-backends
+[ceph-backend-filestore]: http://docs.ceph.com/docs/mimic/rados/configuration/storage-devices/#filestore
+[data-center-faq]: http://docs.ceph.com/docs/cuttlefish/faq/#can-ceph-support-multiple-data-centers
+[rados-paper]: https://ceph.com/wp-content/uploads/2016/08/weil-rados-pdsw07.pdf
+[crush-paper]: https://ceph.com/wp-content/uploads/2016/08/weil-crush-sc06.pdf
+
+<!-- consistency-types links -->
 [course-website]: http://composition.al/CMPS290S-2018-09/
 [disciplined-inconsistency]: https://homes.cs.washington.edu/~luisceze/publications/ipa-socc16.pdf
 [mixt]: http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf
