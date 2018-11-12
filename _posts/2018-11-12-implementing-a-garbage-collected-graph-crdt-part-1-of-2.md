@@ -1,4 +1,9 @@
-# Implementing a Garbage-Collected Graph CRDT (Part 1 of 2)
+---
+title: Implementing a Garbage-Collected Graph CRDT (Part 1 of 2)
+author: Austen Barker
+layout: single
+classes: wide
+---
 
 <script type="text/javascript"
 src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
