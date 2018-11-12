@@ -208,43 +208,66 @@ with the relevant consistency models.
 
 <!-- ------------------------------>
 <!-- SECTION -->
-## Consistency Types
-As described in the [Consistency Models](#consistency-models) section, there
-are many consistency models that are meaningful for developers working in
-distributed systems. From the perspective of a consistency type system, we are
-interested in how to verify and enforce them for associated data types.
-To do this, Consistency type systems associate data types with the consistency
-model we would like the data types to conform to. The consistency model is
-defined by consistency constraints (or requirements), in a way that the
-programming language or system can enforce. The association of data types with
-consistency models allows the developer, and the system, to explicitly reason
-over consistency constraints in applications.
-
-### Related Work
+## Consistency Types and Consistency Type Systems
 In [CMPS290S][course-website], we have been reading a handful of papers that discuss various tools
-for understanding, analyzing, and reasoning about consistency in a distributed system. There are a
-few categories that I would group related work into:
+for understanding, analyzing, and reasoning about consistency in a distributed system. In these
+readings, I have been particularly interested in two implementations of type systems for enforcing
+consistency requirements over data types:
 
-1. Consistency type systems
-2. Analysis of consistent, distributed logic
+* [Disciplined Inconsistency with Consistency Types][ipa-paper]
+* [MixT: A Language for Mixing Consistency in Geodistributed Transactions][mixt-paper]
 
-For the first category, consistency type systems, I first describe and analyze the following
-existing implementations:
-* [Disciplined Inconsistency with Consistency Types][disciplined-inconsistency]
-* [MixT: A Language for Mixing Consistency in Geodistributed
-  Transactions][mixt]
+To differentiate from other type systems in this blog post, I call these type systems *consistency
+type systems*. Consistency type systems try to lift consistency models to first-class citizens in
+the programming model for distributed systems. By making consistency models explicit in the type
+system, it allows developers to verify that important data types are used at an appropriate
+correctness level. The IPA paper claims:
 
-Analysis of consistent, distributed logic is analysis for understanding, proving,
-and designing distributed systems with respect to the requirements of various
-consistency models that abstract data types and operations satisfy. For this
-category, this blog post is influenced by:
-* [Replicated Data Types: Specification, Verification, Optimality][rdt-svo]
-* ['Cause I'm Strong Enough: Reasoning about Consistency Choices in Distributed
-  Systems][strong-enough]
+    > ...IPA allows the programmer to trade off performance and consistency, safe in the knowledge
+    > that the type system has checked the program for consistency safety.
 
-## Consistency type systems
+This type of support from the programming model is necessary for developers to be both
+more efficient and more correct. To further support the benefit of consistency type systems, the
+MixT paper claims:
 
-## Analysis of consistent, distributed logic
+    > ...engineers at major companies frequently find themselves writing distributed programs that
+    > mix accesses to data from multiple existing storage systems, each with distinct consistency
+    > guarantees.
+
+As described in the [Consistency Models](#consistency-models) section, there are many consistency
+models that are meaningful for developers working in distributed systems. From the perspective of a
+consistency type system, we are interested in how to verify and enforce them for associated data
+types. To do this, Consistency type systems associate data types with the consistency model we
+would like the data types to conform to.
+
+### IPA Consistency Type System
+[IPA's implementation][ipa-impl] is in Scala and leverages Scala's powerful type system. This
+approach allows the developer to directly interact with the consistency type of their data, using
+features such as pattern matching. For IPA, the consistency model is specified as a policy on an
+ADT in 1 of 2 ways:
+
+1. Static consistency policies--These specify the consistency model (e.g. strong, weak, causal).
+2. Dynamic consistency policies--These specify performance or correctness bounds, within which to
+   achieve the strongest consistency possible.
+
+Static consistency policies are roughly "passed-through" to the data store. IPA is implemented as a
+layer on top of Cassandra because of Cassandra's quorum approach to consistency. By achieving
+"quorum intersection," writes to and reads from Cassandra can be strongly consistent. Weak
+consistency policies can be satisfied by specifying few replicas to write to (e.g. 1 or 2) and few
+replicas to read from (e.g. 1 or 2). The number of replicas written to, W, and the
+number of replicas read from, R, only needs to be less than the total number of replicas, N, to be
+weakly consistent. But, notice that Cassandra does not natively support complex consistency models,
+such as causal or strong eventual.
+
+### MixT Consistency Type System
+TODO
+
+## Declarative Programming over Mixed Consistencies
+[QUELEA][quelea-paper] takes a declarative programming approach to allowing developers directly
+reason over the consistency policies used for ADTs. [QUELEA's implementation][quelea-impl] provides
+a declarative language for specifying an operational contract for an ADT to follow.
+
+TODO
 
 <!-- ------------------------------>
 <!-- SECTION -->
@@ -365,7 +388,7 @@ A unique identifier for an OSD. The "fsid" term is used interchangeably with "uu
 
 <!-- consistency-types links -->
 [course-website]: http://composition.al/CMPS290S-2018-09/
-[disciplined-inconsistency]: https://homes.cs.washington.edu/~luisceze/publications/ipa-socc16.pdf
-[mixt]: http://www.cs.cornell.edu/andru/papers/mixt/mixt.pdf
 [rdt-svo]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/replDataTypesPOPL13-complete.pdf
 [strong-enough]: http://software.imdea.org/~gotsman/papers/logic-popl16.pdf
+[ipa-impl]: https://github.com/bholt/ipa/tree/master/src/main/scala/ipa
+[quelea-impl]: https://github.com/kayceesrk/Quelea
