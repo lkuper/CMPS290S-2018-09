@@ -14,3 +14,17 @@ Lindsey Kuper:
 
 Austen Barker:
   name        : "Austen Barker"
+
+Aldrin Montana:
+  name  : "Aldrin Montana"
+  avatar: "https://disorderlylabs.github.io/images/Aldrin.jpg"
+  links :
+    - label: "Email"
+      icon : "fas fa-fw fa-envelope-square"
+      url  : "mailto:akmontan@ucsc.edu"
+    - label: "Website"
+      icon : "fas fa-fw fa-link"
+      url  : "https://portfolio.aldrinmontana.com/blog/"
+    - label: "Twitter"
+      icon : "fab fa-fw fa-twitter-square"
+      url  : "https://twitter.com/drin_montana"
