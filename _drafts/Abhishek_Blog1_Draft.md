@@ -227,7 +227,9 @@ func (c *OTEditor) exec(operation Op) {
 func (c *OTEditor) performTransformation(op *Op) {
     l := len(c.Ops)
     lastOp := c.Ops[l-1]
-    if lastOp.Type == LOCAL && lastOp.Type != op.Type { // Transformation required only when synchronizing user changes.
+
+    // Transformation required only when synchronizing user changes.
+    if lastOp.Type == LOCAL && lastOp.Type != op.Type {
         if op.Index > lastOp.Index {
             if lastOp.Op == DELETE {
                 op.Index -= 1
