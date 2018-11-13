@@ -81,7 +81,7 @@ func TestOTEditor_Transformation(t *testing.T) {
 }
 ```
 
-_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data. 
+_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
 
 Each test case shown above adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
 
@@ -135,108 +135,107 @@ Now that expectations are set, we implement a simplified Operational Transformat
 type Operation string
 
 const (
-	INSERT Operation = "1"
-	DELETE Operation = "2"
-	APPEND Operation = "3"
-	PRINT  Operation = "4"
+    INSERT Operation = "1"
+    DELETE Operation = "2"
+    APPEND Operation = "3"
+    PRINT  Operation = "4"
 )
 
 type OpType int
 
 const (
-	LOCAL  OpType = 0
-	REMOTE OpType = 1
+    LOCAL  OpType = 0
+    REMOTE OpType = 1
 )
 
 type Op struct {
-	Op    Operation
-	Data  string
-	Index int
-	Type  OpType
+    Op    Operation
+    Data  string
+    Index int
+    Type  OpType
 }
 
 type OTEditor struct {
-	Data string
-	Ops  []Op
+    Data string
+    Ops  []Op
 }
 
 func NewCollab() *OTEditor {
-	collab := &OTEditor{
-		Data: "",
-		Ops:  make([]Op, 10), // Keeps list of operations executed on the data.
-	}
-	return collab
+    collab := &OTEditor{
+        Data: "",
+        Ops:  make([]Op, 10), // Keeps list of operations executed on the data.
+    }
+    return collab
 }
 
 func (c *OTEditor) AppendOperation(op Operation, data string, index int, optype OpType) {
-	operation := Op{Op: op, Data: data, Index: index, Type: optype}
-	log.Printf("Existing Data: %v\n", *c)
-	log.Printf("New Operation received: %v\n", operation)
-	c.exec(operation)
+    operation := Op{Op: op, Data: data, Index: index, Type: optype}
+    log.Printf("Existing Data: %v\n", *c)
+    log.Printf("New Operation received: %v\n", operation)
+    c.exec(operation)
 }
 
 func (c *OTEditor) exec(operation Op) {
-	log.Printf("Executing new operation: %v, current data: %s\n", operation, c.Data)
-	//if operation.Type == REMOTE {
-	//}
-	c.performTransformation(&operation)
-	b := []byte(c.Data)
-	status := false
-	switch operation.Op {
-	case INSERT:
-		if len(b) <= operation.Index {
-			log.Printf("Cannot perform operation %v, index out of bounds.", operation)
-		} else {
-			b1 := b[0:operation.Index]
-			b2 := []byte(operation.Data)
-			b3 := b[operation.Index:]
-			var b0 []byte
-			finalData := append(b0, b1...)
-			finalData = append(finalData, b2...)
-			finalData = append(finalData, b3...)
-			c.Data = string(finalData)
-			status = true
-		}
-	case APPEND:
-		b2 := []byte(operation.Data)
-		finalData := append(b, b2...)
-		c.Data = string(finalData)
-		status = true
+    log.Printf("Executing new operation: %v, current data: %s\n", operation, c.Data)
 
-	case DELETE:
-		if len(b) <= operation.Index {
-			log.Printf("Cannot perform operation %v, index out of bounds.", operation)
-		} else {
-			// TODO: Check logic
-			b1 := b[0:operation.Index]
-			b3 := b[operation.Index:]
-			var b0 []byte
-			finalData := append(b0, b1...)
-			finalData = append(finalData, b3[1:]...)
-			c.Data = string(finalData)
-			status = true
-		}
-	}
-	if status {
-		ops := append(c.Ops, operation)
-		c.Ops = ops
-		log.Printf("Current value of data: %v", *c)
-	}
+    c.performTransformation(&operation)
+    b := []byte(c.Data)
+    status := false
+    switch operation.Op {
+    case INSERT:
+        if len(b) <= operation.Index {
+            log.Printf("Cannot perform operation %v, index out of bounds.", operation)
+        } else {
+            b1 := b[0:operation.Index]
+            b2 := []byte(operation.Data)
+            b3 := b[operation.Index:]
+            var b0 []byte
+            finalData := append(b0, b1...)
+            finalData = append(finalData, b2...)
+            finalData = append(finalData, b3...)
+            c.Data = string(finalData)
+            status = true
+        }
+    case APPEND:
+        b2 := []byte(operation.Data)
+        finalData := append(b, b2...)
+        c.Data = string(finalData)
+        status = true
+
+    case DELETE:
+        if len(b) <= operation.Index {
+            log.Printf("Cannot perform operation %v, index out of bounds.", operation)
+        } else {
+
+            b1 := b[0:operation.Index]
+            b3 := b[operation.Index:]
+            var b0 []byte
+            finalData := append(b0, b1...)
+            finalData = append(finalData, b3[1:]...)
+            c.Data = string(finalData)
+            status = true
+        }
+    }
+    if status {
+        ops := append(c.Ops, operation)
+        c.Ops = ops
+        log.Printf("Current value of data: %v", *c)
+    }
 
 }
 
 func (c *OTEditor) performTransformation(op *Op) {
-	l := len(c.Ops)
-	lastOp := c.Ops[l-1]
-	if lastOp.Type == LOCAL && lastOp.Type != op.Type { // Transformation required only when synchronizing user changes.
-		if op.Index > lastOp.Index {
-			if lastOp.Op == DELETE {
-				op.Index -= 1
-			} else if lastOp.Op == INSERT {
-				op.Index += len(lastOp.Data)
-			}
-		}
-	}
+    l := len(c.Ops)
+    lastOp := c.Ops[l-1]
+    if lastOp.Type == LOCAL && lastOp.Type != op.Type { // Transformation required only when synchronizing user changes.
+        if op.Index > lastOp.Index {
+            if lastOp.Op == DELETE {
+                op.Index -= 1
+            } else if lastOp.Op == INSERT {
+                op.Index += len(lastOp.Data)
+            }
+        }
+    }
 }
 ```
 
