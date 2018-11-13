@@ -1,4 +1,4 @@
-# "Hands off my code!" or conflict resolution algorithms in collaborative work tools
+# "Hands off my code!" OR conflict resolution algorithms in collaborative work tools
 
 ## Introduction
 
@@ -90,7 +90,12 @@ Each test case shown above adds an operation performed either locally on the dat
 5. The local user then inserts `f` at index `1`. The data is now `yfxbcd`.
 6. The remote user then deletes the character at index `3` with the data finally becoming `yfxcd`.
 
-The important thing to note here is that each modification to the data is performed as a series of operations.
+The important thing to note here is that each modification to the data is performed as a series of operations. There are a few assumptions made in the test cases shown above which are important to point out:
+
+1. There is no way to know if operation in #1 _happened before_ #2. It is assumed that LOCAL and REMOTE operations happen concurrently.
+2. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are seen. This imposes a partial order on the set of events occurring in the system.
+
+
 
 Now that expectations are set, we implement a simplified Operational Transformation Editor.
 
