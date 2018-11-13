@@ -1,4 +1,4 @@
-# "Hands off my code!" OR conflict resolution algorithms in collaborative work tools
+# "Hands off my code!" OR conflict resolution algorithms in collaborative work tools (Part 1 of 2)
 
 ## Introduction
 
@@ -84,11 +84,42 @@ func TestOTEditor_Transformation(t *testing.T) {
 Each test case shown above adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
 
 1. Initially the data is `abcd` inserted locally.
-2. A `y` is inserted next locally and the data becomes `yabcd`.
-3. Concurrently the remote users adds `x` at index `2` and sends this operation to be synced with the local copy. The data is modified to `yaxbcd`.
-4. The remote user then deletes the character at index `1`. The data becomes `yxbcd`
-5. The local user then inserts `f` at index `1`. The data is now `yfxbcd`.
-6. The remote user then deletes the character at index `3` with the data finally becoming `yfxcd`.
+2. A `y` is inserted next locally and the data becomes `yabcd`. This information is then sent to the remote server as well (code not shown).
+3. Concurrently the remote user adds `x` at index `2` to it's copy which is `abcd` and sends this operation to be synced with the local copy. The local data is modified to `yabxcd`.
+4. At this point the remote user should also have seen the insert from step `2` and updated its copy of the data. So both user and remote data should be `yabxcd`.
+5. The remote user then deletes the character at index `1` from its copy of the data which was `yabxcd`. The data becomes `ybxcd`. When this operation is received by the local system, data is updated to `ybxcd`.
+6. The local user then inserts `f` at index `1` to its local copy of data which is `ybxcd`. The data is now `yfbxcd`.
+7. The remote user concurrently deletes the character at index `3` of its local data which is `ybxcd`. The remote user's data becomes `ybxd`. This operation is received by the local system which deletes the character `c` from its index `4` with the data finally becoming `yfbxd`.
+8. The remote system will also update its data when it receives the insert operation of character `f` at index `1` from the local system. When the operation is applied by the remote system its data will be modified from `ybxd` to `yfbxd`. Thus both local and remote users will converge to the same state.
+
+Based on the above test cases and discussion, the following outputs is seen:
+
+```go
+
+2018/11/12 15:15:46 Existing Data: {yabcd [{1 abcd 0 0} {1 y 0 0}]}
+2018/11/12 15:15:46 New Operation received: {1 x 2 1}
+2018/11/12 15:15:46 Executing new operation: {1 x 2 1}, current data: yabcd
+2018/11/12 15:15:46 Current value of data: {yabxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1}]}
+
+Test 2. remote delete char at index 1
+2018/11/12 15:15:46 Existing Data: {yabxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1}]}
+2018/11/12 15:15:46 New Operation received: {2  1 1}
+2018/11/12 15:15:46 Executing new operation: {2  1 1}, current data: yabxcd
+2018/11/12 15:15:46 Current value of data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1}]}
+
+Test 3. insert 'f' at index 1
+2018/11/12 15:15:46 Existing Data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1}]}
+2018/11/12 15:15:46 New Operation received: {1 f 1 0}
+2018/11/12 15:15:46 Executing new operation: {1 f 1 0}, current data: ybxcd
+2018/11/12 15:15:46 Current value of data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
+
+Test 4. delete char at index 3
+2018/11/12 15:15:46 Existing Data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
+2018/11/12 15:15:46 New Operation received: {2  3 1}
+2018/11/12 15:15:46 Executing new operation: {2  3 1}, current data: yfbxcd
+2018/11/12 15:15:46 Current value of data: {yfbxd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0} {2  4 1}]}
+
+```
 
 The important thing to note here is that each modification to the data is performed as a series of operations. There are a few assumptions made in the test cases shown above which are important to point out:
 
@@ -206,6 +237,7 @@ func (c *OTEditor) performTransformation(op *Op) {
 }
 ```
 
+The program above implements a simplified version of Operational Transformation. Here the `AppendOperation` method is called whenever a new operation is performed by the user (either remote or local). All operations are added to the `OTEditor.ops` slice (think of it as an array). The data is stored in `OTEditor.Data` field. When the `AppendOperation` is called the `OTEditor` performs a transformation as previously discussed to compute the new value of the index where the data has to be inserted or deleted. This transformation is performed in the `performTransformation` method.
 
 ### Two-way, Three-way and k-way merge
 
