@@ -218,7 +218,7 @@ func (c *OTEditor) exec(operation Op) {
 The `performTransformation` is the heart of the application. Here we make the decision of how the indices need to be computed. The following are a set of guidelines that are used to make the decision:
 1. If the current operation and last operation are of the same type (either both are `REMOTE` or both are `LOCAL`), indices need not be recomputed. This is because the data is synchronized.
 2. Although the editor program may be running on two or more machines and can have concurrent operations, within the program there are no concurrent threads.
-3. Deletion is performed on a per-character basis.
+3. Deletion is performed on a _one-character-at-a-time_ basis.
 
 
 ```go
@@ -239,6 +239,8 @@ func (c *OTEditor) performTransformation(op *Op) {
     }
 }
 ```
+
+This implementation of Operational Transformation is not without issues and one of the main issues is visible from the discussion so far: this implementation cannot guarantee convergence to a consistent state across replicas during a long enough network partition. One factor that we overlook in this implementation is that of establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these are resolved in the next blog post.
 
 
 ### What's in Part 2?
