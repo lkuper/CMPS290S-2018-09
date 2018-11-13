@@ -103,9 +103,9 @@ Based on the above test cases and discussion, the following outputs is seen:
 
 Test 2. remote delete char at index 1
 2018/11/12 15:15:46 Existing Data: {yabxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1}]}
-2018/11/12 15:15:46 New Operation received: {2  1 1}
-2018/11/12 15:15:46 Executing new operation: {2  1 1}, current data: yabxcd
-2018/11/12 15:15:46 Current value of data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1}]}
+2018/11/12 15:15:46 New Operation received: {2 '' 1 1}
+2018/11/12 15:15:46 Executing new operation: {2 '' 1 1}, current data: yabxcd
+2018/11/12 15:15:46 Current value of data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2 '' 1 1}]}
 
 Test 3. insert 'f' at index 1
 2018/11/12 15:15:46 Existing Data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1}]}
@@ -115,9 +115,9 @@ Test 3. insert 'f' at index 1
 
 Test 4. delete char at index 3
 2018/11/12 15:15:46 Existing Data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
-2018/11/12 15:15:46 New Operation received: {2  3 1}
-2018/11/12 15:15:46 Executing new operation: {2  3 1}, current data: yfbxcd
-2018/11/12 15:15:46 Current value of data: {yfbxd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0} {2  4 1}]}
+2018/11/12 15:15:46 New Operation received: {2 '' 3 1}
+2018/11/12 15:15:46 Executing new operation: {2 '' 3 1}, current data: yfbxcd
+2018/11/12 15:15:46 Current value of data: {yfbxd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2 '' 1 1} {1 f 1 0} {2 '' 4 1}]}
 
 ```
 
