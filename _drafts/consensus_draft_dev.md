@@ -2,7 +2,7 @@
 
 ### Author : [Devashish Purandare](https://twitter.com/dev14e)
 
-### Reviewers : Sohum Banerjee, and Lindsey Kuper
+### Reviewers : Sohum Banerjea, and Lindsey Kuper
 
 ---
 
