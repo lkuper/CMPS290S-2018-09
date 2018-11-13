@@ -81,9 +81,11 @@ func TestOTEditor_Transformation(t *testing.T) {
 }
 ```
 
+_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data. 
+
 Each test case shown above adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
 
-1. Initially the data is `abcd` inserted locally.
+1. Initially the data is `abcd` inserted locally and is sent over to the remote machine (not shown). The idea is that we start with a system where both local and remote users have the same data and are in a consistent state.
 2. A `y` is inserted next locally and the data becomes `yabcd`. This information is then sent to the remote server as well (code not shown).
 3. Concurrently the remote user adds `x` at index `2` to it's copy which is `abcd` and sends this operation to be synced with the local copy. The local data is modified to `yabxcd`.
 4. At this point the remote user should also have seen the insert from step `2` and updated its copy of the data. So both user and remote data should be `yabxcd`.
