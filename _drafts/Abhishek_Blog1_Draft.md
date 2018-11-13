@@ -116,7 +116,7 @@ Test 3. insert 'f' at index 1
 2018/11/12 15:15:46 Executing new operation: {1 f 1 0}, current data: ybxcd
 2018/11/12 15:15:46 Current value of data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
 
-Test 4. delete char at index 3
+Test 4. remote delete char at index 3
 2018/11/12 15:15:46 Existing Data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
 2018/11/12 15:15:46 New Operation received: {2 '' 3 1}
 2018/11/12 15:15:46 Executing new operation: {2 '' 3 1}, current data: yfbxcd
@@ -158,14 +158,6 @@ type Op struct {
 type OTEditor struct {
     Data string
     Ops  []Op
-}
-
-func NewCollab() *OTEditor {
-    collab := &OTEditor{
-        Data: "",
-        Ops:  make([]Op, 10), // Keeps list of operations executed on the data.
-    }
-    return collab
 }
 
 func (c *OTEditor) AppendOperation(op Operation, data string, index int, optype OpType) {
@@ -243,28 +235,7 @@ func (c *OTEditor) performTransformation(op *Op) {
 
 The program above implements a simplified version of Operational Transformation. Here the `AppendOperation` method is called whenever a new operation is performed by the user (either remote or local). All operations are added to the `OTEditor.ops` slice (think of it as an array). The data is stored in `OTEditor.Data` field. When the `AppendOperation` is called the `OTEditor` performs a transformation as previously discussed to compute the new value of the index where the data has to be inserted or deleted. This transformation is performed in the `performTransformation` method.
 
-### Two-way, Three-way and k-way merge
 
-### Patch Theory
+### What's in Part 2?
 
-### Semantic Merge
-
-## References
-
-[1] Hagit Attiya, Sebastian Burckhardt, Alexey Gotsman, Adam Morrison, Hongseok Yang, and Marek Zawirski. 2016. Specification and Complexity of Collaborative Text Editing. In Proceedings of the 2016 ACM Symposium on Principles of Distributed Computing (PODC '16). ACM, New York, NY, USA, 259-268. DOI: https://doi.org/10.1145/2933057.2933090
-
-[2] http://darcs.net/ , http://darcs.net/Theory/Questions
-
-[3] Andres Loh, Wouter Swierstra, and Daan Leijen. A Principled Approach to Version Control. https://www.andres-loeh.de/fase2007.pdf
-
-[5] Ernst Lippe and Norbert van Oosterom. 1992. Operation-based merging. In Proceedings of the fifth ACM SIGSOFT symposium on Software development environments (SDE 5). ACM, New York, NY, USA, 78-87. DOI=http://dx.doi.org/10.1145/142868.143753
-
-[6] Marcelo Sousa, Isil Dillig, and Shuvendu K. Lahiri. 2018. Verified three-way program merge. Proc. ACM Program. Lang. 2, OOPSLA, Article 165 (October 2018), 29 pages. DOI: https://doi.org/10.1145/3276535
-
-[7] Why care about patch theory? Pijul distributed version control system.  https://pijul.org/model/#why-care-about-patch-theory
-
-[9] Merge strategies in Git. https://git-scm.com/docs/merge-strategies
-
-[10] Samuel Mimram, Cinzia Di Giusto. A Categorical Theory of Patches. Electronic Notes in Theoretical Computer Science, Volume 298, 2013, Pages 283-307,ISSN 1571-0661, https://doi.org/10.1016/j.entcs.2013.09.018.
-
-[11] https://jneem.github.io/merging/
+In the next blog we will discuss more ways of resolving conflicts especially as dealt with in version control systems such as [Git](https://git-scm.com/docs/merge-strategies). We will discuss Two-way, [Three-way](https://doi.org/10.1145/3276535) and the generalized k-way merge. We will also look at some [new kinds](https://pijul.org/model/#why-care-about-patch-theory) of version control systems which use [Patch theory](https://doi.org/10.1016/j.entcs.2013.09.018) and [semantic merge](https://daedtech.com/merging-done-right-semantic-merge/).
