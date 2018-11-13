@@ -91,11 +91,12 @@ Each test case shown above adds an operation performed either locally on the dat
 6. The local user then inserts `f` at index `1` to its local copy of data which is `ybxcd`. The data is now `yfbxcd`.
 7. The remote user concurrently deletes the character at index `3` of its local data which is `ybxcd`. The remote user's data becomes `ybxd`. This operation is received by the local system which deletes the character `c` from its index `4` with the data finally becoming `yfbxd`.
 8. The remote system will also update its data when it receives the insert operation of character `f` at index `1` from the local system. When the operation is applied by the remote system its data will be modified from `ybxd` to `yfbxd`. Thus both local and remote users will converge to the same state.
+9. It should be noted the index used in the remote operation need not always correspond to the same index in the local data. This is where Operational Transformation is used. The main idea behind Operational Transformation is, therefore, to understand in what cases transformation will have to be applied to convert indices to correct values.
 
 Based on the above test cases and discussion, the following outputs is seen:
 
 ```go
-
+Test 1. remote insert 'x' at index 2
 2018/11/12 15:15:46 Existing Data: {yabcd [{1 abcd 0 0} {1 y 0 0}]}
 2018/11/12 15:15:46 New Operation received: {1 x 2 1}
 2018/11/12 15:15:46 Executing new operation: {1 x 2 1}, current data: yabcd
