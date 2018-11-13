@@ -8,7 +8,7 @@ Anyone who has used a version control system or worked in a collaborative settin
 
 "But what are these conflicts?", you ask. Well it all starts very innocuously when - the protagonists of recurring CS tales - Alice and Bob decide to collaboratively work on writing a document. They decide to use a new collaborative document editing tool called Frugal Docs. Alice creates a document, shares it with Bob. Alice starts editing the document. The document at Bob's end synchronizes with Alice's copy and when Bob edits his copy of the document, Alice gets to see the changes. And both of them continue editing their documents happily ever after. "I still don't see it!", you say. Patience young Padawan. The problem comes when we encounter network partitions. You see, everything is alright as long as Alice communicates with Bob and Bob with Alice, and both are aware of changes the other has made. Until they can't. And when they can't communicate we say that there has arisen a partition in their "network". To make things even more sinister, let's say they don't know if they have been separated. Let's say they continue to work on their respective documents and then they make changes in sections that the other is currently editing. "Aah now I see  what you were going on about", I hear you say. Yes, but there's more. The problem isn't that Alice and Bob are continuing to work under this partition, it occurs when the network partition evaporates and they can again communicate with each other. Now how do we synchronize their changes into the single document? That's the name of the game! Alice and Bob will have to sit and sort out each other's changes and create a document where no conflicts remain. And here we leave Alice and Bob to continue working on their document. _Fin_.
 
-Partitions[12] are unavoidable in distributed systems. The collaborative document editing software that Alice and Bob used is just one kind of distributed application. One of the most extensive forms of collaborative work is building software.
+[Network Partitions](https://en.wikipedia.org/wiki/Network_partition) are unavoidable in distributed systems. The collaborative document editing software that Alice and Bob used is just one kind of distributed application. One of the most extensive forms of collaborative work is building software.
 
 
 ## What's a Partition?
@@ -19,7 +19,7 @@ This problem is “The Problem” in connected systems. How do we make sure that
 
 ## Examples of collaborative document editing
 
-Some examples of collaborative software which most of the readers of this blog may have used are[13]:
+Some examples of [collaborative software](https://en.wikipedia.org/wiki/Collaborative_software) which most of the readers of this blog may have used are:
 
 * Real-time collaboration and live editing: Online docs (Google/Microsoft docs)
 * Version control software (git, mercurial, subversion)
@@ -41,7 +41,7 @@ There are a few merge strategies which we will go over to understand how conflic
 
 ### Operational Transformation
 
-Operational Transformation [4,5,8] is a technique that was made popular by Google in its Google Wave project [15,16]. Operational Transformation is an algorithm where users keep track of operations performed on shared data as a means of keeping track of changes in the data.
+[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique that was made popular by Google in its [Google Wave project](http://web.archive.org/web/20090923095705/http://www.waveprotocol.org/whitepapers/operational-transform). Much of the original papers and documentation has been removed from Google since Google Wave was discontinued but some documents are available via the [Wayback Machine.](https://web.archive.org/web/20111126052203/http://wave-protocol.googlecode.com/hg/whitepapers/operational-transform/operational-transform.html) Operational Transformation has also made into Google's other products such as [Google Drive and Google Docs](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html). Operational Transformation is an algorithm where users keep track of operations performed on shared data as a means of keeping track of changes in the data. The original paper on Operational Transformation was published by [Sun and Ellis](http://dx.doi.org/10.1145/289444.289469).
 
 To describe operational transformation in its most basic form, let’s say we have a document which is being edited by two users *A* and *B*. Each has a local copy of the document and a common data in the document. Let’s say the data string in the document is “*ABCDEFGH*”. Let’s call this initial string `T`, where `T = “ABCDEFGH”`. Users *A* and *B* have their own copies of the text `Ta` and `Tb` respectively. *A* makes a change to `Ta` where it now reads: `Ta=“ABCMDEFGH”`. This is done by the user *A* performing an `insert` operation at index  `3` of character `"M"` on the string `Ta`. Let's call this operation `OPa1 = Ta.insert(3,'M')`. Concurrently, *B* deletes a character in his copy of the text. Keeping similar notation, the operation *B* performs is `OPb1 = Tb.delete(2)` which results in the text `Tb = “ABDEFGH”`. Now in order to synchronize copies of the text from users *A* and *B*, the users share the operations that were performed by them on the text.
 
@@ -49,7 +49,7 @@ But merely sharing operations performed by both users and applying those operati
 
 #### Implementation of Operational Transformation
 
-A rudimentary implementation of Operational Transformation can be checked [here](https://bitbucket.org/alfredd/collabalgos). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
@@ -94,8 +94,6 @@ The important thing to note here is that each modification to the data is perfor
 
 1. There is no way to know if operation in #1 _happened before_ #2. It is assumed that LOCAL and REMOTE operations happen concurrently.
 2. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are seen. This imposes a partial order on the set of events occurring in the system.
-
-
 
 Now that expectations are set, we implement a simplified Operational Transformation Editor.
 
@@ -223,31 +221,14 @@ func (c *OTEditor) performTransformation(op *Op) {
 
 [3] Andres Loh, Wouter Swierstra, and Daan Leijen. A Principled Approach to Version Control. https://www.andres-loeh.de/fase2007.pdf
 
-[4] Chengzheng Sun and Clarence Ellis. 1998. Operational transformation in real-time group editors: issues, algorithms, and achievements. In Proceedings of the 1998 ACM conference on Computer supported cooperative work (CSCW '98). ACM, New York, NY, USA, 59-68. DOI=http://dx.doi.org/10.1145/289444.289469
-
 [5] Ernst Lippe and Norbert van Oosterom. 1992. Operation-based merging. In Proceedings of the fifth ACM SIGSOFT symposium on Software development environments (SDE 5). ACM, New York, NY, USA, 78-87. DOI=http://dx.doi.org/10.1145/142868.143753
 
 [6] Marcelo Sousa, Isil Dillig, and Shuvendu K. Lahiri. 2018. Verified three-way program merge. Proc. ACM Program. Lang. 2, OOPSLA, Article 165 (October 2018), 29 pages. DOI: https://doi.org/10.1145/3276535
 
 [7] Why care about patch theory? Pijul distributed version control system.  https://pijul.org/model/#why-care-about-patch-theory
 
-[8] Operational Transformation. Wikipedia.org. https://en.wikipedia.org/wiki/Operational_transformation
-
 [9] Merge strategies in Git. https://git-scm.com/docs/merge-strategies
 
 [10] Samuel Mimram, Cinzia Di Giusto. A Categorical Theory of Patches. Electronic Notes in Theoretical Computer Science, Volume 298, 2013, Pages 283-307,ISSN 1571-0661, https://doi.org/10.1016/j.entcs.2013.09.018.
 
 [11] https://jneem.github.io/merging/
-
-[12] Network Partition. Wikipedia. https://en.wikipedia.org/wiki/Network_partition
-
-[13] https://en.wikipedia.org/wiki/Collaborative_software 
-
-[14] Conflict resolution in Google Docs. https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html 
-
-[15] http://web.archive.org/web/20090923095705/http://www.waveprotocol.org/whitepapers/operational-transform
-
-[16] https://web.archive.org/web/20111126052203/http://wave-protocol.googlecode.com/hg/whitepapers/operational-transform/operational-transform.html
-
-
-
