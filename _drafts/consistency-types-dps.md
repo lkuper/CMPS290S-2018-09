@@ -74,7 +74,6 @@ consistency types to data type properties.
 
 <!-- TODO
 * Describe Ceph:
-    * what is Ceph?
     * Why only strong consistency?
     * Why weaker consistency (Examples, examples, examples)?
     * How weaker consistency? (Also, Object Gateway?)
@@ -94,14 +93,14 @@ Ceph:
   freely-available."
 
 Ceph has been part of storage systems research at UC Santa Cruz for several years under Carlos
-Maltzahn, including the [CRUSH algorithm][crush-paper] (2006), the data store, [RADOS][rados-paper]
-(2007), up to and including Noah's dissertation earlier this year (2018). I have just
-started working with Carlos Maltzahn and Peter Alvaro on [declarative programmable
-storage](declarative-storage), making Ceph a natural choice for investigating related, initial
-research questions. While I am not personally experienced with Ceph, if I can provide a layer for
-enforcing consistency types on top of Ceph, then Noah's [programmable storage work on top of
-Ceph][noah-zlog] could benefit. Then, this carries over nicely into assessing the utility of
-sequential, causal, or weaker consistency for a programmable storage system.
+Maltzahn, including the [CRUSH algorithm][crush-paper] (2006), the [RADOS][rados-paper] data store
+(2007), even up to Noah's dissertation earlier this year (2018). I have just started working with
+Carlos Maltzahn and Peter Alvaro on [declarative programmable storage](declarative-storage), making
+Ceph a natural choice for investigating related, initial research questions. While I am not
+personally experienced with Ceph, if I can provide a layer for enforcing consistency types on top
+of Ceph, then Noah's [programmable storage work on top of Ceph][noah-zlog] could benefit. Then,
+this carries over nicely into assessing the utility of sequential, causal, or weaker consistency
+for a programmable storage system.
 
 Ceph's architecture is designed around the [RADOS data store](#rados). This data store is a unified
 system that provides storage interfaces for objects, blocks, and files. A Ceph storage cluster
@@ -109,42 +108,35 @@ consists of two types of daemons:
 * [Ceph Monitor](#ceph-monitor)
 * [Ceph OSD](#ceph-object-storage-daemon)
 
-### Ceph Monitor
-The [Ceph Monitor](#monitor) ... TODO.
+The [Ceph Monitor](#monitor) monitors the Ceph storage cluster. One or more Monitors form a Paxos
+part-time parliament cluster that manage cluster membership, configuration, and state.
 
-### Ceph **O**bject **S**torage **D**aemon
 The [Ceph OSD](#osd) relies upon the stability and performance of the underlying
-filesystem[^osd-fs-fn] when using [the filestore
-backend][ceph-backend-filestore]. The file system currently recommended for
-production systems is XFS, although btrfs is supported. On the other hand, the
-[new BlueStore backend][ceph-backend-bluestore] allows Ceph to directly manage
-storage devices, bypassing the extra layer of abstraction that comes with the
-use of kernel file systems (e.g. XFS, btrfs).
+filesystem[^osd-fs-fn] when using [the filestore backend][ceph-backend-filestore]. The file system
+currently recommended for production systems is XFS, although btrfs is supported. On the other
+hand, the [new BlueStore backend][ceph-backend-bluestore] allows Ceph to directly manage storage
+devices, bypassing the extra layer of abstraction that comes with the use of kernel file systems
+(e.g. XFS, btrfs).
 
-### Ceph Object Gateway and Eventual Consistency for Disaster Recovery
-Ceph is able to [support multiple data centers][data-center-faq], but only
-provides strong consistency. When a client writes data to Ceph the primary
-OSD will not acknowledge the write to the client until the secondary OSDs have
-written the replicas synchronously. Ceph [achieves
-scalability][ceph-cuttlefish-arch] through "intelligent data replication."
-
-<!-- TODO edit -->
-The Ceph community is working to ensure that OSD/monitor heartbeats and peering
-processes operate effectively with the additional latency that may occur when
-deploying hardware in different geographic locations. See Monitor/OSD
-Interaction for details.
-
-If your data centers have dedicated bandwidth and low latency, you can
-distribute your cluster across data centers easily. If you use a WAN over the
-Internet, you may need to configure Ceph to ensure effective peering, heartbeat
-acknowledgement and writes to ensure the cluster performs well with additional
-WAN latency.
-
-The Ceph community is working on an asynchronous write capability via the Ceph
-Object Gateway (RGW) which will provide an eventually-consistent copy of data
-for disaster recovery purposes. This will work with data read and written via
-the Object Gateway only. Work is also starting on a similar capability for Ceph
-Block devices which are managed via the various cloudstacks.
+While understanding Ceph in general is useful, the aspect that is relevant for what we want to
+explore in this blog post, is how Ceph replicates data, and what type of consistency is available
+to developers and users. Well, Ceph is able to [support multiple data centers][data-center-faq],
+but only provides strong consistency. When a client writes data to Ceph the primary OSD will not
+acknowledge the write to the client until the secondary OSDs have written the replicas
+synchronously. Ceph [achieves scalability][ceph-cuttlefish-arch] through "intelligent data
+replication." For hardware deployed in differenge geographic locations, this will clearly lead to
+additional latency in the time to receive synchronous acknowledgements. Considering the possible
+(likely) latency, The Ceph community is working to ensure that OSD/monitor heartbeats and peering
+processes still operate effectively. Othewrise, Ceph's current solutions are to rely on hardware
+within a data center, or to configure Ceph in a way that ensures effective peering, heartbeat
+acknowledgement and writes. According to [Ceph's faq][data-center-faq], there was an asynchronous
+write capability in progress via the Ceph Object Gateway (RGW) which would provide an
+eventually-consistent copy of data for disaster recovery purposes. However, this would only work
+with reads and writes sent via the Object Gateway. There is also similar capability for Ceph Block
+devices which are managed via the various cloudstacks. Unfortunately, it is not clear what the
+progress is on these capabilities, and the proposed use cases sound particular to disaster recovery
+and not performance. This leaves some potentially interesting work to be done by this blog post and
+a follow-up blog post.
 
 <!-- ------------------------------>
 <!-- SECTION -->
@@ -196,6 +188,9 @@ reading about consistency models up to this point, I will fill this section in
 later and assume that initial readers of this blog post are well acquainted
 with the relevant consistency models.
 
+<!--
+To be added when I have more time? Otherwise this looks too incomplete.
+
 #### Linearizabilty
 
 #### Sequential Consistency
@@ -205,6 +200,7 @@ with the relevant consistency models.
 #### Eventual Consistency
 
 #### Weak Consistency
+-->
 
 <!-- ------------------------------>
 <!-- SECTION -->
@@ -223,16 +219,16 @@ the programming model for distributed systems. By making consistency models expl
 system, it allows developers to verify that important data types are used at an appropriate
 correctness level. The IPA paper claims:
 
-    > ...IPA allows the programmer to trade off performance and consistency, safe in the knowledge
-    > that the type system has checked the program for consistency safety.
+    ...IPA allows the programmer to trade off performance and consistency, safe in the knowledge
+    that the type system has checked the program for consistency safety.
 
 This type of support from the programming model is necessary for developers to be both
 more efficient and more correct. To further support the benefit of consistency type systems, the
 MixT paper claims:
 
-    > ...engineers at major companies frequently find themselves writing distributed programs that
-    > mix accesses to data from multiple existing storage systems, each with distinct consistency
-    > guarantees.
+    ...engineers at major companies frequently find themselves writing distributed programs that
+    mix accesses to data from multiple existing storage systems, each with distinct consistency
+    guarantees.
 
 As described in the [Consistency Models](#consistency-models) section, there are many consistency
 models that are meaningful for developers working in distributed systems. From the perspective of a
@@ -259,15 +255,46 @@ number of replicas read from, R, only needs to be less than the total number of 
 weakly consistent. But, notice that Cassandra does not natively support complex consistency models,
 such as causal or strong eventual.
 
+Unlike with Cassandra, implementing an IPA-style consistency type system on top of Ceph will
+require communicating with Ceph's OSDs more directly. This approach would enable a quorum approach
+by treating each OSD as a replica. I'm not entirely sure that there's a way to write to an OSD in a
+way that doesn't trigger the OSD to communicate to other OSDs automatically. Understanding the
+details of OSD communication will be important for understanding what parts of IPA may be portable
+to a DPS system on top of Ceph.
+
 ### MixT Consistency Type System
-TODO
+In contrast to IPA's approach, [MixT's implementation][mixt-impl] is in C++ and much lower in the
+development stack. Another interesting difference is that the backend data store used is
+Postgres. What makes this interesting is that Postgres (to my knowledge) supports strong
+consistency, but various levels of *isolation*. MixT allows weaker consistencies by providing a
+**D**omain **S**pecific **L**anguage (DSL) for defining computation in a *mixed-consistency
+transaction*. Operations within these mixed-consistency transactions are then split into smaller
+transactions to achieve weaker consistency.
+
+Initially, I thought that building a consistency type system on top of a data store
+that *already supports* weaker consistency models seemed more natural. Grouping operations (or enforcing
+operation constraints) seemed easier to reason about than slicing operations into sub-groups, or
+into isolated operations. Operationally, this makes MixT a very different approach to enforcing
+consistency types. At a glance, this approach seems like it should be easier to build on top of
+Ceph than an IPA-style consistency type system. However, while the similarity between Ceph and
+Postgres providing strong consistency by default seems like something that would make MixT
+applicable for being used on top of Ceph, it is not clear that mixed-consistency transactions will
+be able to achieve weaker consistency on top of Ceph. I think this is due to Postgres having weaker
+levels of isolation, but I am not sure that Ceph offers weaker levels of isolation. Before
+attempting to architect an approach that layers MixT on top of Ceph, it will be important to
+understand the effect of isolation levels on mixed-consistency transactions.
 
 ## Declarative Programming over Mixed Consistencies
 [QUELEA][quelea-paper] takes a declarative programming approach to allowing developers directly
 reason over the consistency policies used for ADTs. [QUELEA's implementation][quelea-impl] provides
 a declarative language for specifying an operational contract for an ADT to follow.
 
-TODO
+QUELEA, like IPA, uses Cassandra as the backend data store. Because QUELEA takes specifications for
+an ADT and then communicates with the data store in a way that enforces the consistency
+constraints, it seems that QUELEA may also require the ability to communicate with Ceph OSDs
+individually, just like IPA. Once Ceph supports weaker consistency data operations, or some way of
+communicating with Ceph allows weaker consistency, then QUELEA would be an ideal approach to take
+for a DPS system.
 
 <!-- ------------------------------>
 <!-- SECTION -->
@@ -391,4 +418,5 @@ A unique identifier for an OSD. The "fsid" term is used interchangeably with "uu
 [rdt-svo]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/replDataTypesPOPL13-complete.pdf
 [strong-enough]: http://software.imdea.org/~gotsman/papers/logic-popl16.pdf
 [ipa-impl]: https://github.com/bholt/ipa/tree/master/src/main/scala/ipa
+[mixt-impl]: https://github.com/mpmilano/MixT
 [quelea-impl]: https://github.com/kayceesrk/Quelea
