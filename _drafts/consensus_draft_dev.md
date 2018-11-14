@@ -6,18 +6,23 @@
 
 ---
 
-*Note : With its comprehensive coverage of consistency, this course had limited
-time to go over consensus. This blog post serves two objectives, it covers the
-basics of consensus, and explores the programming language and paradigm support
-for it, keeping with the theme of the course.*
+## Introduction
+
+*With its comprehensive coverage of consistency, this course had limited
+time to go over consensus. I wrote this post to serve two objectives,
+it covers the basics of consensus, which would be a helpful read for all of us
+and it explores how systems program and implement it in the real world
+with some detail on languages, keeping with the theme of the course.*
 
 ---
 
-## Introduction
-
-Lorem Ipsum
-
 ## Consensus
+
+Consensus, as the name suggests, are a class of algorithms that resolve
+conflicting values and get different replicas in a replicated data store
+to agree on the values and orders of operations. Consensus algorithms are
+some of the most complex operations in distributed systems, so how do we
+get replicas to agree?
 
 ### Don't do it!
 
@@ -298,24 +303,166 @@ in a domain specific language, prototyped in Python, built specifically for
 us! In [their paper](https://arxiv.org/pdf/1704.00082.pdf) they discuss
 implementation of Paxos in DistAlgo.
 
-TODO, finish the section.
+As they discuss Lamport's Paxos made simple, they explain why Paxos is hard to
+understand and implement very beautifully :
+> "Indeed, this is the hardest part for understanding Paxos,
+> because understanding an earlier phase requires understanding a later phase,
+> which requires understanding the earlier phases."
+
+The authors implement the Paxos implementation we saw in Paxos made Moderately
+complex : the one with slots and scouts and commanders! Unlike the original
+paper, they fold the functionality of commanders and scouts back into the leader
+to allow simpler code. The separation in the original paper seemed arbitrary to
+me and this makes it so that the leader performs their actions.
+
+**Optimizations** : Because of this simplified interface, it is trivial to
+implement optimization which keeps just the maximum numbered ballot for each
+slot changing just 1 line of implementation :
+
+```python
+accepted := {(b,s,c): received (’2a’,b,s,c)}
+```
+to
+
+```python
+accepted := {(b,s,c): received (’2a’,b,s,c), b = max {b: received (’2a’,b,=s,_)}}
+```
+this will pick the maximum ballot for each slot instead of keeping every ballot.
+
+They implement leader leases with timeout, similar optimization to the original
+to prevent unnecessary contention because of multiple readers.
+
+The paper also formally verifies the implementation of Paxos made moderately
+complex and discovers a safety violation which may cause `preempt` messages to
+never be delivered to the leaders and fixes it.
+
+Perhaps the most important contribution of this is that it implements Paxos
+made moderately complex with much less complexity as you have programming
+language support now.
 
 ## Raft
 
+[Raft](https://raft.github.io) is often touted as a simpler alternative to
+Paxos. Winner of the best paper award at Usenix ATC 2014, Raft offers you a
+_raft_ to wade through the dangerous and scary waters of consenus protocols. It
+is designed to be _simple_. The [original paper,](https://www.usenix.org/system/files/conference/atc14/atc14-paper-ongaro.pdf)
+in fact has an in-depth user Study at Stanford to show that Raft is much easier
+to understand as well as explain over Paxos. The authors present a world where
+the treacherous waters of Greece are past us and it is smooth sailing from now
+on to understand and implement consensus. So let's see how Raft works!
+
 ### Base Implementation
 
-### vard and etcd
+Raft performs leader elections to pick leaders for each round. The condition for
+leadership is stronger in raft as leaders are the only nodes that handle reads
+and writes to the log as well as log replication to all the replicas.
+Conflicting entries in followers logs can be overwritten to reflect the leader.
+The leader election protocol works with the help of a timeout mechanism for
+sending heartbeats to collect votes. The election phase itself comes with a
+timeout to reduce conflicts.
 
-### Formal verification and Verdi implementation
+**Is raft really simpler to understand an implement than Paxos?**
+To understand, yes, as the paper shows it with a study that it is indeed easier
+to understand and explain for most students. However for implementing it, that's
+a big maybe.
 
-### CockroachDB and RethinkDB
+In a recent tweet by [Cindy Sridharan](https://twitter.com/copyconstruct/status/1061818753925578753)
+:
+> "Paxos is known to be notoriously difficult to implement. Here's a little
+> secret for you - Raft is difficult to implement too. As I know a lot more
+> about this now, there's really not much difference between Raft and Paxos."
+>
+> \- Peter Mattis, of CockroachDB, the OSS Spanner clone.
 
-### Raft in DistAlgo
+The quorum reads discussed in Raft are never implemented by CockroachDB as it is
+simply too expensive to perform them.
 
-### Cockroach DB implementation
+Over the next few sections, we will analyze different implementations of Raft.
+
+### Formal verification and implementation of Raft with `vard` and `etcd`
+
+[`etcd`](https://github.com/etcd-io/etcd) is a lightweight Key-Value store
+implemented using Go. It uses the raft protocol for distributed consensus to
+manage its replicated log. It uses a verified and widely used [Raft Library](https://github.com/etcd-io/etcd/tree/master/raft)
+which is shared by other big projects like _"Kubernetes, Docker Swarm, Cloud
+Foundry Diego, CockroachDB, TiDB, Project Calico, Flannel, and more."_ The
+linked implementation is feature complete implementation of Raft in Go,
+including some optional enhancements such as :
+
+> Optimistic pipelining to reduce log replication latency
+>
+> Flow control for log replication
+>
+> Batching Raft messages to reduce synchronized network I/O calls
+>
+> Batching log entries to reduce disk synchronized I/O
+>
+> Writing to leader's disk in parallel
+>
+> Internal proposal redirection from followers to leader
+>
+> Automatic stepping down when the leader loses quorum
+>
+> Protection against unbounded log growth when quorum is lost
+
+The verification project [Verdi](http://verdi.uwplse.org) base their own KV
+store `vard` on this implementation of Raft. They implement the Raft protocol
+in the Verdi framework and verify it using [Coq](https://coq.inria.fr) a popular
+formal verification tool. This has now been exported to OCaml and is [available
+to use](https://github.com/uwplse/verdi-raft).
+
+### CockroachDB
+
+[CockroachDB](https://www.cockroachlabs.com/docs/stable/) is an open source
+alternative to [Google's Spanner](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/65b514eda12d025585183a641b5a9e096a3c4be5.pdf),
+a highly available distributed store which uses atomic clock timestamps to
+allow ACID properties on top of a distributed data store. The big advantage of
+these stores is that despite being scalable across continents, they allow SQL
+and relational properties. Raft is used extensively in CockroachDB to ensure
+that replicas remain consistent.
+
+CockroachDB implements [Multi-Raft](https://www.cockroachlabs.com/blog/scaling-raft/)
+on top of the raft protocol to allow better
+scalability. This involves certain changes to how raft works. It divides
+replicas into ranges, which locally implement raft. Each range performs leader
+elections and other raft protocol operations. Ranges can have overlapping
+memberships. MultiRaft converts each node's associated ranges into a group
+for raft, limiting the hearbeat exchange to once per tick,
+
+### Other Raft implementations
+
+The `etcd` implementation of raft is the gold standard, and widely used in
+projects that use raft. It is a feature-complete implementation true to the
+paper. Raft is rather easy to [implement in DistAlgo](https://github.com/DistAlgo/distalgo/blob/master/da/examples/raft/orig.da)
+the framework we discussed in "Moderately Complex Paxos Made Simple." Although
+interestingly, it involves much more code than their implementations of Paxos.
+The DistAlgo specification for
+
+- Lamport Paxos is **72 loc**,
+- the moderately complex paxos at **173 loc**,
+- Raft clocks in at **213 loc**.
+
+You can check out the [various implementations here.](https://github.com/DistAlgo/distalgo/tree/master/da/examples)
+
+(For reference, the C++/Python/Go implementations are thousands of loc).
 
 ## Closing note
 
+I intended to write down this blog post as _"Programming Language Support for
+Consensus"_, however, thrown off by the possible implementations and
+complications, it ended up being more about the different implementations of
+Consensus class algorithms, and what they offer. The topic for language support
+and why DistAlgo achieves the same in a shorter span will have to wait. Perhaps
+it can be a separate post down the line, or someone else can pick it up. Hazy
+after reading dozens of papers, blogs, and manuals on achieving consensus, I
+plan to do something more implementation focused my next blog post.
+
+
 ## References and Resources
 
-- [Distributed Systems class by Kyle Kingsbury](https://github.com/aphyr/distsys-class)
+I have linked all the references in the relevant sections. For general readings
+I would recommend these resources that I looked at.
+
+- [An introduction to distributed systems by Kyle Kingsbury](https://github.com/aphyr/distsys-class)
+- [CMPS 232 by Peter Alvaro](https://github.com/devashishp/CMPS232-Fall16/blob/master/readings.md)
+- [CMPS 290S by Lindsey Kuper : current class!](http://composition.al/CMPS290S-2018-09/readings.html)
