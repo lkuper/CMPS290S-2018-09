@@ -1,106 +1,119 @@
-# Supporting mixed consistency in a Declarative Programmable Storage System
+# Mixing Consistency in a Declarative Programmable Storage System
+
 
 <!-- ------------------------------>
 <!-- SECTION -->
 ## Introduction
-In this blog post, we explore how to enforce various consistency models in a **D**eclarative
-**P**rogrammable **S**torage (DPS) system. In the following sections, we describe what we mean by
-DPS systems:
+In general, I tend to be interested in approaches to lifting various concepts to first-class
+citizens of a programming model. Of course, there is a lot of contextual important to be
+considered, but when I think of an application domain and how a problem might be
+addressed, I tend to wonder: is there a concept germane to the given domain such that considering
+the concept early on in development would make design and implementation more natural and concise.
+
+In the case of this blog post, consistency models are an important aspect of any distributed,
+important computation. So, how can we make reasoning about consistency of data types and
+computations natural during development? Distributed systems have been well studied for many years,
+and there now exist logical frameworks, tools, declarative approaches, and even type systems
+for bringing consistency models to the forefront of the developer's mental model. While this is the
+case, there are still data management and storage systems that do not include consistency models in
+their short list of design goals. Although, it may be fair to say that in this blog post, the
+considered approaches for mixing consistency in computations (I just say "mixing consistency" for
+conciseness hereafter), have happened in the last few years. So, "battle-hardened",
+production-capable systems were likely designed and began development before mixing consistency had
+been well explored. Specifically, the systems we consider in this blog post: [QUELEA][quelea-paper],
+[IPA][ipa-paper], and [MixT][mixt-paper], have all been released and published in the last 3 years.
+
+To establish a clear objective, in this blog post we explore approaches for declaring, and
+enforcing, various consistency models in a **D**eclarative **P**rogrammable **S**torage system
+([dps system](#dps-system)). The following sections include an overview, some definitions and
+intuitions, and goals of dps systems:
 
 * [*programmable storage* systems](#programmable-storage)
 * [**D**eclarative **P**rogrammable **S**torage](#declarative-programmable-storage):
 
-Once we know what a DPS system is, and what type of backend data store we are using, We analyze
-implementations of consistency type systems (e.g. [IPA][ipa-paper], [MixT][mixt-paper]) and
-declarative programming models (e.g. [QUELEA][quelea-paper]) for explicitly accommodating, and
-reasoning over, a variety of consistency models. Background for understanding what consistency
-means and what consistency models are, can be found in these sections (TBD later, since this
-knowledge is assumed for the class):
+For our high-level analysis of [mixing consistency](#mixing-consistency) to be
+meaningful, it is important to have _some_ understanding of what programmable storage is, and
+especially what a declarative programmable storage system is. In the above sections, background
+information is provided for both of these types of storage systems (really, it's just programmable
+storage, and then with a declarative layer on top). Part of the background information is the
+choice of backend data store for implementing a consistency type system on top of, and some of the
+motivations behind various trade-offs we might be interested in.
+
+Just to further anchor the analysis in this blog post (spoiler alert), the existing consistency
+type system implementations we choose to cover were discussed as part of [CMPS
+290S][course-website]. The analysis is provided in the section, [Mixing
+Consistency](#mixing-consistency). Background for understanding what consistency even is, and what
+consistency models are, can be found in these sections (TBD later, since this knowledge is assumed
+for the class, CMPS 290S):
 
 <!-- TODO later -->
 * [Consistency](#consistency)
 * [consistency models](#consistency-models)
 
-And then we explore our main topics of interest in these sections:
+For convenience (hopefully it's also useful), there is a [glossary](#glossary) at the end of this
+blog post.
 
-* [consistency type systems](#consistency-type-systems)
-* [consistency as a property](#consistency-as-a-property)
+Due to time constraints (and perhaps the nature of my goal), this blog post will **only** cover the
+relevant implementations of using mixed consistency computations, and not the actual implementation
+of such a programming model in (or on top of) a dps system. However, the implementation is
+something that will be addressed in a follow up blog post in the next 3 - 4 weeks (and I cross my
+fingers for interesting results).
 
-And, for convenience, there is a [glossary](#glossary) at the end of this blog post.
-
-### Overview
-For a DPS system, There are 2 major features that I explore to allow developers specify
-consistency requirements over data types:
-1. Mechanisms for supporting weaker consistency models in the backend storage system.
-2. A way to define, and enforce, consistency requirements for data types.
-
-The IPA and QUELEA implementations used [Cassandra][cassandra-datastore] as the backend storage
-system, while the MixT implementation used [PostgreSQL][postgres-dbms] as the backend storage
-system. To support consistency types on top of a data store, it would be ideal to use a data store
-that supports weaker consistency models, such as Cassandra, that way logic only needs to be added
-on top of the data store. Cassandra provides flexible consistency by allowing writes to be sent to
-any number of replicas within each datacenter or across datacenters. In contrast, a data store that
-only supports strong consistency, such as PostgreSQL, requires an alternate approach to adding
-support for consistency types. MixT defines its own transaction context, and breaks this
-transaction down into separate PostgreSQL transactions in order to control consistency.
-
-For my data store backend, I am interested in using Ceph, a programmable storage system. Some
-[initial work on a DPS system][noah-dissertation], by Noah Watkins, uses Ceph as the backend
-storage system for designing a DPS system. In general, the purpose of DPS systems is to address
-maintainability and expressiveness of *programmable storage* systems using declarative languages.
-For traditional storage systems, strong consistency is a must. Although Ceph is a distributed,
-large-scale storage system, Ceph was designed to fill the role of traditional storage systems as
-reliable, durable storage. This expectation is common (and preferred) for many applications,
-especially scientific applications, where the complexity of distributed systems and consistency
-models weaker than linearizability is too difficult to work with. This makes Ceph's support for
-only strong consistency reasonable. However, there are many other applications with large data
-volumes, rich data models, but with inherently low business risk that prefer to trade strong
-consistency for availability and performance. This is especially common in social, web-based
-applications. To build a storage system that can support these types of applications, it would be
-ideal to provide the ability to specify weaker consistency models over low risk, or non-essential,
-data types.
-
-Even beyond the support of mixed consistency levels, this investigation will be useful for future
-work, exploring the generalization of data properties. MixT claims that consistency is a property
-of data. For storage systems which are designed entirely around the storage of data, being able to
-enforce pre- and post-conditions and reason over general properties of data seems incredibly
-useful. This is a secondary motivation of this blog post, to explore a generalization of
-consistency types to data type properties.
 
 <!-- ------------------------------>
 <!-- SECTION -->
 
 # Programmable Storage
+Programmable storage is motivated by the current state of large-scale, distributed storage systems.
+Notably, one idea is to reuse components and subsystems from a storage system. Because storage
+systems have inherently very high expectations of reliable data persistence, rewriting relevant
+subsystems or components only invites younger, error-prone code. While this is not a hard and fast
+rule, the intuition is that reusing subsystems of a storage system means that the community
+supporting these subsystems is larger, and these subsystems are exercised and improved more
+frequently. Without diving too deep into the details, programmable storage seems to be a domain
+that will continue to grow, as described by Noah Watkins [in his dissertation][noah-dissertation].
 
-<!-- TODO
-* Describe Ceph:
-    * Why only strong consistency?
-    * Why weaker consistency (Examples, examples, examples)?
-    * How weaker consistency? (Also, Object Gateway?)
-        * What granularity
-        * How is it tunable
-        * Quorum?
--->
+Also described in Noah's dissertation, is the programmable storage system, [Ceph](#ceph). In his
+dissertation, Noah details his implementation of a distributed, shared log on top of Ceph, which he
+also described [in a blog post][noah-blog-zlog]. Since Noah has already explored programmable
+storage system work on top of Ceph, it seemed like a natural choice to use for my data store
+backend for this blog post.
+
 
 ## [Ceph][ceph-intro]
-Ceph is an open source, distributed, large-scale storage system. Some quotes that nicely summarize
-Ceph:
+Ceph is an open source, distributed, large-scale storage system, that can be nicely summarized (I
+think) by the following:
 
-* As described by Noah Watkins, [in his dissertation][noah-dissertation], "Ceph is something of a
-  storage Swiss army knife."
-* According to [Ceph's introduction blog post][ceph-intro-blog], "the main goals of Ceph are to be
+* In Noah's dissertation, "Ceph is something of a storage Swiss army knife."
+* [In Ceph's introduction blog post][ceph-intro-blog], "the main goals of Ceph are to be
   completely distributed without a single point of failure, scalable to the exabyte level, and
   freely-available."
 
 Ceph has been part of storage systems research at UC Santa Cruz for several years under Carlos
 Maltzahn, including the [CRUSH algorithm][crush-paper] (2006), the [RADOS][rados-paper] data store
-(2007), even up to Noah's dissertation earlier this year (2018). I have just started working with
-Carlos Maltzahn and Peter Alvaro on [declarative programmable storage](declarative-storage), making
-Ceph a natural choice for investigating related, initial research questions. While I am not
-personally experienced with Ceph, if I can provide a layer for enforcing consistency types on top
-of Ceph, then Noah's [programmable storage work on top of Ceph][noah-zlog] could benefit. Then,
-this carries over nicely into assessing the utility of sequential, causal, or weaker consistency
-for a programmable storage system.
+(2007), even up to [Noah's dissertation][noah-dissertation] earlier this year (2018). I have just
+started working with Carlos Maltzahn and Peter Alvaro on [declarative programmable
+storage](declarative-storage), where there is some interest in continuing to use Ceph as the
+underlying storage system implementation. While I am not personally experienced with Ceph nor have
+I interacted with users of Ceph, the idea of allowing the developer to mix consistency on top of a
+storage system seemed interesting enough to explore. Especially, when considering that Ceph is
+distributed over a cluster (and potentially replicated to remote clusters). With Noah's previous
+work, an implementation of mixing consistencies over Ceph seems to have a clear path forward for
+evaluating the benefit of sequential, causal, or weaker consistency for a programmable storage
+system. This brings us to the variety of consistency models that Ceph supports.
+
+For traditional storage systems, strong consistency is a must. Although Ceph is a distributed,
+large-scale storage system, Ceph was designed to fill the role of reliable, durable storage. This
+expectation is common (and preferred) for many applications, especially scientific applications,
+where the complexity of distributed systems and consistency models weaker than linearizability is
+too difficult to work with. This makes Ceph's support for only strong consistency reasonable.
+However, there are many other applications with large data volumes, rich data models, but with
+inherently low business risk that prefer to trade strong consistency for availability and
+performance. This is especially common in social, web-based applications, but could also be
+applicable in other scenarios (examples to come as I think about them? Maybe this is just an
+interesting exercise for a graduate student?). To more optimally support these types of
+applications, it would be ideal to provide the ability to specify weaker consistency models over
+low risk, or non-essential, data types.
 
 Ceph's architecture is designed around the [RADOS data store](#rados). This data store is a unified
 system that provides storage interfaces for objects, blocks, and files. A Ceph storage cluster
@@ -111,12 +124,12 @@ consists of two types of daemons:
 The [Ceph Monitor](#monitor) monitors the Ceph storage cluster. One or more Monitors form a Paxos
 part-time parliament cluster that manage cluster membership, configuration, and state.
 
-The [Ceph OSD](#osd) relies upon the stability and performance of the underlying
-filesystem[^osd-fs-fn] when using [the filestore backend][ceph-backend-filestore]. The file system
-currently recommended for production systems is XFS, although btrfs is supported. On the other
-hand, the [new BlueStore backend][ceph-backend-bluestore] allows Ceph to directly manage storage
-devices, bypassing the extra layer of abstraction that comes with the use of kernel file systems
-(e.g. XFS, btrfs).
+The [Ceph OSD](#osd) handles data persistence on a node in the Ceph storage cluster. The osd relies
+upon the stability and performance of the underlying filesystem[^osd-fs-fn] when using [the
+filestore backend][ceph-backend-filestore]. The file system currently recommended for production
+systems is XFS, although btrfs is supported. On the other hand, the [new BlueStore
+backend][ceph-backend-bluestore] allows Ceph to directly manage storage devices, bypassing the
+extra layer of abstraction that comes with the use of kernel file systems (e.g. XFS, btrfs).
 
 While understanding Ceph in general is useful, the aspect that is relevant for what we want to
 explore in this blog post, is how Ceph replicates data, and what type of consistency is available
@@ -124,10 +137,10 @@ to developers and users. Well, Ceph is able to [support multiple data centers][d
 but only provides strong consistency. When a client writes data to Ceph the primary OSD will not
 acknowledge the write to the client until the secondary OSDs have written the replicas
 synchronously. Ceph [achieves scalability][ceph-cuttlefish-arch] through "intelligent data
-replication." For hardware deployed in differenge geographic locations, this will clearly lead to
+replication." For hardware deployed in different geographic locations, this will clearly lead to
 additional latency in the time to receive synchronous acknowledgements. Considering the possible
 (likely) latency, The Ceph community is working to ensure that OSD/monitor heartbeats and peering
-processes still operate effectively. Othewrise, Ceph's current solutions are to rely on hardware
+processes still operate effectively. Otherwise, Ceph's current solutions are to rely on hardware
 within a data center, or to configure Ceph in a way that ensures effective peering, heartbeat
 acknowledgement and writes. According to [Ceph's faq][data-center-faq], there was an asynchronous
 write capability in progress via the Ceph Object Gateway (RGW) which would provide an
@@ -138,23 +151,35 @@ progress is on these capabilities, and the proposed use cases sound particular t
 and not performance. This leaves some potentially interesting work to be done by this blog post and
 a follow-up blog post.
 
+
 <!-- ------------------------------>
 <!-- SECTION -->
 
-<!-- TODO
-* Describe Declarative Programmable Storage:
-    * how does it interact with Ceph?
-    * how could consistency level be specified
-    * how could consistency level be enforced
--->
-
 # Declarative Programmable Storage
-Programmable storage tends to be a low-level task that requires lots of code and detailed knowledge
-of storage subsystem implementations. Even when carefully written, storage systems built on top of
-reusable components can still expose dependencies that make maintenance prohibitively expensive. By
-using a declarative language for specifying storage systems, implementations over reusable
-components can be made more tractable and flexible. [DeclStore][declstore-paper] is a step towards
-declarative programmable storage. 
+Programmable storage tends to be a difficult, low-level task that requires lots of code and
+detailed knowledge of storage subsystem implementations. Even when carefully written, storage
+systems built on top of reusable components can still expose dependencies that make maintenance
+prohibitively expensive. The goal of declarative programmable storage is to use a declarative
+language for specifying interfaces over storage systems (e.g. [Noah's ZLog example][noah-blog-zlog]
+and [the work on DeclStore][declstore-paper]), such that maintainability and performance can be
+addressed by a query optimizer or some other principled, automatic machinery. In general, the
+purpose of DPS systems is to address maintainability and expressiveness of *programmable storage*
+systems using declarative languages. DeclStore is a step towards declarative programmable storage. 
+
+For a declarative programmable storage system ([dps system](#dps-system)), There are 2 major
+features that I explore to allow developers specify consistency requirements over data types. These
+are further explored in the [Mixing Consistency section](#mixing-consistency) section:
+1. Mechanisms for supporting weaker consistency models in the backend storage system.
+2. A way to define, and enforce, consistency requirements for data types.
+
+There is an additional, related motive for studying mixing consistency over dps systems: exploring
+the generalization of reasoning over arbitrarily complex data properties. From this perspective,
+even beyond support for mixing consistency, this investigation will help guide the direction for future
+work. To draw from MixT, which has a similar intuition, MixT claims that consistency is a property
+of data. If this is at all true, then the storage system is a clear candidate for managing a
+property such as consistency. If we minimally extend intuitions around consistency models to
+general properties of data, being able to enforce, and reason over, pre- and post-conditions for
+data seems useful.
 
 <!-- ------------------------------>
 <!-- SECTION -->
@@ -192,49 +217,44 @@ with the relevant consistency models.
 To be added when I have more time? Otherwise this looks too incomplete.
 
 #### Linearizabilty
-
 #### Sequential Consistency
-
 #### Causal Consistency
-
 #### Eventual Consistency
-
 #### Weak Consistency
 -->
 
 <!-- ------------------------------>
 <!-- SECTION -->
-## Consistency Types and Consistency Type Systems
-In [CMPS290S][course-website], we have been reading a handful of papers that discuss various tools
+## Mixing Consistency
+In [CMPS 290S][course-website], we have been reading a handful of papers that discuss various tools
 for understanding, analyzing, and reasoning about consistency in a distributed system. In these
-readings, I have been particularly interested in two implementations of type systems for enforcing
-consistency requirements over data types:
+readings, I have been particularly interested in two implementations of consistency type systems
+for enforcing consistency requirements over data types:
 
 * [Disciplined Inconsistency with Consistency Types][ipa-paper]
 * [MixT: A Language for Mixing Consistency in Geodistributed Transactions][mixt-paper]
 
-To differentiate from other type systems in this blog post, I call these type systems *consistency
-type systems*. Consistency type systems try to lift consistency models to first-class citizens in
-the programming model for distributed systems. By making consistency models explicit in the type
-system, it allows developers to verify that important data types are used at an appropriate
-correctness level. The IPA paper claims:
+For brevity, I call "a type system that includes and enforces consistency" a consistency type
+system. Consistency type systems try to lift consistency models to first-class citizens in
+the type system of the distributed system programming model. By making consistency models explicit
+in the type system, developers are able to verify that important data types are used at an
+appropriate correctness level. The IPA paper claims:
 
     ...IPA allows the programmer to trade off performance and consistency, safe in the knowledge
     that the type system has checked the program for consistency safety.
 
 This type of support from the programming model is necessary for developers to be both
-more efficient and more correct. To further support the benefit of consistency type systems, the
-MixT paper claims:
+more efficient and more correct. To further support mixing consistency, the MixT paper claims:
 
     ...engineers at major companies frequently find themselves writing distributed programs that
     mix accesses to data from multiple existing storage systems, each with distinct consistency
     guarantees.
 
-As described in the [Consistency Models](#consistency-models) section, there are many consistency
-models that are meaningful for developers working in distributed systems. From the perspective of a
-consistency type system, we are interested in how to verify and enforce them for associated data
-types. To do this, Consistency type systems associate data types with the consistency model we
-would like the data types to conform to.
+There are many consistency models (see [Consistency Models](#consistency-models)) that are
+meaningful for developers working in distributed systems. From the perspective of a consistency
+type system, we are interested in how to verify and enforce them for associated data types. To do
+this, consistency type systems associate data types with the consistency model we would like the
+data types to conform to.
 
 ### IPA Consistency Type System
 [IPA's implementation][ipa-impl] is in Scala and leverages Scala's powerful type system. This
@@ -247,25 +267,37 @@ ADT in 1 of 2 ways:
    achieve the strongest consistency possible.
 
 Static consistency policies are roughly "passed-through" to the data store. IPA is implemented as a
-layer on top of Cassandra because of Cassandra's quorum approach to consistency. By achieving
-"quorum intersection," writes to and reads from Cassandra can be strongly consistent. Weak
-consistency policies can be satisfied by specifying few replicas to write to (e.g. 1 or 2) and few
-replicas to read from (e.g. 1 or 2). The number of replicas written to, W, and the
-number of replicas read from, R, only needs to be less than the total number of replicas, N, to be
-weakly consistent. But, notice that Cassandra does not natively support complex consistency models,
-such as causal or strong eventual.
+layer on top of Cassandra because of Cassandra's quorum approach to consistency (and maybe because
+it seemed easier to develop on top of?). By achieving "quorum intersection," writes to and reads
+from Cassandra can be strongly consistent. Weak consistency policies can be satisfied by specifying
+fewer replicas to write to (e.g. 1 or 2) or fewer replicas to read from (e.g. 1 or 2) such that
+quorum intersection is **not satisfied**. The number of replicas written to, W, and the number of
+replicas read from, R, only needs to be less than the total number of replicas, N, to be weakly
+consistent. But, notice that Cassandra does not natively support complex consistency models, such
+as causal or strong eventual.
 
-Unlike with Cassandra, implementing an IPA-style consistency type system on top of Ceph will
-require communicating with Ceph's OSDs more directly. This approach would enable a quorum approach
-by treating each OSD as a replica. I'm not entirely sure that there's a way to write to an OSD in a
-way that doesn't trigger the OSD to communicate to other OSDs automatically. Understanding the
-details of OSD communication will be important for understanding what parts of IPA may be portable
-to a DPS system on top of Ceph.
+Dynamic consistency policies are specifications of performance or behavior properties, within which
+the strongest consistency constraints should be satisfied. More concretely, there are two types of
+of dynamic consistency types: rushed and interval. A rushed type represents latency bounds in which
+an answer is expected. For a latency bound of 2 seconds, IPA would return a value meeting the
+strongest consistency constraints within 2 seconds. If strong consistency could be achieved for the
+operation in 1 second, then that value would be preferred to a returned value that is only weakly
+consistent. When the latency threshold is reached, it may be possible that a value only satisfying
+weak consistency is available, and thus that would be returned.
+
+Because the typical IO path to Ceph's storage cluster does not support various consistency models,
+an IPA-style consistency type system would have to be modified, or a new storage interface on top
+of Ceph be provided. In the quorum style of supporting various consistency models, Ceph may require
+communicating with the OSDs directly. A potential problem could be if the OSD has synchronization
+with other OSDs in the configured cluster built-in. If it is possible to communicate writes to OSDs
+individually, it would be possible, potentially even "trivial", to enable a quorum approach to
+consistency over Ceph OSDs. Understanding the details of OSD communication will be important for
+understanding whether Ceph can provide a similar interface to IPA as what Cassandra provides.
 
 ### MixT Consistency Type System
 In contrast to IPA's approach, [MixT's implementation][mixt-impl] is in C++ and much lower in the
 development stack. Another interesting difference is that the backend data store used is
-Postgres. What makes this interesting is that Postgres (to my knowledge) supports strong
+Postgres. What makes this interesting is that Postgres (to my understanding) supports strong
 consistency, but various levels of *isolation*. MixT allows weaker consistencies by providing a
 **D**omain **S**pecific **L**anguage (DSL) for defining computation in a *mixed-consistency
 transaction*. Operations within these mixed-consistency transactions are then split into smaller
@@ -276,15 +308,21 @@ that *already supports* weaker consistency models seemed more natural. Grouping 
 operation constraints) seemed easier to reason about than slicing operations into sub-groups, or
 into isolated operations. Operationally, this makes MixT a very different approach to enforcing
 consistency types. At a glance, this approach seems like it should be easier to build on top of
-Ceph than an IPA-style consistency type system. However, while the similarity between Ceph and
-Postgres providing strong consistency by default seems like something that would make MixT
-applicable for being used on top of Ceph, it is not clear that mixed-consistency transactions will
-be able to achieve weaker consistency on top of Ceph. I think this is due to Postgres having weaker
-levels of isolation, but I am not sure that Ceph offers weaker levels of isolation. Before
+Ceph than an IPA-style consistency type system due to the lack of support for weaker consistency.
+However, while the similarity between Ceph and Postgres providing strong consistency by default
+seems like something that would make MixT applicable for being used on top of Ceph, it is not clear
+that mixed-consistency transactions will be able to achieve weaker consistency on top of Ceph. I
+suspect that support for weaker levels of isolation in Postgres enables MixT to support weaker
+consistency by breaking up a transaction into smaller transactions. I may be misunderstanding
+MixT's implementation, but it seems that weaker isolation is the only way to achieve weaker
+consistency if the data store does not explicitly support weak consistency models. Before
 attempting to architect an approach that layers MixT on top of Ceph, it will be important to
-understand the effect of isolation levels on mixed-consistency transactions.
+understand the effect of isolation levels on mixed-consistency transactions. It will also be
+important to understand whether transaction splitting has the desired semantics over Ceph, given
+that Ceph does not seem to support transactions (though they are requested? It is hard to tell when
+they were requested and if they were ever completed).
 
-## Declarative Programming over Mixed Consistencies
+### Declarative Programming over Mixed Consistencies
 [QUELEA][quelea-paper] takes a declarative programming approach to allowing developers directly
 reason over the consistency policies used for ADTs. [QUELEA's implementation][quelea-impl] provides
 a declarative language for specifying an operational contract for an ADT to follow.
@@ -402,7 +440,8 @@ A unique identifier for an OSD. The "fsid" term is used interchangeably with "uu
 [maltzahn-website]: https://users.soe.ucsc.edu/~carlosm/UCSC/Home/Home.html
 [programmable-storage]: http://programmability.us/
 [noah-dissertation]: https://cloudfront.escholarship.org/dist/prd/content/qt72n6c5kq/qt72n6c5kq.pdf?t=pcfodf
-[noah-zlog]: https://github.com/cruzdb/zlog
+[noah-zlog-impl]: https://github.com/cruzdb/zlog
+[noah-blog-zlog]: https://nwat.xyz/blog/2014/10/26/zlog-a-distributed-shared-log-on-ceph/
 [ceph-intro]: https://ceph.com/ceph-storage/
 [ceph-intro-blog]: https://ceph.com/geen-categorie/ceph-storage-introduction/
 [ceph-cuttlefish-arch]: http://docs.ceph.com/docs/cuttlefish/architecture/#how-ceph-scales
