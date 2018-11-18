@@ -66,9 +66,10 @@ What follows is an explanation of the implementation of Operational Transformati
 The important thing to note here is that each modification to the data is performed as a series of operations. There are a few assumptions made in this implementation which are important to point out:
 
 1. Operation messages from 'remote' sites are received exactly once.
-2. The implementation does not use clocks to timestamp operations. So there is no way to know if an operation **O1** _happened before_ **O2**. It is assumed that LOCAL and REMOTE operations happen concurrently.
-3. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are executed at the 'local' site. In our implementation the executed operations are stored in a list `OTEditor.Ops`. This imposes a partial order on the set of events occurring in the system.
-4. Unlike the implementation in the [paper](http://doi.acm.org/10.1145/67544.66963), we do not assign priorities to an operation before the operation is sent to other editors. We assume that an operation is sent to others immediately after it was executed at one particular site.
+2. There are exactly 2 editors in the system: one 'local' and the other 'remote'.
+3. The implementation does not use clocks to timestamp operations. So there is no way to know if an operation **O1** _happened before_ **O2**. It is assumed that LOCAL and REMOTE operations happen concurrently.
+4. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are executed at the 'local' site. In our implementation the executed operations are stored in a list `OTEditor.Ops`. This imposes a partial order on the set of events occurring in the system.
+5. Unlike the implementation in the [paper](http://doi.acm.org/10.1145/67544.66963), we do not assign priorities to an operation before the operation is sent to other editors. We assume that an operation is sent to others immediately after it was executed at one particular site.
 
 This implementation of Operational Transformation is not without issues and one of the main issues is visible from the discussion so far: this implementation cannot guarantee convergence to a consistent state across replicas during a long enough network partition. One factor that we overlook in this implementation is that of establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these are resolved in the next blog post.
 
@@ -130,6 +131,17 @@ Test 4. remote delete char at index 3
 2018/11/12 15:15:46 Current value of data: {yfbxd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2 '' 1 1} {1 f 1 0} {2 '' 4 1}]}
 
 ```
+
+In the [paper](http://doi.acm.org/10.1145/67544.66963) a necessary condition (but not sufficient) to ensure that the transformation function works is to ensure commutativity of the operations. Additionally, in this implementation, we need to understand if transformation is required. Transformation in the paper is a technique to resolve conflicts. If there are no conflicts, we do not apply any transformations.
+
+First, we understand when is a transformation required. In the above test cases we have two cases where transformation is not required. The first is seen when the `insert` operation inserts `abcd` and `y`. These are 'local' operations. Data consistency is ensured because the 'local' editor is ["_reading your writes_"](https://en.wikipedia.org/wiki/Consistency_model#Read-your-writes_Consistency). Similarly, test case #2 does not require any transformation because the last operation was also a 'remote' edit. Since there were no other edits performed locally the data is consistent with the previous write. This is a weak spot in this implementation. Since there are only two editors ('local' and 'remote') if the 'remote' made two edits (test case #1 and #2), the data is consistent at the remote system and once the edits are applied locally at the 'local' system as well. In both these cases there are no conflicts where a transformation function is needed.
+
+Second, we discuss what commutativity is and how it applies to our test cases. Given two operations _Oi_ and _Oj_ the transformation **T** generates the following transformations
+* _Oj'_ := **T** (_Oj_, _Oi_)
+* _Oi'_ := **T** (_Oi_, _Oj_)
+
+The transformation **T** is implemented such that **_Oj'_ `x` _Oi_ `=` _Oi'_ `x` _Oj_**. 
+
 
 Now that expectations are set, we implement a simplified Operational Transformation Editor. The first part of the implementation deals with setting up data structures. We have two main operations: `INSERT` and `DELETE`. These operations can be done either locally or could be sent as part of a synchronization message from a remote user. Operations are tagged `LOCAL` if they are performed at on the "local" machine and tagged `REMOTE` if they are sent from a remote user. The operation is described by the struct `Op` which defines the structure of the operations which the editor (`OTEditor`) can process. The editor `OTEditor` itself has two fields: `Data`, which stores application data and `Ops`, which keeps a record of operations that have been processed by the `OTEditor`. `OTEditor.Ops` imposes a partial order on the operations.
 
@@ -228,7 +240,6 @@ The `performTransformation` is the heart of the application. Here we make the de
 1. If the current operation and last operation are of the same type (either both are `REMOTE` or both are `LOCAL`), indices need not be recomputed. This is because the data is synchronized.
 2. Although the editor program may be running on two or more machines and can have concurrent operations, within the program there are no concurrent threads.
 3. Deletion is performed on a _one-character-at-a-time_ basis.
-
 
 ```go
 
