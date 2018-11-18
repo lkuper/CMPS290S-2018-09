@@ -1,164 +1,147 @@
-# Time Is Weird
-## or: why do distributed systems and weak memory models look so similar, anyway
+---
+title: Time Is Partial, or: why do distributed consistency models and weak memory models look so similar, anyway?
+author: Sohum Banerjea
+layout: single
+classes: wide
+---
 
-(_Epistemic status: I'm just learning about both of these fields, and these are my
-observations from studying them and comparing them. If you work in either field and
-something looks wrong, it probably is; let me know!_)
+by Sohum Banerjea ⋅ edited by Aldrin Montana and Lindsey Kuper
 
-    There's only one hard problem in computer science: recognising that cache invalidation errors
-    are misnamed. They're just off-by-one errors in the time domain.
-        —Unknown
+> There's only one hard problem in computer science: recognising that cache invalidation
+> errors are misnamed. They're just off-by-one errors in the time domain.
 
-Time is weird.
-
-Time is weird, not just because we insist on trying to [measure it](#url) and [standardise
-it](#url), though that field is of course amazingly horrifying. Time is weird, because
-we've never truly understood what it _means_, for a second to have passed since one
-second ago.
-
-The best we've been able to come up with is that the arrow of time in some way tracks
-things that “happened” _before_ other things that “happened” _after_ them, in the sense,
-that, uh, the later events have access to information? and entropy? from the earlier
-events? Which means, um, something something flow of causality?
-
-Of course that breaks down, as all abstractions must. If your distances are large relative
-to the speed of light, and you can no longer assume that knowledge of events are
-instantaneously propagated across space, time behaves _seriously_ anomalously. Can an
-alien reading about memory models outside your light cone meaningfully have done so
-_before_ you did?
-
-But we ignore that, and hope that in the vast majority of cases we can just assume time
-just works how we want it to work. There's no reason to make life so much more complicated
-for ourselves, right?
-
-…if there's one thing I've understood about computer folk, it's that we _never_ pass up a
-chance to make life more complicated for ourselves.
-
-### Time, But Only Sometimes
+> —Unknown
 
 Time is weird.
 
-Time is weird because there are so many cases where (processors / compilers / “the
-network”, pick all) look at two events that “happened” in one order and decide, nah, those
-don't need to “happen” in that order.
+Time is weird, because we really really want to pretend it’s totally ordered. Everything
+at 3pm happens (we’d like to say) before everything at 4pm, no exceptions, arguments, or
+compromises.
 
-Your hardware will have a memory ordering model; this captures what guarantees your CPU
-doesn't want to give you, when executing assembly, as to which instruction happened before
-which other instruction. (Or is supposed to, anyway; in practice many hardware memory
-models are [underspecified](#urls[1-2]).)
+But there are so many cases in computer science where we have to loosen this
+requirement. This shows up in processors, in compilers, in nodes on the network—again and
+again in computing, at various levels of the stack, we find ourselves in situations where
+we look at two events and don’t know what order they happened in. Time is no longer total;
+it’s a partial order.
 
-Your compiler will have a memory model; this captures what guarantees your compiler
-doesn't want to give you, as to ordering instructions _while generating assembly_ across
-multiple threads. The reorderings inherent in the hardware memory model are a large part
-of why the compiler is forced to provide you this weak notion of time. This memory model
-is what you code to when writing lock-free systems code.
+Why? The reason we don’t _know_ is because the abstraction layer below us doesn’t
+_say_. Whether deliberately or not, our computing abstractions often refuse to give us
+guarantees about order. The freedom to reorder events often enables much higher
+performance, or availability.
 
-In practice, there's two major language memory models that matters to most people—the
-C++11 weak and strong memory models. The weak memory model is intended to be an
-abstraction over the major processor architectures today (x86, POWER, and ARM); the strong
-memory model is the weak model with acquire/release semantics (synchronisation by any
-other name).
+A processor may have a _[memory-ordering](https://www.cl.cam.ac.uk/~pes20/weakmemory/)
+[model](https://preshing.com/20120930/weak-vs-strong-memory-models/)_; this captures what
+guarantees your CPU doesn't want to give you, when executing assembly, as to which
+instruction happened before which other instruction. It uses this freedom to pipeline
+instructions and execute them out of order, so it can use its silicon more efficiently
+than I would know how to.
 
-And your distributed system will have a consistency model; this captures what guarantees
-your system doesn't want to give you, as to the ordering events across clients and
-replicas in a wide-area network. The reorderings inherent in communication lags and the
-presence or absence of synchronisation are a large part of why a distributed system is
-forced to provide you this weak notion of time. This consistency model is what you code to
-when writing a distributed application.
+A language may have a _memory consistency model_ ("memory model" for short); this captures
+what guarantees that language doesn't want to give you, while _generating_ assembly, as to
+ordering instructions across multiple threads. The reorderings inherent in the hardware
+memory model are a large part of why the compiler provides this weak notion of time. This
+language-level memory model is what you code to when writing lock-free systems code.
 
-In practice, there's a vast [consistency zoo](#url) of consistency models you could be
-using when writing a distributed system. Good. Good. Good!
+A prominent example of language-level memory models is [the C++11 weak and strong memory
+models](https://en.cppreference.com/w/cpp/atomic/memory_order). By default, C++ provides
+atomic operations with synchronisation; but provides the ability to weaken memory accesses
+for higher performance. The behaviour it provides is intended to be an abstraction over
+the major processor architectures today (x86, POWER, and ARM).
 
-In all these cases, these models describe the (desired) observable behaviour of the
-system, from outside the system. If I, a single client, or a single thread, write to a
-value, then immediately read from it, am I guaranteed to see a write at least as new as
-mine? If time wasn't weird, if we always had a clear idea about the ordering of operations
-in our systems, the answer to these questions would be yes, of course. It'd be weird to
-even _ask_.
+Finally, a distributed system may have a _consistency model_; this captures what
+guarantees your system doesn't want to give you as to the ordering of events across
+clients and replicas in a wide-area network. The reorderings inherent in communication
+lags and the presence or absence of synchronisation are a large part of why a distributed
+system is forced to provide you this weak notion of time. This consistency model is what
+you code to when writing a distributed application.
 
-But time _is_ weird, and so we have to ask.
+In practice, there's a vast [zoo](http://www.vukolic.com/consistency-survey.pdf) of
+consistency models you could be using when writing a distributed system. In all these
+cases, these models describe the (desired) observable behaviour of the system, from
+outside the system. If I, a single client, or a single thread, write to a value, then
+immediately read from it, am I guaranteed to see a write at least as new as mine? If time
+weren't partial, if we always had a clear idea about the ordering of operations in our
+systems, the answer to this question would be yes, of course. It'd be weird to even _ask_.
+
+But time _is_ partial, and so we have to ask.
 
 ### Consistency Models—I Mean, Memory Models
 
-Both these worlds started out by trying to ignore time being this weird for as long as
-they could—distributed programmers tried to adhere to ACID properties as long as possible,
-and systems programmers relied on mutual exclusion / locks for a long time.
+Reasoning about this partial ordering is often difficult and always annoying. At all
+layers of the stack, we’ve always wanted to pretend time is total—whether it’s ACID or
+atomic operations/locks, coding to stronger guarantees is, well, easier!
 
-But we all need speed. Whether it's the CAP theorem and weakly/eventually consistent
-models [#url], or lockfree programming with weak/relaxed memory models, both worlds ended
-up relaxing this strong view of time in order to gain speed.
+But we all need speed. Whether we're talking about distributed systems that sacrifice
+strong consistency to gain availability, or lock-free programming under weak memory to
+avoid the synchronisation penalty, programmers at every layer of the stack have found it
+useful to do this difficult reasoning.
 
-Weak memory models and consistency models are both _abstract_ models: they describe the
-_interface_ of the system to the programmer using it. They describe what sorts of
-behaviours we _can_ rely on from time, now that the default properties we tend to assume
-no longer apply.
+Shared-memory consistency models and distributed-memory consistency models are both
+_abstract_ models: they describe the _interface_ of the system to the programmer using
+it. They describe what sorts of weaker behaviours we _can_ rely on from time, now that the
+default total ordering properties we tend to assume no longer apply. It would seem that
+the two kinds of memory models are analogous, and yet, each community has developed its
+own language for discussing them, with different-but-overlapping meanings.
 
-Both worlds have developed their own language for describing these models. For instance:
-the phrase “data race” in systems programming refers to any pair of accesses to a memory
-location that include at least one write, without a synchronisation barrier between
-them. This concept doesn't have a specific phrasing in distributed programming, because
-that field assumes that reads and writes participate in data races (“are concurrent”) by
-default.
+You can see how this would get confusing.  What can we do about it?
 
-Thus, the term “data-race freedom” tells you more about a system's behaviour than the
-distributed systems term “sequential consistency” (any concurrent accesses can be treated
-_as if_ they were synchronised). But if you, the processor, can require that a series of
-instructions is data-race free, you may be able to _provide_ sequential consistency to
-that series of instructions as your hardware memory model (“SQ-DRF”, “sequential
-consistency for data-race free programs” [6]).
+### Describing Time With Anywhere Between Two And Eight Partial Orders
 
-…You can see how this could get confusing.
+In [his 2014
+book(https://www.microsoft.com/en-us/research/publication/principles-of-eventual-consistency/),
+Sebastian Burckhardt attempts to comprehensively characterise the behaviour of the many
+kinds of consistency models.  The framework they develop describes, among other
+mathematical structures, two logical orderings of events, “visibility” and
+“arbitration”—which also appeared previously in Burckhardt and his co-authors' [2014 POPL
+paper on specifying and verifying replicated data
+types](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/).
 
-The obvious solution is, of course, to make things more confusing!
-
-### The Burckhardt Paper
-
-The Burckhardt Paper. The _Burckhardt paper_.
-
-Dr. Sebastian Burckhardt has [been trying](#urls) to formalise the specification of
-consistency models for some time, in the distributed systems world. In [7], Appendix D.4,
-their team lays out an analysis of the C++ weak memory model under their framework.
-
-This gives us a convenient way to discuss the similarities and differences between the two
-fields. In particular, the C++ memory model _approximates_ to per-object causal
-consistency, with some interesting deviations.
-
-We first have to note that where causal consistency is defined in (Burckhardt's) terms of
-a “visibility” and an “arbitration” orderings, the weak memory axioms are defined in terms
-of a “reads-from” and “modification order” instead, respectively.
-
-“Visibility” in the distributed systems model is a partial order of potential causality;
-it tracks what events (possibly on other replicas) are visible to what other events. It
-isn't constrained (beyond needing to be acyclic); events on one object can be visible to
-events on another object, and whether the event is a read or write doesn't determine
-whether it's visible to other events or not. “Reads-from” is much more specialised; it
-only ever tracks the visibility of writes to reads on the same object, and only ever
-allows a read to have visibility of exactly zero or one writes.
-
-This corresponds to the fact that there only ever a single actual memory cell being written
-to in a shared memory processor, for any given object, even if threads may access it at
-different points in causality. In a distributed system, a logical object can be written to
-at many separate replicas.
+“Visibility” is a partial order of potential causality; it tracks what events (possibly on
+other replicas) are visible to what other events. It isn't constrained, beyond needing to
+be acyclic; events on one object can be visible to events on another object, and whether
+the event is a read or write doesn't determine whether it's visible to other events or
+not.
 
 “Arbitration” is a total order that tracks how the distributed system, when asked to make
-a choice, will adjudicate which event happened before which other event. It's distinct
-from “modification order” in that the latter is, again, per-object, and only adjudicates
-writes.
+a choice, will adjudicate which event happened before which other event.
 
-This is, again, a specialisation borne from the fact that the weak memory specification
-only makes strong guarantees per-object.
+Since distributed consistency models are analogous to memory models, it turns out these
+notions of visibility and arbitration are also useful for discussing and reasoning about
+memory models. In particular, in appendix D.4 of [their POPL '14
+paper](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/),
+Burckhardt et al. show how the C++11 weak memory model is "very close" to per-object
+causal consistency, with some interesting deviations.  This is what we’ll be diving into
+for the rest of the blog post.
 
-Okay. Now we can discuss each individual property and how they differ between distributed
-systems' per-object causal consistency and the C++11 weak memory model.
+The first step is to specialise visibility and arbitration into “reads-from” and
+“modification order”. “Reads-from” no longer tracks visibility between anything but writes
+to reads on the same object, and only ever allows a read to have visibility of exactly
+zero or one writes.
+
+This corresponds to the fact that there only ever a single actual memory cell being
+written to in a shared memory processor, for any given object, even if threads may access
+it at different points in causality. In a distributed system, a logical object can be
+written to at many separate replicas.
+
+“Modification order” takes the same step in specialising arbitration, by being per-object
+and only ordering writes. This is, again, a specialisation borne from the fact that the
+weak memory specification only makes strong guarantees per-object.
+
+The next step is to consider the consistency axioms that Burckhardt et al. define, and see
+how they apply to the weak memory model. They define these axioms in the context of
+distributed systems first, so they need specialisation for the shared memory case. Note
+that even though they’re named “axioms”, they are properties that different consistency
+models may or may not provide—the paper focuses on the properties that define cross-object
+causal consistency.
 
 #### EVENTUAL
 
 For any particular event, there cannot be infinitely many events that do not have
 visibility of it. That is, every event is _eventually_ visible to “the system”.
 
-To make sense under weak memory, this is slightly more complicated: you have to state that
-for any particular _write_, there cannot be infinitely many reads that don't read from it
-or read from an earlier write (by modification order).
+This needs to be somewhat more complicated to make sense under weak memory: you have to
+state that any particular _write_ cannot have infinitely many reads that don't read from
+it or read from an earlier write (by modification order).
 
 The C++11 specification does not guarantee this axiom, though practically it's difficult
 to find a counterexample.
@@ -166,19 +149,25 @@ to find a counterexample.
 #### THINAIR
 
 When you trace “potential causality” across thread/client operations and
-visibility/reads-from, you cannot go back in time. This is just a sanity axiom in
-distributed systems, but it does prohibit certain kinds of speculative execution from
-being visible to the user in weak memory systems.
+visibility/reads-from, you cannot go back in time. This is defined by requiring the
+closure of thread orderings with reads-from to be acyclic. We can typically rely on this
+property holding in distributed systems, but it would prohibit certain kinds of
+speculative execution from being visible to the user in weak memory systems.
 
-The C++11 specification does not guarantee this axiom, and it is violated on commodity
-hardware consistently.
+The C++11 specification does not guarantee this axiom, and Burckhardt et al. point out the
+C++11 specification “does not validate” this axiom, and it’s unclear whether the resulting
+“satisfaction cycles” [are observable in
+practice](https://dl.acm.org/citation.cfm?id=2429099).
 
 #### Causality Axioms
 
-To track our notion of causality and time, we need to pin down what events can impact the
-results from what other events. To start, we define per-object causality axioms: the
-session guarantees. These are four related properties that capture coherence
-properties of reads and writes across different threads.
+To pin down what causality actually refers to under weak memory, we need to precisely
+define what events can impact the results from what other events. This starts by staring
+at our standard causality axioms: the [session
+guarantees](https://dl.acm.org/citation.cfm?id=645792.668302). These are four related
+properties that capture coherence properties of reads and writes across different threads,
+and we need to specialise them to the per-object case (see [Figure 23 of Burckhardt et
+al.](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/)).
 
 * RYW (Read Your Writes): A read that follows a write, to the same cell, within the same
   thread/replica/session, must read data that is at least as new as the write. The
@@ -187,78 +176,76 @@ properties of reads and writes across different threads.
   modification order.
 * MR (Monotonic Reads): Subsequent reads (within the same thread, to the same cell) must
   continue to see data that is at least as new.
-* WFR (Writes Follow Reads): If a write follows a read within a thread, to the same
-  cell, then it has to be later in arbitration order (and visibility) than the write
-  that read read-from.
+* WFR (Writes Follow Reads): If a write follows a read within a thread, to the same cell,
+  then it has to be later in modification order than the write that read read-from.
 * MW (Monotonic Writes): Later writes (within a thread, to the same cell) have to be later
-  in arbitration (and visibility) order.
+  in modification order.
 
-WFR and MW have two variants, for arbitration and visibility; but this only matters for
-more complex data cells than integer registers.
+The original versions of WFR and MW have two variants, for arbitration and visibility; but
+this only matters for more complex data cells than integer registers.
 
-These properties capture common-sense notions of causality; it's what they leave
-out that's interesting. In particular, these definitions of causality are scoped to be
-within a thread/replica/session and a particular cell/object being written to; they are
-summarised in the Burckhardt paper as “per-object causal visibility” and “per-object
-causal arbitration”.
+These properties capture common-sense notions of causality; it's what they leave out
+that's interesting. In particular, under the weak memory analysis, these definitions of
+causality are scoped to be within a thread/replica/session and a particular cell/object
+being written to; [the Burckhardt et
+al. paper](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/)
+calls them “per-object causal visibility” and “per-object causal arbitration”, again in
+Figure 23.
 
 They do not at all restrict the behaviour of the system when separate threads are writing
 to separate cells.
 
-The cross-object causality axioms capture the impact of causal influence across different
-objects/memory cells.
+The cross-object causality axioms then capture the impact of causal influence across
+different objects/memory cells.
 
 * COCV (Cross Object Causal Visibility): This is RYW, without the restriction that the
   final read has to be in the same thread/replica/session. Reads from an object that are
-  causally later than a write to that object, via visibility/reads-from or events that are
-  ordered by happening in the same thread, must read data that is at least as new as the
-  write.
+  causally later than a write to that object, via visibility/reads-from or thread order,
+  must read data that is at least as new as the write.
 
-The C++11 specification captures these previous properties. Note that they have been
-defined such that the restriction of visibility to reads-from and arbitration to
-modification order don't effect their definitions much.
+The C++11 specification captures these properties. Note that they have been defined such
+that the restriction of visibility to reads-from and arbitration to modification order
+don't affect their definitions much.
 
-This is not true for the last property.
+That is not true for the last property.
 
 * COCA (Cross Object Causal Arbitration): This is Monotonic Writes but across different
-  threads/replicas/sessions, in the same way. However, since modification order only
-  orders writes per object, the weak memory version allows the system to inconsistently
-  order writes to different objects to reads-from and within-thread order.
+  threads, in the same way as COCV is RYW across different threads. However, since
+  modification order only orders writes per object, the weak memory version allows the
+  system to inconsistently order writes to different objects across reads-from and
+  within-thread order.
 
-Concretely, this amounts to an analysis of why this classic weak memory testcase can
-return `{x := 0, y := 0}`.
+Concretely, COCA being a much weaker property under weak memory is why this classic weak
+memory case can return `{x := 0, y := 0}`.
 
-    Initial State {x := 0, y := 0}
-    Thread A: x := 1; return y
-    Thread B: y := 1; return x
+> Thread A: y := 0; x := 1; return x
+> Thread B: x := 0; y := 1; return y
+
+The thread order within each thread is allowed to be inconsistent with the per-object
+ordering and modification order. Note that by RYW, it cannot be the case that `x := 0 →x
+:= 1` in modification order, and similarity for `y`, and so modification order must
+contain `x := 1 → x := 0` and `y := 1 → y := 0`. Thus, modification order clearly forms a
+cycle with thread order.
+
+This cycle is allowed by weak memory COCA. It’s not that thread order/reads-from
+contradict modification order; each thread sees a coherent history of writes. It’s just
+that those histories only agree with other threads’ histories when you scope them
+per-object.
 
 ### What Does This All Mean?
 
-Time is weird.
+Time is partial.
 
-Time is weird because time is ultimately our way of trying to keep track of what events
-had an influence on other events. And that turns out to be a surprisingly complicated
-concept!
+Even though time naturally feels like a total order, studying distributed systems or weak
+memory exposes you, head on, to how it isn’t. And that’s precisely _because_ these are
+both cases where our standard over-approximation of time being total limits
+performance—which we obviously can't have.
 
-Studying distributed systems or weak memory exposes you to this complexity head on,
-precisely _because_ these are both cases where the standard overapproximating answer of
-“everything that happened before it” are limiting performance. Which we obviously can't
-have.
+Then, after we accept that time is partial, there are many small but important
+distinctions between the various ways it can be partial. Even these two fields, which
+_look_ so much alike at first glance, have careful, subtle differences in what kinds of
+events they treat as impacting each other. We needed to dig into the technical definitions
+of various properties, _after_ someone else has already done the work of translating one
+field into another's language already.
 
-Even these two fields, which _look_ so much alike at first glance, have careful, subtle
-differences in what kinds of events they treat as impacting each other. We needed to dig
-into the technical definitions of various properties, _after_ someone else has already
-done the work of translating one field into another's language already.
-
-Time is weird. Maybe it's time we got used to it.
-
-
-[1] https://www.cl.cam.ac.uk/~pes20/weakmemory/
-[2] https://preshing.com/20120930/weak-vs-strong-memory-models/
-[3] https://arxiv.org/abs/1707.05923
-[4] https://arxiv.org/abs/1805.07886
-[5] http://www0.cs.ucl.ac.uk/staff/j.alglave/papers/aplas11.pdf
-[6] http://www.hboehm.info/c++mm/sc_proof.html
-[7] https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/
-
-[?] http://www.podc.org/dijkstra/2003.html or maybe the 1991 paper directly?
+Time is partial. Maybe it's time we got used to it.
