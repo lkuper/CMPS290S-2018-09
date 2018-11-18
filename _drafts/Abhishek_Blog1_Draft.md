@@ -35,7 +35,9 @@ There are a few merge strategies which we will go over to understand how conflic
 
 ### Operational Transformation
 
-[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique that was made popular by Google in its [Google Wave project](http://web.archive.org/web/20090923095705/http://www.waveprotocol.org/whitepapers/operational-transform). Much of the original papers and documentation has been removed from Google since Google Wave was discontinued but some documents are available via the [Wayback Machine.](https://web.archive.org/web/20111126052203/http://wave-protocol.googlecode.com/hg/whitepapers/operational-transform/operational-transform.html) Operational Transformation has also made into Google's [other products](https://developers.google.com/realtime/conflict-resolution) such as [Google Drive and Google Docs](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html). Operational Transformation is an algorithm where users keep track of operations performed on shared data as a means of keeping track of changes in the data. The original paper on Operational Transformation was published by [Sun and Ellis](http://dx.doi.org/10.1145/289444.289469).
+[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique which was first discussed in a 1989 paper called ["Concurrency control in groupware systems" by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The technique described in the paper was intended to allow systems to collaboratively edit a text file.
+
+Operational Transformation was made popular by Google in its [Google Wave project](http://web.archive.org/web/20090923095705/http://www.waveprotocol.org/whitepapers/operational-transform). Much of the original papers and documentation has been removed from Google since Google Wave was discontinued but some documents are available via the [Wayback Machine.](https://web.archive.org/web/20111126052203/http://wave-protocol.googlecode.com/hg/whitepapers/operational-transform/operational-transform.html) Operational Transformation has also made into Google's [other products](https://developers.google.com/realtime/conflict-resolution) such as [Google Drive and Google Docs](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html). Operational Transformation is an algorithm where users keep track of operations performed on shared data as a means of keeping track of changes in the data. The original paper on Operational Transformation was published by [Sun and Ellis](http://dx.doi.org/10.1145/289444.289469).
 
 To describe operational transformation in its most basic form, let’s say we have a document which is being edited by two users *A* and *B*. Each has a local copy of the document and a common data in the document. Let’s say the data string in the document is “*ABCDEFGH*”. Let’s call this initial string `T`, where `T = “ABCDEFGH”`. Users *A* and *B* have their own copies of the text `Ta` and `Tb` respectively. *A* makes a change to `Ta` where it now reads: `Ta=“ABCMDEFGH”`. This is done by the user *A* performing an `insert` operation at index  `3` of character `"M"` on the string `Ta`. Let's call this operation `OPa1 = Ta.insert(3,'M')`. Concurrently, *B* deletes a character in his copy of the text. Keeping similar notation, the operation *B* performs is `OPb1 = Tb.delete(2)` which results in the text `Tb = “ABDEFGH”`. Now in order to synchronize copies of the text from users *A* and *B*, the users share the operations that were performed by them on the text.
 
@@ -43,7 +45,7 @@ But merely sharing operations performed by both users and applying those operati
 
 #### Implementation of Operational Transformation
 
-A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
@@ -123,6 +125,8 @@ The important thing to note here is that each modification to the data is perfor
 1. There is no way to know if operation in #1 _happened before_ #2. It is assumed that LOCAL and REMOTE operations happen concurrently.
 2. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are seen. This imposes a partial order on the set of events occurring in the system.
 
+This implementation of Operational Transformation is not without issues and one of the main issues is visible from the discussion so far: this implementation cannot guarantee convergence to a consistent state across replicas during a long enough network partition. One factor that we overlook in this implementation is that of establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these are resolved in the next blog post.
+
 Now that expectations are set, we implement a simplified Operational Transformation Editor. The first part of the implementation deals with setting up data structures. We have two main operations: `INSERT` and `DELETE`. These operations can be done either locally or could be sent as part of a synchronization message from a remote user. Operations are tagged `LOCAL` if they are performed at on the "local" machine and tagged `REMOTE` if they are sent from a remote user. The operation is described by the struct `Op` which defines the structure of the operations which the editor (`OTEditor`) can process. The editor `OTEditor` itself has two fields: `Data`, which stores application data and `Ops`, which keeps a record of operations that have been processed by the `OTEditor`. `OTEditor.Ops` imposes a partial order on the operations.
 
 ```go
@@ -154,6 +158,7 @@ type OTEditor struct {
 }
 
 ```
+
 
 The `OTEditor` has several methods that help implement Operational Transformation. The `AppendOperation` method is called whenever a new operation is performed by the user (either remote or local). All operations are added to the `OTEditor.ops` slice (think of it as an array). The data is stored in `OTEditor.Data` field. When the `AppendOperation` is called the `OTEditor` performs a transformation as previously discussed to compute the new value of the index where the data has to be inserted or deleted. This transformation is performed in the `performTransformation` method.
 
@@ -239,9 +244,6 @@ func (c *OTEditor) performTransformation(op *Op) {
     }
 }
 ```
-
-This implementation of Operational Transformation is not without issues and one of the main issues is visible from the discussion so far: this implementation cannot guarantee convergence to a consistent state across replicas during a long enough network partition. One factor that we overlook in this implementation is that of establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these are resolved in the next blog post.
-
 
 ### What's in Part 2?
 
