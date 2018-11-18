@@ -47,11 +47,11 @@ The key insight from the above discussion is this: in order to correctly apply t
 
 #### Implementation of Operational Transformation
 
-_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
+_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where a program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
 
-A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963).
+The following implementation of Operational Transformation is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963).
 
-The following is an explanation of the implementation of Operational Transformation via a few test scenarios. Each test case shown below adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
+What follows is an explanation of the implementation of Operational Transformation via a few test scenarios. Each test case shown below adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
 
 1. Initially the data is `abcd` inserted locally and is sent over to the remote machine. The idea is that we start with a system where both local and remote users have the same data and are in a consistent state.
 2. A `y` is inserted next locally and the data becomes `yabcd`. This information is then sent to the remote server as well.
