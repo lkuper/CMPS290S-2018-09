@@ -45,7 +45,7 @@ But merely sharing operations performed by both users and applying those operati
 
 #### Implementation of Operational Transformation
 
-A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs]((http://doi.acm.org/10.1145/67544.66963)). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
