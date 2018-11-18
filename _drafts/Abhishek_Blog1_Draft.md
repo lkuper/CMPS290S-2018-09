@@ -43,7 +43,7 @@ To describe operational transformation in its most basic form, let’s say we ha
 
 But merely sharing operations performed by both users and applying those operations at their ends is not sufficient for the text to by synchronized. If **A** received `OPb1` and decided to delete index `2` at its end, the text would read `ABMDEFGH`. If **B** received `OPa1` and inserted `"M"` at `3`, the text `Tb` would read `ABDMEFGH`. Clearly, this is a problem. The solution is arrived at when both **A** and **B** take cognisance of the operations performed at their end and not just apply new operations on the results of previous operations.
 
-The key insight from the above discussion is this: in order to correctly apply the the operations that happened on 'remote' systems to data on 'local' systems there should be some function which can transform indices received from 'remote' operations to the exact index of 'local' data where the operation should be applied. Next, we will discuss a rudimentary implementation of such a transformation.
+The key insight from the above discussion is this: in order to correctly apply the the operations that happened on **B** to data on **A** there should be some function which can transform indices received from **B** to the exact index of data on **A** where the operation should be applied. Next, we will discuss a rudimentary implementation of such a transformation.
 
 #### Implementation of Operational Transformation
 
