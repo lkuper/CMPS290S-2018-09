@@ -81,22 +81,22 @@ func TestOTEditor_Transformation(t *testing.T) {
 		},
 	}
 
-	// Testcase #1
+	// Test case #1
 	fmt.Println("Test 1. remote insert 'x' at index 2")
 	ot.AppendOperation(INSERT, "x", 2, REMOTE)
 	assertEquals(ot.Data, "yaxbcd")
 
-	// Testcase #2
+	// Test case #2
 	fmt.Println("Test 2. remote delete char at index 1")
 	ot.AppendOperation(DELETE, "", 1, REMOTE)
 	assertEquals(ot.Data, "yxbcd")
 
-	// Testcase #3
+	// Test case #3
 	fmt.Println("Test 3. insert 'f' at index 1")
 	ot.AppendOperation(INSERT, "f", 1, LOCAL)
 	assertEquals(ot.Data, "yfxbcd")
 
-	// Testcase #4
+	// Test case #4
 	fmt.Println("Test 4. delete char at index 3")
 	ot.AppendOperation(DELETE, "", 3, REMOTE)
 	assertEquals(ot.Data, "yfxcd")
@@ -136,12 +136,31 @@ In the [paper](http://doi.acm.org/10.1145/67544.66963) a necessary condition (bu
 
 First, we understand when is a transformation required. In the above test cases we have two cases where transformation is not required. The first is seen when the `insert` operation inserts `abcd` and `y`. These are 'local' operations. Data consistency is ensured because the 'local' editor is ["_reading your writes_"](https://en.wikipedia.org/wiki/Consistency_model#Read-your-writes_Consistency). Similarly, test case #2 does not require any transformation because the last operation was also a 'remote' edit. Since there were no other edits performed locally the data is consistent with the previous write. This is a weak spot in this implementation. Since there are only two editors ('local' and 'remote') if the 'remote' made two edits (test case #1 and #2), the data is consistent at the remote system and once the edits are applied locally at the 'local' system as well. In both these cases there are no conflicts where a transformation function is needed.
 
-Second, we discuss what commutativity is and how it applies to our test cases. Given two operations _Oi_ and _Oj_ the transformation **T** generates the following transformations
-* _Oj'_ := **T** (_Oj_, _Oi_)
-* _Oi'_ := **T** (_Oi_, _Oj_)
+Second, we discuss what commutativity is and how it applies to our test cases. Given two operations _A_ and _B_ the transformation **T** generates the following transformations
+* _B'_ := **T** (_B_, _A_)
+* _A'_ := **T** (_A_, _B_)
 
-The transformation **T** is implemented such that **_Oj'_ `x` _Oi_ `=` _Oi'_ `x` _Oj_**. 
+The transformation **T** is implemented such that **_B_ `x` _A'_ `=` _A_ `x` _B'_**. Here the symbol `x` in the expression is used to refer to order of ooperation execution. For example operations `A` and `B`, `A x B` means _apply operation A then B_. The symbol `=` in `LHS = RHS` refers to the fact that data after application of `RHS` operations equals `LHS`. This transformation works in the test cases shown above. Let's first consider test case #1:
+* _A_ := `INSERT ("y", 0 )`, which happened before testcase #1.
+* _A'_ := `INSERT ("y", 0 )`, transformation is same as insertion as the operation before _A_ was local,
+* _B_ := `INSERT ("x", 2 )`, operation received from the 'remote' in test case #1,
+* _B'_ := `INSERT ("x", 3 )`, operation after the transformation.
+* Data at both 'remote' and 'local' systems before operations _A_ and _B_ is `abcd`.
+* **_B_ `x` _A'_** yields data `abxcd` and `yabxcd`.
+* **_A_ `x` _B'_** yields data `yabcd` and `yabxcd`.
+* Both sets of the operations lead to the same state after test case #1. So commutativity, as defined by us, holds.
 
+Updates in test cases #1, #2 and #3 are all conflict free and do not require transformation. Test case #4 does. To prove commutativity for operation in test case #4:
+* _A_ := `INSERT ("f", 1 )`, which happened before testcase #4.
+* _A'_ := `INSERT ("f", 1 )`, local operation, no transformation required,
+* _B_ := `DELETE ( 3 )`, operation received from the 'remote' in test case #1,
+* _B'_ := `DELETE ( 4 )`, operation after the transformation.
+* Data at both 'remote' and 'local' systems before operations _A_ and _B_ is `ybxcd`.
+* **_B_ `x` _A'_** yields data `ybxd` and `yfbxd`.
+* **_A_ `x` _B'_** yields data `yfbxcd` and `yfbxd`.
+* Again, both sets of the operations lead to the same state.
+
+The case of concurrent local and remote updates is the only case where conflict resolution is needed and therefore the cases discussed above ensure that the transformations produced are always commutative.
 
 Now that expectations are set, we implement a simplified Operational Transformation Editor. The first part of the implementation deals with setting up data structures. We have two main operations: `INSERT` and `DELETE`. These operations can be done either locally or could be sent as part of a synchronization message from a remote user. Operations are tagged `LOCAL` if they are performed at on the "local" machine and tagged `REMOTE` if they are sent from a remote user. The operation is described by the struct `Op` which defines the structure of the operations which the editor (`OTEditor`) can process. The editor `OTEditor` itself has two fields: `Data`, which stores application data and `Ops`, which keeps a record of operations that have been processed by the `OTEditor`. `OTEditor.Ops` imposes a partial order on the operations.
 
@@ -260,6 +279,8 @@ func (c *OTEditor) performTransformation(op *Op) {
 }
 ```
 
+The `performTransformation` in conjunction with `exec` methods ensures commutativity of the transformation function and thus, ensure that the two editors can collaboratively edit a document without any conflicts (albeit in a painfully long process). (Hey! but it works.)
+
 ### What's in Part 2?
 
-In the next blog we will discuss more ways of resolving conflicts especially as dealt with in version control systems such as [Git](https://git-scm.com/docs/merge-strategies). We will discuss Two-way, [Three-way](https://doi.org/10.1145/3276535) and the generalized k-way merge. We will also look at some [new kinds](https://pijul.org/model/#why-care-about-patch-theory) of version control systems which use [Patch theory](https://doi.org/10.1016/j.entcs.2013.09.018) and [semantic merge](https://daedtech.com/merging-done-right-semantic-merge/).
+In the next blog we will discuss more ways of resolving conflicts especially where there are multiple people involved as dealt with in version control systems such as [Git](https://git-scm.com/docs/merge-strategies). We will discuss Two-way, [Three-way](https://doi.org/10.1145/3276535) and the generalized k-way merge. We will also look at some [new kinds](https://pijul.org/model/#why-care-about-patch-theory) of version control systems which use [Patch theory](https://doi.org/10.1016/j.entcs.2013.09.018) and [semantic merge](https://daedtech.com/merging-done-right-semantic-merge/).
