@@ -1,7 +1,7 @@
 # "Hands off my code!" OR conflict resolution algorithms in collaborative work tools (Part 1 of 2)
 
 ## Introduction
-<div style="text-align: justify">
+
 The main idea I would like to discuss in this blog post is: what are conflicts in collaborative work and how do we resolve these conflicts. We will look into collaborative work tools such as collaborative text editors, version control systems, etc., and try to understand the features that such tools provide their users. We will focus mainly on problems that such tools have to solve to allow multiple users using these tools to build stuff collaboratively.
 
 Anyone who has used a version control system or worked in a collaborative setting knows all too well the problems which arise when there are conflicts between replicas of a document people have been editing.
@@ -249,4 +249,3 @@ func (c *OTEditor) performTransformation(op *Op) {
 ### What's in Part 2?
 
 In the next blog we will discuss more ways of resolving conflicts especially as dealt with in version control systems such as [Git](https://git-scm.com/docs/merge-strategies). We will discuss Two-way, [Three-way](https://doi.org/10.1145/3276535) and the generalized k-way merge. We will also look at some [new kinds](https://pijul.org/model/#why-care-about-patch-theory) of version control systems which use [Patch theory](https://doi.org/10.1016/j.entcs.2013.09.018) and [semantic merge](https://daedtech.com/merging-done-right-semantic-merge/).
-</div>
