@@ -89,7 +89,7 @@ You can see how this would get confusing.  What can we do about it?
 In [his 2014
 book](https://www.microsoft.com/en-us/research/publication/principles-of-eventual-consistency/),
 Sebastian Burckhardt attempts to comprehensively characterise the behaviour of the many
-kinds of consistency models.  The framework they develop describes, among other
+kinds of consistency models.  This characterisation involves, among other
 mathematical structures, two logical orderings of events, “visibility" and
 “arbitration"—which also appeared previously in Burckhardt and his co-authors' [2014 POPL
 paper on specifying and verifying replicated data
