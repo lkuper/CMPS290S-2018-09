@@ -1,4 +1,4 @@
-# "Hands off my code!" OR conflict resolution algorithms in collaborative work tools (Part 1 of 2)
+# "Hey! Watch it!" OR conflict resolution collaborative editors (Part 1 of 2)
 
 ## Introduction
 
@@ -47,8 +47,27 @@ But merely sharing operations performed by both users and applying those operati
 
 _NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
 
-A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963).
 
+The following is an explanation of the implementation of Operational Transformation via a few test scenarios. Each test case shown below adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
+
+1. Initially the data is `abcd` inserted locally and is sent over to the remote machine. The idea is that we start with a system where both local and remote users have the same data and are in a consistent state.
+2. A `y` is inserted next locally and the data becomes `yabcd`. This information is then sent to the remote server as well.
+3. Concurrently the remote user adds `x` at index `2` to it's copy which is `abcd` and sends this operation to be synced with the local copy. The local data is modified to `yabxcd`.
+4. At this point the remote user should also have seen the insert from step `2` and updated its copy of the data. So both user and remote data should be `yabxcd`.
+5. The remote user then deletes the character at index `1` from its copy of the data which was `yabxcd`. The data becomes `ybxcd`. When this operation is received by the local system, data is updated to `ybxcd`.
+6. The local user then inserts `f` at index `1` to its local copy of data which is `ybxcd`. The data is now `yfbxcd`.
+7. The remote user concurrently deletes the character at index `3` of its local data which is `ybxcd`. The remote user's data becomes `ybxd`. This operation is received by the local system which deletes the character `c` from its index `4` with the data finally becoming `yfbxd`.
+8. The remote system will also update its data when it receives the insert operation of character `f` at index `1` from the local system. When the operation is applied by the remote system its data will be modified from `ybxd` to `yfbxd`. Thus both local and remote users will converge to the same state.
+9. It should be noted the index used in the remote operation need not always correspond to the same index in the local data. This is where Operational Transformation is used. The main idea behind Operational Transformation is, therefore, to understand in what cases transformation will have to be applied to convert indices to correct values.
+
+The important thing to note here is that each modification to the data is performed as a series of operations. There are a few assumptions made in this implementation which are important to point out:
+
+1. Operation messages from 'remote' sites are received exactly once.
+2. The implementation does not use clocks to timestamp operations. So there is no way to know if an operation **O1** _happened before_ **O2**. It is assumed that LOCAL and REMOTE operations happen concurrently.
+3. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are executed at the 'local' site. In our implementation the executed operations are stored in a list `OTEditor.Ops`. This imposes a partial order on the set of events occurring in the system.
+
+This implementation of Operational Transformation is not without issues and one of the main issues is visible from the discussion so far: this implementation cannot guarantee convergence to a consistent state across replicas during a long enough network partition. One factor that we overlook in this implementation is that of establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these are resolved in the next blog post.
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
@@ -80,18 +99,6 @@ func TestOTEditor_Transformation(t *testing.T) {
 }
 ```
 
-Each test case shown above adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
-
-1. Initially the data is `abcd` inserted locally and is sent over to the remote machine (not shown). The idea is that we start with a system where both local and remote users have the same data and are in a consistent state.
-2. A `y` is inserted next locally and the data becomes `yabcd`. This information is then sent to the remote server as well (code not shown).
-3. Concurrently the remote user adds `x` at index `2` to it's copy which is `abcd` and sends this operation to be synced with the local copy. The local data is modified to `yabxcd`.
-4. At this point the remote user should also have seen the insert from step `2` and updated its copy of the data. So both user and remote data should be `yabxcd`.
-5. The remote user then deletes the character at index `1` from its copy of the data which was `yabxcd`. The data becomes `ybxcd`. When this operation is received by the local system, data is updated to `ybxcd`.
-6. The local user then inserts `f` at index `1` to its local copy of data which is `ybxcd`. The data is now `yfbxcd`.
-7. The remote user concurrently deletes the character at index `3` of its local data which is `ybxcd`. The remote user's data becomes `ybxd`. This operation is received by the local system which deletes the character `c` from its index `4` with the data finally becoming `yfbxd`.
-8. The remote system will also update its data when it receives the insert operation of character `f` at index `1` from the local system. When the operation is applied by the remote system its data will be modified from `ybxd` to `yfbxd`. Thus both local and remote users will converge to the same state.
-9. It should be noted the index used in the remote operation need not always correspond to the same index in the local data. This is where Operational Transformation is used. The main idea behind Operational Transformation is, therefore, to understand in what cases transformation will have to be applied to convert indices to correct values.
-
 Based on the above test cases and discussion, the following outputs is seen:
 
 ```go
@@ -120,13 +127,6 @@ Test 4. remote delete char at index 3
 2018/11/12 15:15:46 Current value of data: {yfbxd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2 '' 1 1} {1 f 1 0} {2 '' 4 1}]}
 
 ```
-
-The important thing to note here is that each modification to the data is performed as a series of operations. There are a few assumptions made in the test cases shown above which are important to point out:
-
-1. There is no way to know if operation in #1 _happened before_ #2. It is assumed that LOCAL and REMOTE operations happen concurrently.
-2. Ordering of the operations is implicit in the test cases. (Testcase #1 is processed before testcase #2.) Operations are processed in the order in which they are seen. This imposes a partial order on the set of events occurring in the system.
-
-This implementation of Operational Transformation is not without issues and one of the main issues is visible from the discussion so far: this implementation cannot guarantee convergence to a consistent state across replicas during a long enough network partition. One factor that we overlook in this implementation is that of establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these are resolved in the next blog post.
 
 Now that expectations are set, we implement a simplified Operational Transformation Editor. The first part of the implementation deals with setting up data structures. We have two main operations: `INSERT` and `DELETE`. These operations can be done either locally or could be sent as part of a synchronization message from a remote user. Operations are tagged `LOCAL` if they are performed at on the "local" machine and tagged `REMOTE` if they are sent from a remote user. The operation is described by the struct `Op` which defines the structure of the operations which the editor (`OTEditor`) can process. The editor `OTEditor` itself has two fields: `Data`, which stores application data and `Ops`, which keeps a record of operations that have been processed by the `OTEditor`. `OTEditor.Ops` imposes a partial order on the operations.
 
