@@ -35,7 +35,7 @@ There are a few merge strategies which we will go over to understand how conflic
 
 ### Operational Transformation
 
-[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique which was first discussed in a 1989 paper called ["Concurrency control in groupware systems" by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The technique described in the paper was intended to allow systems to collaboratively perform a task.
+[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique which was first discussed in a 1989 paper called ["Concurrency control in groupware systems" by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The technique described in the paper was intended to allow systems to collaboratively edit a text file.
 
 Operational Transformation was made popular by Google in its [Google Wave project](http://web.archive.org/web/20090923095705/http://www.waveprotocol.org/whitepapers/operational-transform). Much of the original papers and documentation has been removed from Google since Google Wave was discontinued but some documents are available via the [Wayback Machine.](https://web.archive.org/web/20111126052203/http://wave-protocol.googlecode.com/hg/whitepapers/operational-transform/operational-transform.html) Operational Transformation has also made into Google's [other products](https://developers.google.com/realtime/conflict-resolution) such as [Google Drive and Google Docs](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html). Operational Transformation is an algorithm where users keep track of operations performed on shared data as a means of keeping track of changes in the data. The original paper on Operational Transformation was published by [Sun and Ellis](http://dx.doi.org/10.1145/289444.289469).
 
@@ -45,7 +45,7 @@ But merely sharing operations performed by both users and applying those operati
 
 #### Implementation of Operational Transformation
 
-A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs]((http://doi.acm.org/10.1145/67544.66963)). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
