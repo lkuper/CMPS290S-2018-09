@@ -87,7 +87,7 @@ You can see how this would get confusing.  What can we do about it?
 ## Describing Time With Anywhere Between Two And Eight Partial Orders
 
 In [his 2014
-book(https://www.microsoft.com/en-us/research/publication/principles-of-eventual-consistency/),
+book](https://www.microsoft.com/en-us/research/publication/principles-of-eventual-consistency/),
 Sebastian Burckhardt attempts to comprehensively characterise the behaviour of the many
 kinds of consistency models.  The framework they develop describes, among other
 mathematical structures, two logical orderings of events, “visibility" and
