@@ -117,13 +117,13 @@ The first step is to specialise visibility and arbitration into "reads-from" and
 to reads on the same object, and only ever allows a read to have visibility of exactly
 zero or one writes.
 
-This corresponds to the fact that there only ever a single actual memory cell being
-written to in a shared memory processor, for any given object, even if threads may access
-it at different points in causality. In a distributed system, a logical object can be
-written to at many separate replicas.
+This corresponds to the fact that there's only ever a single actual memory cell being
+written to in a shared-memory processor, for any given object, even if threads may access
+it at different points in causality.  (In a distributed system, on the other hand, a logical object can be
+written to at many separate replicas.)
 
 "Modification order" takes the same step in specialising arbitration, by being per-object
-and only ordering writes. This is, again, a specialisation borne from the fact that the
+and only ordering writes. This is, again, a specialisation borne of the fact that the
 weak memory specification only makes strong guarantees per-object.
 
 The next step is to consider the consistency axioms that Burckhardt et al. define, and see
