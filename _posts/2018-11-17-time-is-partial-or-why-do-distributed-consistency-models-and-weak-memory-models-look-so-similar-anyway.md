@@ -8,8 +8,7 @@ classes: wide
 by Sohum Banerjea ⋅ edited by Aldrin Montana and Lindsey Kuper
 
 > There's only one hard problem in computer science: recognising that cache invalidation
-> errors are misnamed. They're just off-by-one errors in the time domain.
-
+> errors are misnamed. They're just off-by-one errors in the time domain.<br />
 > -- Unknown
 
 Time is weird.
@@ -216,11 +215,11 @@ That is not true for the last property.
 Concretely, COCA being a much weaker property under weak memory is why this classic weak
 memory case can return `{x := 0, y := 0}`.
 
-> Thread A: y := 0; x := 1; return x
+> Thread A: y := 0; x := 1; return x<br />
 > Thread B: x := 0; y := 1; return y
 
 The thread order within each thread is allowed to be inconsistent with the per-object
-ordering and modification order. Note that by RYW, it cannot be the case that `x := 0 →x
+ordering and modification order. Note that by RYW, it cannot be the case that `x := 0 → x
 := 1` in modification order, and similarity for `y`, and so modification order must
 contain `x := 1 → x := 0` and `y := 1 → y := 0`. Thus, modification order clearly forms a
 cycle with thread order.
