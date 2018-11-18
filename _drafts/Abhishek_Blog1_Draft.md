@@ -1,7 +1,7 @@
 # "Hands off my code!" OR conflict resolution algorithms in collaborative work tools (Part 1 of 2)
 
 ## Introduction
-
+<div style="text-align: justify">
 The main idea I would like to discuss in this blog post is: what are conflicts in collaborative work and how do we resolve these conflicts. We will look into collaborative work tools such as collaborative text editors, version control systems, etc., and try to understand the features that such tools provide their users. We will focus mainly on problems that such tools have to solve to allow multiple users using these tools to build stuff collaboratively.
 
 Anyone who has used a version control system or worked in a collaborative setting knows all too well the problems which arise when there are conflicts between replicas of a document people have been editing.
@@ -35,7 +35,7 @@ In part 1 of this post we will look at Operational Transformation: an algorithm 
 
 ### Operational Transformation
 
-[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique which was first discussed in a 1989 paper called ["Concurrency control in groupware systems" by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The technique described in the paper was intended to allow systems to collaboratively perform a common task. An important consideration when trying to understand collaborative work in general is the notion of what an operation is and what does it mean when we say operation _x_ happened before operation _y_. Additionally, it is one thing to say that _x_ happened before _y_ and another to say that _x caused y_. One of the aims of operational transformation was to recognize these cases and differentiate between them.
+[Operational Transformation](https://en.wikipedia.org/wiki/Operational_transformation) is a technique which was first discussed in a 1989 paper called ["Concurrency control in groupware systems" by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The technique described in the paper was intended to allow systems to collaboratively perform a common task. An important consideration when trying to understand collaborative work in general is the notion of what an operation is and what does it mean when we say operation _x_ happened before operation _y_. Additionally, it is one thing to say that _x_ happened before _y_ and another to say that _x caused y_. One of the aims of operational transformation is to recognize these cases and differentiate between them.
 
 Operational Transformation was made popular by Google in its [Google Wave project](http://web.archive.org/web/20090923095705/http://www.waveprotocol.org/whitepapers/operational-transform). Much of the original papers and documentation has been removed from Google since Google Wave was discontinued but some documents are available via the [Wayback Machine.](https://web.archive.org/web/20111126052203/http://wave-protocol.googlecode.com/hg/whitepapers/operational-transform/operational-transform.html) Operational Transformation has also made into Google's [other products](https://developers.google.com/realtime/conflict-resolution) such as [Google Drive and Google Docs](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html). Operational Transformation is an algorithm where users keep track of operations performed on shared data as a means of keeping track of changes in the data. A more elaborate discussion of Operational Transformation was published by [Sun and Ellis](http://dx.doi.org/10.1145/289444.289469).
 
@@ -45,7 +45,10 @@ But merely sharing operations performed by both users and applying those operati
 
 #### Implementation of Operational Transformation
 
+_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
+
 A rudimentary implementation of Operational Transformation was done for the blog and is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963). The following is an explanation of the implementation of Operational Transformation via Test cases. First we look at the test cases.
+
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
@@ -76,8 +79,6 @@ func TestOTEditor_Transformation(t *testing.T) {
 	assertEquals(ot.Data, "yfxcd")
 }
 ```
-
-_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where the above program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
 
 Each test case shown above adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. The following operations are performed on the data:
 
@@ -248,3 +249,4 @@ func (c *OTEditor) performTransformation(op *Op) {
 ### What's in Part 2?
 
 In the next blog we will discuss more ways of resolving conflicts especially as dealt with in version control systems such as [Git](https://git-scm.com/docs/merge-strategies). We will discuss Two-way, [Three-way](https://doi.org/10.1145/3276535) and the generalized k-way merge. We will also look at some [new kinds](https://pijul.org/model/#why-care-about-patch-theory) of version control systems which use [Patch theory](https://doi.org/10.1016/j.entcs.2013.09.018) and [semantic merge](https://daedtech.com/merging-done-right-semantic-merge/).
+</div>
