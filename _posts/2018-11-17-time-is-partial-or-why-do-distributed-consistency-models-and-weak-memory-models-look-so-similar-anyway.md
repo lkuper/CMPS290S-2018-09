@@ -1,5 +1,5 @@
 ---
-title: Time is Partial, or: why do distributed consistency models and weak memory models look so similar, anyway?
+title: "Time is Partial, or: why do distributed consistency models and weak memory models look so similar, anyway?"
 author: Sohum Banerjea
 layout: single
 classes: wide
