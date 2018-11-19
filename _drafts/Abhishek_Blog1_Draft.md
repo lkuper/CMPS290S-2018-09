@@ -36,7 +36,7 @@ The discussion of the dOPT implementation is driven via a set of test cases. The
 <p align="center">
 <img src="Abhishek_test_operations.png" height="600" width="450"></img>
 </p>
-<p align="center">Figure 2. Operations received by Alice and Bob are transformed before being applied to local data.</p>
+<h5 align="center">Figure 2. Operations received by Alice and Bob are transformed before being applied to local data.</h5>
 
 
 
