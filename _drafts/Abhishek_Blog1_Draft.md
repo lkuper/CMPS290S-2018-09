@@ -1,14 +1,18 @@
-# Conflict resolution in collaborative tools : Text editing and Operation Transformation (Part 1 of 2)
+---
+title: Conflict resolution in collaborative tools, part 1 of 2: Text editing and Operational Transformation
+author: Abhishek Singh
+layout: single
+classes: wide
+---
+
+by Abhishek Singh &middot; edited by Austen Barker and Lindsey Kuper
+
 
 ## Introduction
 
 Anyone who has used a version control system or collaboratively edited a document knows all too well the problems that arise when versions of a document conflict.
 
-What are these conflicts? Well it all starts very innocuously when - the protagonists of recurring CS tales - Alice and Bob decide to collaborate on a document. Alice creates a new document, shares it with Bob, and starts editing. Meanwhile,  Bob edits his copy.
-
-If Alice and Bob's respective copies of the document magically synchronized with each other with zero latency, collaborative text editing would be easy.  But if there is any latency between Alice and Bob --- perhaps due to a [network partition](https://en.wikipedia.org/wiki/Network_partition) --- then their copies of the document may diverge, leading to a conflict that must eventually be resolved. If Alice and Bob had been writing on paper, they would have to manually create a unified document incorporating both their changes. [Collaborative software](https://en.wikipedia.org/wiki/Collaborative_software) --- encompassing both real-time collaborative editing tools such as Google Docs, and version control systems such as Git, Mercurial, and Subversion ---  aims to automate as much of this conflict resolution process as possible.
-
-In order to automate conflict resolution, algorithm designers need to ensure correctness of their alogrithms when faced with issues that arise in message delivery. In part 1 of this post we will look at Operational Transformation: an algorithm which was designed to allow collaborative executions of tasks.
+Suppose Alice and Bob decide to collaborate on a document. Alice creates a new document, shares it with Bob, and starts editing. Meanwhile,  Bob edits his copy. If Alice and Bob's respective copies of the document magically synchronized with each other with zero latency, collaborative text editing would be easy.  But if there is any latency between Alice and Bob --- perhaps due to a [network partition](https://en.wikipedia.org/wiki/Network_partition) --- then their copies of the document may diverge, leading to a conflict that must eventually be resolved. If Alice and Bob had been writing on paper, they would have to manually create a unified document incorporating both their changes. [Collaborative software](https://en.wikipedia.org/wiki/Collaborative_software) --- encompassing both real-time collaborative editing tools such as Google Docs, and version control systems such as Git, Mercurial, and Subversion ---  aims to automate as much of this conflict resolution process as possible.
 
 ## Operational Transformation
 
@@ -31,7 +35,7 @@ In the figure shown above any changes that either Alice or Bob make to their cop
 
 As part of writing this blog post I wrote a simple program and a set of test cases which showcase dOPT. The code is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963).
 
-The discussion of the dOPT implementation is driven via a set of test cases. The test cases are implemented based on the figure shown below. At the end of each synchronization step the data must be consistent on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. Operations performed at both user ends are shown in the following figure:
+To see what the code does, let's begin by walking through an example shown in the figure below. Alice and Bob have a shared document that both start editing. At the end of each edit the edit operation performed is sent to the other. When a message is received the indices are recomputed based on some criteria and the correct operation is executed. At the end of each synchronization step the data must be consistent on both local and remote users' ends. Each operation moves the editing process forward.
 
 <p align="center">
 <img src="Abhishek_test_operations.png" height="600" width="450"></img>
@@ -40,7 +44,7 @@ The discussion of the dOPT implementation is driven via a set of test cases. The
 
 
 
-This implementation is not without faults and there are a few assumptions made which need to be pointed out:
+Based on the figure above we create a set of test cases which will be the basis of further discussion of the process. In the implementation I make a few assumptions that differ from the dOPT algorithm mentioned in the paper:
 
 1. Operation messages from either sites are received exactly once.
 2. There are exactly 2 editors in the system: one at Alice's end and the other at Bob's end.
@@ -49,60 +53,65 @@ This implementation is not without faults and there are a few assumptions made w
 5. Unlike the implementation in the [paper](http://doi.acm.org/10.1145/67544.66963), we do not assign priorities to an operation. Every operation has equal priority.
 6. An operation is sent to others immediately after it was executed at one particular site. There are no out-of-order delivery of messages in the system.
 
-One of the main issues in this implementation is that we overlook establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. Suppose Bob performs two operations _Op1_ and _Op2_ and _Op2_ reaches Alice before _Op2_, this would immediately cause data consistency in my implementation of dOPT since the transformation depends on the l We will explore how these issues affect systems and how these are resolved in the next blog post.
+One of the main issues in this implementation is that we overlook establishing causality between a set of operations. There is an implicit _happens before_ relationship established by the order in which operations are stored in the `OTEditor.Ops` list. This can easily be broken by packets that arrive out of order leading to data inconsistency. Suppose Bob performs two operations _Op1_ and _Op2_ and _Op2_ reaches Alice before _Op2_, this would immediately cause data consistency in my implementation of dOPT since the transformation depends on the previous operation to compute the new indices.
+
+The code below shows test cases based on the operations performed in Figure 2. The comments in the program identify the operations and the generator of the operations.
 
 ```go
 func TestOTEditor_Transformation(t *testing.T) {
-	ot := OTEditor { Data: "yabcd", Ops: []Op{
-		{Data: "abcd", Index: 0, Location: LOCAL, Op: INSERT},
-		{Data: "y", Index: 0, Location: LOCAL, Op: INSERT},
-		},
-	}
+    ot := OTEditor { Data: "yabcd", Ops: []Op{
 
-	// Test case #1
-	fmt.Println("Test 1. remote insert 'x' at index 2")
-	ot.AppendOperation(INSERT, "x", 2, REMOTE)
-	assertEquals(ot.Data, "yaxbcd")
+        // OPERATION #1 : ALICE
+        {Data: "abcd", Index: 0, Location: LOCAL, Op: INSERT},
 
-	// Test case #2
-	fmt.Println("Test 2. remote delete char at index 1")
-	ot.AppendOperation(DELETE, "", 1, REMOTE)
-	assertEquals(ot.Data, "yxbcd")
+        // OPERATION #2 : ALICE
+        {Data: "y", Index: 0, Location: LOCAL, Op: INSERT},
+        },
+    }
 
-	// Test case #3
-	fmt.Println("Test 3. insert 'f' at index 1")
-	ot.AppendOperation(INSERT, "f", 1, LOCAL)
-	assertEquals(ot.Data, "yfxbcd")
+    // OPERATION #3 : BOB
+    fmt.Println("Operation 3. BOB (remote) insert 'x' at index 2")
+    ot.AppendOperation(INSERT, "x", 2, REMOTE)
+    assertEquals(ot.Data, "yabxcd")
 
-	// Test case #4
-	fmt.Println("Test 4. delete char at index 3")
-	ot.AppendOperation(DELETE, "", 3, REMOTE)
-	assertEquals(ot.Data, "yfxcd")
+    // OPERATION #4 : BOB
+    fmt.Println("Operation 4. BOB (remote) delete char at index 1")
+    ot.AppendOperation(DELETE, "", 1, REMOTE)
+    assertEquals(ot.Data, "ybxcd")
+
+    // OPERATION #5 : ALICE
+    fmt.Println("Operation 5. ALICE (local) insert 'f' at index 1")
+    ot.AppendOperation(INSERT, "f", 1, LOCAL)
+    assertEquals(ot.Data, "yfbxcd")
+
+    // OPERATION #6 : BOB
+    fmt.Println("Operation 6. BOB (remote) delete char at index 3")
+    ot.AppendOperation(DELETE, "", 3, REMOTE)
+    assertEquals(ot.Data, "yfbxd")
 }
 ```
-
-Based on the above test cases and discussion, the following outputs is seen:
+In the above code, an `OTEditor` is represented by a `Data` string and a list of operations, `Ops`, that have taken place on it.  There are two supported operations: `INSERT` and `DELETE`.  `LOCAL` and `REMOTE` are constants distinguishing two operation locations; `LOCAL` operations should be thought of as being performed on a local copy of the data, while `REMOTE` operations should be thought of as being performed by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each operation execution, data at both Alice and Bob's end is synchronized and is in a consistent state. This is seen in the outputs of the test case:
 
 ```go
-Test 1. remote insert 'x' at index 2
+Operation 3. BOB (remote) insert 'x' at index 2
 2018/11/12 15:15:46 Existing Data: {yabcd [{1 abcd 0 0} {1 y 0 0}]}
 2018/11/12 15:15:46 New Operation received: {1 x 2 1}
 2018/11/12 15:15:46 Executing new operation: {1 x 2 1}, current data: yabcd
 2018/11/12 15:15:46 Current value of data: {yabxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1}]}
 
-Test 2. remote delete char at index 1
+Operation 4. BOB (remote) delete char at index 1
 2018/11/12 15:15:46 Existing Data: {yabxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1}]}
 2018/11/12 15:15:46 New Operation received: {2 '' 1 1}
 2018/11/12 15:15:46 Executing new operation: {2 '' 1 1}, current data: yabxcd
 2018/11/12 15:15:46 Current value of data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2 '' 1 1}]}
 
-Test 3. insert 'f' at index 1
+Operation 5. ALICE (local) insert 'f' at index 1
 2018/11/12 15:15:46 Existing Data: {ybxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1}]}
 2018/11/12 15:15:46 New Operation received: {1 f 1 0}
 2018/11/12 15:15:46 Executing new operation: {1 f 1 0}, current data: ybxcd
 2018/11/12 15:15:46 Current value of data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
 
-Test 4. remote delete char at index 3
+Operation 6. BOB (remote) delete char at index 3
 2018/11/12 15:15:46 Existing Data: {yfbxcd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2  1 1} {1 f 1 0}]}
 2018/11/12 15:15:46 New Operation received: {2 '' 3 1}
 2018/11/12 15:15:46 Executing new operation: {2 '' 3 1}, current data: yfbxcd
