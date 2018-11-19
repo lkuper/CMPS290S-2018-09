@@ -33,7 +33,7 @@ The following implementation of Operational Transformation is available [here](h
 What follows is an explanation of the implementation of Operational Transformation via a few test scenarios. Each test case shown below adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. Operations performed at both user ends are shown in the following figure:
 
 <p align="center">
-<img src="Abhishek_test_operations.png" height="200" width="150"></img>
+<img src="Abhishek_test_operations.png" height="400" width="300"></img>
 </p>
 
  The following operations are performed on the data:
