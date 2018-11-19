@@ -1,4 +1,4 @@
-# [Title]
+# [Cassandra's **TRUE** Consistency Model]
 ## Introduction
 <p align="justify" markdown="1">
 Today, all popular NoSQL databases like Cassandra, MongoDB or HBase claim to provide eventual consistency by offering tunable consistency. Reading this, the next question that comes to my mind is, What is consistency? In distributed systems, consistency defines rules for ordering and visibility of operations to multiple replicas regarding all the nodes in the cluster. For example, if row X is replicated on two replicas R1 and R2, client A writes row X to R1 and after a time period t, B reads row X from node R2. Then, the consistency model has to determine whether client B sees the write from client A or not.</p>
@@ -422,6 +422,8 @@ But the current implementation ignores the value already accepted by some accept
 </p>
 
 ## References
+
+1. [Link](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dmlAboutDataConsistency.html)
 
 
 
