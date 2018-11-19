@@ -18,17 +18,17 @@ Operational Transformation was popularized by Google in its [Google Wave project
 
 The Google Wave project itself was based on the [Jupiter collaboration system](https://dl.acm.org/citation.cfm?doid=215585.215706). Jupiter collaboration system was aimed towards simplifying the algorithm created by Ellis and Gibbs by creating a centralized architecture as opposed to the free range collaborative system that Ellis and Gibbs drew out in their paper. In our discussion we deal with decentralized idea as presented in the paper by Ellis and Gibbs. To be specific, we look at the Distributed Operational Transformation (dOPT) algorithm and its use in the GROVE editor in the [1989 paper](http://doi.acm.org/10.1145/67544.66963).
 
-To describe the problem in in its most basic form, let’s say we have a document which is being edited by two users **Alice** and **Bob**. Each has a local copy of the document and a common data in the document. Let’s say the data string in the document is “*ABCDEFGH*”. Let’s call this initial string `T`, where `T = “ABCDEFGH”`. Users **Alice** and **Bob** have their own copies of the text `Ta` and `Tb` respectively. **Alice** makes a change to `Ta` where it now reads: `Ta=“ABCMDEFGH”`. This is done by the user **Alice** performing an `insert` operation at index  `3` of character `"M"` on the string `Ta`. Let's call this operation `OPa1 = Ta.insert(3,'M')`. Concurrently, **Bob** deletes a character in his copy of the text. Keeping similar notation, the operation **Bob** performs is `OPb1 = Tb.delete(2)` which results in the text `Tb = “ABDEFGH”`. Now in order to synchronize copies of the text from users **Alice** and **Bob**, the users share the operations that were performed by them on the text.
+To describe the problem in in its most basic form, let’s say we have a document which is being edited by two users **Alice** and **Bob**. Alice creates a local copy of the document and shares it with Bob. She then starts editing the document and these changes are shared with Bob as shown in the figure below.
 
-But merely sharing operations performed by both users and applying those operations at their ends is not sufficient for the text to by synchronized. If **Alice** received `OPb1` and decided to delete index `2` at its end, the text would read `ABMDEFGH`. If **Bob** received `OPa1` and inserted `"M"` at `3`, the text `Tb` would read `ABDMEFGH`. Clearly, this is a problem. The solution is arrived at when both **Alice** and **B** take cognisance of the operations performed at their end and not just apply new operations on the results of previous operations.
+<p align="center">
+<img src="Abhishek_test_operations_inconsistent.png" height="600" width="450"></img>
+</p>
 
-The key insight from the above discussion is this: in order to correctly apply the the operations that happened on **Bob** to data on **Alice** there should be some function which can transform indices received from **Bob** to the exact index of data on **Alice** where the operation should be applied. Next, we will discuss a rudimentary implementation of such a transformation.
+In the figure below any changes that either Alice or Bob make to their copy of the document is sent over to the other as an operation message. The problem is that neither user applies the operation to their local data with any consideration of how the other user applied the operation at their end. This leads to data inconsistencies. Some mechanism should be devised for Alice to correctly apply the the operations that Bob did on his data and vice-versa. A function is required which can transform the operation and indices received from Bob to the exact index of data on Alice's end. Next, we will discuss a rudimentary implementation of such a transformation.
 
-## An example of collaborative editing using dOPT
+## An example of collaborative editing using distributed operational transformation (dOPT)
 
-_NOTE_: A word on terminology before we begin the discussion. The word 'local' is used below to denote where a program is executing: the 'local' machine or system. The word 'remote' is used to denote a remote machine where a 'remote' user may be working and making changes to their own copy of the data.
-
-The following implementation of Operational Transformation is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963).
+The following implementation of dOPT is available [here](https://bitbucket.org/alfredd/collabalgos). The implementation follows the algorithm roughly as stated in the [1989 paper by Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963).
 
 What follows is an explanation of the implementation of Operational Transformation via a few test scenarios. Each test case shown below adds an operation performed either locally on the data or by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each synchronization step the data must be the same data on both local and remote users' ends. Each test case moves the editing process forward via a set of operations that are performed on the data. Operations performed at both user ends are shown in the following figure:
 
@@ -36,17 +36,6 @@ What follows is an explanation of the implementation of Operational Transformati
 <img src="Abhishek_test_operations.png" height="600" width="450"></img>
 </p>
 
- The following operations are performed on the data:
-
-1. Initially the data is `abcd` inserted locally and is sent over to the remote machine. The idea is that we start with a system where both local and remote users have the same data and are in a consistent state.
-2. A `y` is inserted next locally and the data becomes `yabcd`. This information is then sent to the remote server as well.
-3. Concurrently the remote user adds `x` at index `2` to it's copy which is `abcd` and sends this operation to be synced with the local copy. The local data is modified to `yabxcd`.
-4. At this point the remote user should also have seen the insert from step `2` and updated its copy of the data. So both user and remote data should be `yabxcd`.
-5. The remote user then deletes the character at index `1` from its copy of the data which was `yabxcd`. The data becomes `ybxcd`. When this operation is received by the local system, data is updated to `ybxcd`.
-6. The local user then inserts `f` at index `1` to its local copy of data which is `ybxcd`. The data is now `yfbxcd`.
-7. The remote user concurrently deletes the character at index `3` of its local data which is `ybxcd`. The remote user's data becomes `ybxd`. This operation is received by the local system which deletes the character `c` from its index `4` with the data finally becoming `yfbxd`.
-8. The remote system will also update its data when it receives the insert operation of character `f` at index `1` from the local system. When the operation is applied by the remote system its data will be modified from `ybxd` to `yfbxd`. Thus both local and remote users will converge to the same state.
-9. It should be noted the index used in the remote operation need not always correspond to the same index in the local data. This is where Operational Transformation is used. The main idea behind Operational Transformation is, therefore, to understand in what cases transformation will have to be applied to convert indices to correct values.
 
 The important thing to note here is that each modification to the data is performed as a series of operations. There are a few assumptions made in this implementation which are important to point out:
 
