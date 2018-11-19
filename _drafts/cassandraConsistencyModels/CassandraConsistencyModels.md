@@ -301,6 +301,7 @@ That means that if the values written to two distinct columns don’t have the s
 <p align="justify">
 Jepsen tested the same by repeatedly changing a column value and found that 1 row is corrupted per 250 transactions. 
 </p>
+
 ~~~~
 1000 total
 399 acknowledged
