@@ -31,3 +31,14 @@ Aldrin Montana:
     - label: "Twitter"
       icon : "fab fa-fw fa-twitter-square"
       url  : "https://twitter.com/drin_montana"
+
+Natasha Mittal:
+  name  : "Natasha Mittal"
+  avatar: "https://users.soe.ucsc.edu/~natasha/img/myImg.jpeg"
+  links :
+    - label: "Email"
+      icon : "fas fa-fw fa-envelope-square"
+      url  : "mailto:nmittal1@ucsc.edu"
+    - label: "LinkedIn"
+      icon : "fab fa-fw fa fa-linkedin-square"
+      url  : "https://www.linkedin.com/in/nmittal29/"
