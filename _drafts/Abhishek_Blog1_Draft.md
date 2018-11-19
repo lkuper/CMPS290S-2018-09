@@ -24,7 +24,7 @@ To describe the problem in in its most basic form, let’s say we have a documen
 <img src="Abhishek_test_operations_inconsistent.png" height="600" width="450"></img>
 </p>
 
-In the figure below any changes that either Alice or Bob make to their copy of the document is sent over to the other as an operation message. The problem is that neither user applies the operation to their local data with any consideration of how the other user applied the operation at their end. This leads to data inconsistencies. Some mechanism should be devised for Alice to correctly apply the the operations that Bob did on his data and vice-versa. A function is required which can transform the operation and indices received from Bob to the exact index of data on Alice's end. Next, we will discuss a rudimentary implementation of such a transformation.
+In the figure shown above any changes that either Alice or Bob make to their copy of the document is sent over to the other as an operation message. The problem is that neither user applies the operation to their local data with any consideration of how the other user applied the operation at their end. This leads to data inconsistencies. Some mechanism should be devised for Alice to correctly apply the the operations that Bob did on his data and vice-versa. The distributed operational transformation algorithm specifies the properties a transformation function which could help us transform the operation and indices received from one user and apply it safely on other user. Next, we will discuss a rudimentary implementation of such a transformation.
 
 ## An example of collaborative editing using distributed operational transformation (dOPT)
 
