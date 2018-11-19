@@ -202,7 +202,7 @@ SERIAL reads allows reading the current (and possibly uncommitted) data. If a SE
 
 <p align="justify">
 Vector Clocks are used to determine whether pairs of events are causally related in a distributed system. Timestamps are generated for each event in the system, and their causal relationship is determined by comparing those timestamps.
-The timestamp for an event is vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.
+The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.
 </p>
 
 <p align="justify">
@@ -228,7 +228,7 @@ for (i=0; i < num_elements; i++)
 ~~~~
 
 <p align="justify">
-To determine if two events are concurrent, do an element-by-element comparison of the corresponding timestamps. If each element of timestamp V is less than or equal to the corresponding element of timestamp W then V causally precedes W and the events are not concurrent. If each element of timestamp V is greater than or equal to the corresponding element of timestamp W then W causally precedes V and the events are not concurrent. If, on the other hand, neither of those conditions apply and some elements in V are greater than while others are less than the corresponding element in W then the events are concurrent.
+To determine if two events are concurrent, do an element-by-element comparison of the corresponding vector timestamps. If each element of timestamp V is less than or equal to the corresponding element of timestamp W then V causally dominates W and the events are not concurrent. If each element of timestamp V is greater than or equal to the corresponding element of timestamp W then W causally dominates V and the events are not concurrent. If, on the other hand, neither of these conditions apply and some elements in V are greater than while others are less than the corresponding element in W then the events are concurrent.
 </p>
 
 <p align="center">
@@ -287,17 +287,20 @@ Jepsen test has three key properties:
 #### Vector Clocks
 
 <p align="justify">
-Cassandra chose not to implement vector clocks because Vclocks require a read before each write. In order to speed up, Cassandra uses last-write-wins in all cases, thereby cutting down the number of round trips required for a write from 2 to 1. But, now the problem is that there is no safe way to modify column value. Instead of modifying a column, each distinct change is written to its own UUID-keyed column. Then, at read time, all the cells are read and a merge function is applied to obtain a result. This implies that order of writes is completely irrelevant. Any write made to the cluster could eventually wind up winning, if it has a higher timestamp.
+Cassandra chose not to implement vector clocks because vector clocks require a read before each write. In order to speed-up performance, Cassandra uses last-write-wins(LWW) in all cases, thereby cutting down the number of round trips required for a write from 2 to 1. But, now the problem is that there is no safe way to modify column value. Instead of modifying a column, each distinct change is written to its own UUID-keyed column. Then, at read time, all the column values are read and a merge function is applied to obtain the result. This implies that order of writes is completely irrelevant. Any write made to the cluster could eventually wind up winning, if it has a higher timestamp.
 </p>
 
 <p align="justify">
-Now, what happens if Cassandra sees two copies of a column with the same timestamp? <i>It picks the lexicographically bigger value.</i>
+Now, the question arises that what will happens if Cassandra sees two copies of a column with a same timestamp? <i>It picks the lexicographically bigger value.</i>
 </p>
 
 <p align="justify">
-That means that if the values written to two distinct columns don’t have the same sort order, Cassandra could pick final cell values from different transactions. For instance, we might write {1,-1} and {2,-1}. 2 is greater than 1, so the first cell will be 2. But -1 is bigger than -2, so -1 wins in the second cell. The result? {2 -1}. In order for that to happen, you’d need two timestamps to collide. It’s really unlikely that two writes will get the same microsecond-resolution timestamp, right? I’ve never seen it happen in my cluster.
+That means that if the values written to two distinct columns don’t have the same sort order, Cassandra could pick final column values from different transactions. For instance, we might write {10,-20} and {20,-10}. 20 is greater than 10, so the first column will be 20. But -10 is bigger than -20, so -10 wins in the second column. The result? {20 -10}. In order for that to happen, you’d need two timestamps to collide. It’s unlikely that two writes will get the same microsecond-resolution timestamp.
 </p>
 
+<p align="justify">
+Jepsen tested the same by repeatedly changing a column value and found that 1 row is corrupted per 250 transactions. 
+</p>
 ~~~~
 1000 total
 399 acknowledged
@@ -306,11 +309,11 @@ That means that if the values written to two distinct columns don’t have the s
 ~~~~
 
 <p align="justify">
-It turns out that Cassandra is taking the current time in milliseconds and tacking on three zeroes to the end, calling it good. The probability of millisecond conflicts is significantly higher than microsecond conflicts, which is why we saw so much corrupt data.
+It turns out that Cassandra is taking the current time in milliseconds and appending on three zeroes to the end, calling it good. The probability of millisecond conflicts is significantly higher than microsecond conflicts, which is why we saw so much corrupt data.
 </p>
 
 <p align="justify">
-Another example of this is during a read query, a coordinator node collects and compares digests (hash) of the data from replicas. If the digests mismatch, conflicts in the values are resolved using a latest timestamp wins policy. If there is a tie between timestamps, the lexically greatest value is chosen and installed on other replicas. If the corrupted value is lexically greater than the original value, the corrupted value is returned to the user and the corruption is propagated to other intact replicas. 
+Another example of this is when a client requests a read operation, the coordinator node collects and compares digests (hash) of the data from replicas. If the digests mismatch, conflicts in the values are resolved using a latest timestamp wins policy. If there is a tie between timestamps, the lexically greatest value is chosen and installed on other replicas. If the corrupted value is lexically greater than the original value, the corrupted value is returned to the user and the corruption is propagated to other intact replicas. 
 </p>
 
 #### Session Consistency
