@@ -90,6 +90,7 @@ func TestOTEditor_Transformation(t *testing.T) {
     assertEquals(ot.Data, "yfbxd")
 }
 ```
+
 In the above code, an `OTEditor` is represented by a `Data` string and a list of operations, `Ops`, that have taken place on it.  There are two supported operations: `INSERT` and `DELETE`.  `LOCAL` and `REMOTE` are constants distinguishing two operation locations; `LOCAL` operations should be thought of as being performed on a local copy of the data, while `REMOTE` operations should be thought of as being performed by another user on their own copy of the data and sent over as part of the synchronization process. At the end of each operation execution, data at both Alice and Bob's end is synchronized and is in a consistent state. This is seen in the outputs of the test case:
 
 ```go
