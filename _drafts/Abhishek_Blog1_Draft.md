@@ -141,7 +141,7 @@ Operation 6. BOB (remote) delete char at index 3
 2018/11/12 15:15:46 Current value of data: {yfbxd [{1 abcd 0 0} {1 y 0 0} {1 x 3 1} {2 '' 1 1} {1 f 1 0} {2 '' 4 1}]}
 
 ```
-<h5 align="center">Figure 4. Output of test case shown in Figure 4. The operations in the test cases are annotated with the operation numbers from Figure 4 and contain additional logs from program execution. </h5>
+<h5 align="center">Figure 4. Output of test case shown in Figure 3. The operations in the test cases are annotated with the operation numbers from Figure 3 and contain additional logs from program execution. </h5>
 
 In the [paper](http://doi.acm.org/10.1145/67544.66963) a necessary condition (but not sufficient) to ensure that the transformation function works is to ensure commutativity of the operations. Additionally, in this implementation, we need to understand if transformation is required. Transformation in the paper is a technique to resolve conflicts. If there are no conflicts, we do not apply any transformations.
 
@@ -285,7 +285,7 @@ func (c *OTEditor) exec(operation Op) {
 
 }
 ```
-<h5 align="center">Figure 5. Methods implemented on the OTEditor type.</h5>
+<h5 align="center">Figure 6. Methods implemented on the OTEditor type.</h5>
 
 The `performTransformation` method shown in Figure 6, implements the heart of the application. Combined with the `exec` method, `performTransformation` implements the algorithm for recomputing indices and ensuring that operations remain commutative.
 
@@ -307,7 +307,7 @@ func (c *OTEditor) performTransformation(op *Op) {
     }
 }
 ```
-<h5 align="center">Figure 6. The “performTransformation” function which implements index recomputation for operations where this transformation is required.</h5>
+<h5 align="center">Figure 7. The “performTransformation” function which implements index recomputation for operations where this transformation is required.</h5>
 
 As part of this blog post we see that we have implemented a very simplistic version of a collaborative text editor. This implementation deals with a very narrow subset of the application we wish to create. As we discussed before, one factor that we overlook in this implementation is that of establishing causality between a set of operations. The implementation, therefore, relies on the order on which the operations are received to establish consistency in the system. We will explore how these issues affect systems and how these can be resolved in the next blog post.
 
