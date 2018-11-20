@@ -24,7 +24,7 @@ The Google Wave project itself was based on the [Jupiter collaboration system](h
 To describe the problem in in its most basic form, let’s say we have a document which is being edited by two users, **Alice** and **Bob**. Alice creates a local copy of the document with the string `abcd` and shares it with Bob. She then starts editing the document, and these changes are shared with Bob as shown in the figure below.
 
 <figure>
-  <img src="/CMPS290S-2018-09/blog-assets/test_operations_inconsistent.png" height="600" width="450"></img>
+  <img src="/CMPS290S-2018-09/blog-assets/test_operations_inconsistent.png" height="600" width="450" />
   <figcaption>Figure 1. Operations received by both Alice and Bob are applied to local data as they are received. This leads to data inconsistencies. (Data index starts from 0.)</figcaption>
 </figure> 
 
@@ -41,7 +41,7 @@ For this blog post, I wrote [a simple Go program and a set of test cases which s
 To see what the code does, let's begin by walking through the example shown in the figure below. Again, Alice and Bob have a shared document that both start editing. At the end of each edit, the edit operation performed is sent to the other. When a message is received, the indices are recomputed based on some criteria and the correct operation is executed.
 
 <figure>
-  <img src="/CMPS290S-2018-09/blog-assets/test_operations.png" height="600" width="450"></img>
+  <img src="/CMPS290S-2018-09/blog-assets/test_operations.png" height="600" width="450" />
   <figcaption>Figure 2. Operations received by Alice and Bob are transformed before being applied to local data.</figcaption>
 </figure> 
 
