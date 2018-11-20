@@ -1,5 +1,5 @@
 ---
-title: Manufacturing Consensus: An Overview of Distributed Consensus Implementations
+title: "Manufacturing Consensus: An Overview of Distributed Consensus Implementations"
 author: Devashish Purandare
 layout: single
 classes: wide
