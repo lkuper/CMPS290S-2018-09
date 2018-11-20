@@ -327,7 +327,7 @@ sending heartbeats to collect votes. The election phase itself comes with a
 timeout to reduce conflicts.
 
 
-### Formal verification and implementation of Raft with `vard` and `etcd`
+### Implementation of Raft with `etcd` and formal verification with `vard`
 
 
 [etcd](https://github.com/etcd-io/etcd) is a lightweight key-value store
