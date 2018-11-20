@@ -287,7 +287,7 @@ func (c *OTEditor) exec(operation Op) {
 ```
 <h5 align="center">Figure 6. Methods implemented on the OTEditor type.</h5>
 
-The `performTransformation` method shown in Figure 6, implements the heart of the application. Combined with the `exec` method, `performTransformation` implements the algorithm for recomputing indices and ensuring that operations remain commutative.
+The `performTransformation` method shown in Figure 7, implements the heart of the application. Combined with the `exec` method, `performTransformation` implements the algorithm for recomputing indices and ensuring that operations remain commutative.
 
 ```go
 
