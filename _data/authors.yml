@@ -18,6 +18,20 @@ Austen Barker:
 Sohum Banerjea:
   name        : "Sohum Banerjea"
 
+Devashish Purandare:
+  name  : "Devashish Purandare"
+  avatar: "https://dev14e.com/about/dp.jpg"
+  links :
+    - label: "Email"
+      icon : "fas fa-fw fa-envelope-square"
+      url  : "mailto:devashish@ucsc.edu"
+    - label: "Website"
+      icon : "fas fa-fw fa-link"
+      url  : "https://dev14e.com/"
+    - label: "Twitter"
+      icon : "fab fa-fw fa-twitter-square"
+      url  : "https://twitter.com/dev14e"
+
 Aldrin Montana:
   name  : "Aldrin Montana"
   avatar: "https://disorderlylabs.github.io/images/Aldrin.jpg"
