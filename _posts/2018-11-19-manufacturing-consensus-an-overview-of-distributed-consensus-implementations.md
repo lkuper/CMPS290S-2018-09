@@ -55,7 +55,7 @@ moment can void the correctness of any consensus algorithm. As disheartening as
 this seems, there's a way around it. FLP assumes deterministic processes, and
 by
 making our algorithms non-deterministic (as in ["Another Advantage of Free Choice:
-Completely Asynchronous Agreement Protocols"](https://allquantor.at/blockchainbib/pdf/ben1983another.pdf) can guarantee that a solution is generated "as
+Completely Asynchronous Agreement Protocols"](https://allquantor.at/blockchainbib/pdf/ben1983another.pdf)) can guarantee that a solution is generated "as
 long as a majority of the processes continue to operate."
 
 ### Then why do we need consensus?
