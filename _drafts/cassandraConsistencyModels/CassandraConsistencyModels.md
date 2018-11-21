@@ -1,5 +1,5 @@
 ---
-title: "Cassandra's TRUE Consistency Model"
+title: "Consistency in Cassandra"
 author: Natasha Mittal
 layout: single
 classes: wide
@@ -49,7 +49,7 @@ For example, a system with configuration RF=3, W=2 and R=2.
 R + W <= RF is a weak/eventual consistency model, where there is a possibility that the read and write set will not overlap and system is vulnerable to reading from nodes that have not yet received the updates.
   
 ### Read Request in Cassandra
-Cassandra can send three types of read requests to a replica:
+As mentioned in the [datastax documentation](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dmlAboutDataConsistency.html), Cassandra can send three types of read requests to a replica:
 
 1. Direct read request
 2. Digest request
@@ -166,7 +166,7 @@ Example of how [vector clock](https://amturing.acm.org/p558-lamport.pdf) works
 
 [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) is an open source Clojure library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing the systems with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.
 
-A [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) test has three key properties:
+As [Joel Knighton mentions in his talk](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=931s) that a [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) test has three key properties:
 
 1. <b>Generative</b>: relies on randomized testing to explore the state space of distributed systems
 2. <b>Blackbox</b>: observes the system at client boundaries (does not need any tracing framework or apply some code patch in the distributed system to run the test)
@@ -204,7 +204,7 @@ A [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) test has three k
 
 [Cassandra chose not to implement vector clocks](https://www.datastax.com/dev/blog/why-cassandra-doesnt-need-vector-clocks) because vector clocks require a read before each write. In order to speed-up performance, Cassandra uses last-write-wins(LWW) in all cases, thereby cutting down the number of round trips required for a write from 2 to 1. But, now the problem is that there is no safe way to modify column value. Instead of modifying a column, each distinct change is written to its own UUID-keyed column. Then, at read time, all the column values are read and a merge function is applied to obtain the result. This implies that order of writes is completely irrelevant. Any write made to the cluster could eventually wind up winning, if it has a higher timestamp.
 
-Now, the question arises that what will happens if Cassandra sees two copies of a column with a same timestamp? <i>It picks the lexicographically bigger value.</i>
+Now, the question arises that what will happens if Cassandra sees two copies of a column with a same timestamp? *It picks the lexicographically bigger value.*
 
 That means that if the values written to two distinct columns don’t have the same sort order, Cassandra could pick final column values from different transactions. For instance, we might write {10,-20} and {20,-10}. 20 is greater than 10, so the first column will be 20. But -10 is bigger than -20, so -10 wins in the second column. The result? {20 -10}. In order for that to happen, you’d need two timestamps to collide. It’s unlikely that two writes will get the same microsecond-resolution timestamp.
 
@@ -312,10 +312,6 @@ Paxos says that on receiving the result of a prepare from a quorum of acceptors,
 But the current implementation ignores the value already accepted by some acceptors if any of the acceptor sends a more recent ballot than the other acceptor but with no values. The net effect is that mistakenly the system is accepting two different values for the same round.
 
 ## References
-
-1. [Datastax official documentation of Cassandra 2.0](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dmlAboutDataConsistency.html)
-
-2. [Eventually Consistent: All things Distributed](https://www.allthingsdistributed.com/2008/12/eventually_consistent.html)
 
 7. [Jepsen github code for Cassandra test cases](https://github.com/jepsen-io/jepsen)
 
