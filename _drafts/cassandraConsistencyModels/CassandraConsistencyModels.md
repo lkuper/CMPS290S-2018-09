@@ -99,40 +99,14 @@ The coordinator node sends one replica node with a direct read request and a dig
 The coordinator node sends a write request to all the replicas that contain the row being written. As long as all replicas are available, they will get the write request regardless of the write consistency level specified by the client. The write consistency level determines how many replicas should respond with an acknowledgment in order for the write to be considered successful.
 </p>
 
-<table style="margin-left:20px;margin-right:20px;" border-spacing='0'>
-    <thead>
-        <tr>
-            <th align="left">Consistency Level </th>
-            <th align="left">Usage</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td align="left">ALL</td>
-            <td align="left">highest consistency and lowest availability</td>
-        </tr>
-        <tr>
-            <td align="left">EACH_QUORUM</td>
-            <td align="left">strong consistency but write fails when a datacenter is down</td>
-        </tr>
-        <tr>
-            <td align="left">QUORUM</td>
-            <td align="left">strong consistency with some level of failure</td>
-        </tr>
-        <tr>
-            <td align="left">LOCAL_QUORUM</td>
-            <td align="left">strong consistency which avoids inter-datacenter communication latency</td>
-        </tr>
-        <tr>
-            <td align="left">ONE</td>
-            <td align="left">low consistency and high availability</td>
-        </tr>
-        <tr>
-            <td align="left">ANY</td>
-            <td align="left">lowest consistency and highest availability and guarantees that write will never fail</td>
-        </tr>
-    </tbody>
-</table>
+| Consistency Level        | Usage         									      |
+| -------------------------|------------------------------------------------------------------------------------------|
+| ALL		           | highest consistency and lowest availability					      |
+| EACH_QUORUM		   | strong consistency but write fails when a datacenter is down			      |
+| QUORUM     		   | strong consistency with some level of failure					      |
+| LOCAL_QUORUM		   | strong consistency which avoids inter-datacenter communication latency		      |
+| ONE			   | low consistency and high availability					      	      |
+| ANY			   | lowest consistency and highest availability and guarantees that write will never fail    |
 
 <p align="left">Table 2: Write Consistency Levels</p>
 
