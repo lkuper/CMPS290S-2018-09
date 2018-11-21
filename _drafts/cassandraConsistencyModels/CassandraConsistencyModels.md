@@ -136,6 +136,7 @@ SERIAL reads allows reading the current (and possibly uncommitted) data. If a SE
 ## [Vector Clocks](https://amturing.acm.org/p558-lamport.pdf)
 
 [Vector Clocks](https://amturing.acm.org/p558-lamport.pdf) are used to determine whether pairs of events are causally related in a distributed system. Timestamps are generated for each event in the system, and their causal relationship is determined by comparing those timestamps.
+
 The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.
 
 Each process assigns a timestamp to each event. The timestamp is composed of that process’ logical time and the last known time of every other process.
@@ -168,9 +169,9 @@ Example of how [vector clock](https://amturing.acm.org/p558-lamport.pdf) works
 
 As [Joel Knighton mentions in his talk](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=931s) that a [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) test has three key properties:
 
-1. <b>Generative</b>: relies on randomized testing to explore the state space of distributed systems
-2. <b>Blackbox</b>: observes the system at client boundaries (does not need any tracing framework or apply some code patch in the distributed system to run the test)
-3. <b>Invariance</b>: checks invariance from recorded history of operations rather than runtime
+1. **Generative**: relies on randomized testing to explore the state space of distributed systems
+2. **Blackbox**: observes the system at client boundaries (does not need any tracing framework or apply some code patch in the distributed system to run the test)
+3. **Invariance**: checks invariance from recorded history of operations rather than runtime
 
 [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) [Test Data Structure](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=931s):
 
