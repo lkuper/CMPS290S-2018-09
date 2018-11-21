@@ -39,28 +39,23 @@ For example, if row X is replicated on two replicas R1 and R2, client A writes r
 
 ## Cassandra's Model of Consistency
 
-<html>
-<head>
-<script src="http://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-</head>
-<body>
 <p align="justify">
 Let's establish a few definitions before getting started:
 </p>
 
 * RF (Replication Factor): the number of copies of each data item
-* R: the number of replicas that are contacted when a data object is accessed through a read operation
-* W: the number of replicas that need to acknowledge the receipt of the update before the update completes
-* QUORUM: \\(sum_of_replication_factors/2 + 1\\), where sum_of_replication_factors = sum of all the replication factor settings for each data center
-</body></html>
+* R: the number of replicas that are contacted when a data object is accessed through a read operation (read-set)
+* W: the number of replicas that need to acknowledge the receipt of the update before the update completes (write-set)
+* QUORUM: sum_of_replication_factors/2 + 1, where sum_of_replication_factors = sum of all the replication factor settings for each data center
 
 <p align="justify">  
 R + W > RF is a strong consistency model, where the write set and the read set always overlap.
 </p>
 
 <p align="justify">
-But, configuring RF, R and W in this model, depends on the application for which the storage system is being used. In write-intensive application, setting W=1 and R=RF can affect durability in presence of failures as there is a possibility of conflicting writes. In read-intensive applications, setting W=RF and R=1 can affect the probability of the write succeeding.
+Configuring RF, R and W in this model, depends on the application for which the storage system is being used. In write-intensive application setting W=1 and R=RF can affect durability as failures can result in conflicting writes. In read-intensive applications setting W=RF (requires all nodes in the datacenter to acknowledge the write) and R=1 can affect the probability of the write succeeding because if any node is down in the cluster, it won't be able to acknowledge the receipt of update and write will fail.
 </p>
+
 <p align="justify">
 So, to provide strong consistency and fault tolerance for balanced read-write requests, these two properties are appropriate:
 </p>
@@ -81,40 +76,21 @@ R + W <= RF is a weak/eventual consistency model, where there is a possibility t
 Cassandra can send three types of read requests to a replica:
 </p>
 
-1. direct read request
-2. digest request
-3. background read repair request
+1. Direct read request
+2. Digest request
+3. Background read repair request
 
 <p align="justify">
 The coordinator node sends one replica node with a direct read request and a digest request to a number of replicas determined by the consistency level specified by the client. These contacted nodes return the requested data and the coordinator compares the rows from each replica to ensure consistency. If all replicas are not in sync, the coordinator uses the replica that has the most recent data (based on timestamp) to forward the result back to the client. Meanwhile, a background read repair request is sent to out-of-date replicas to ensure that the requested data is made consistent on all replicas.
 </p>
 
-<table style="margin-left:20px;margin-right:20px;" border-spacing='0'>
-    <thead>
-        <tr>
-            <th align="left">Consistency Level </th>
-            <th align="left">Usage</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td align="left">ALL</td>
-            <td align="left">highest consistency and lowest availability</td>
-        </tr>
-        <tr>
-            <td align="left">QUORUM</td>
-            <td align="left">strong consistency with some level of failure</td>
-        </tr>
-        <tr>
-            <td align="left">LOCAL_QUORUM</td>
-            <td align="left">strong consistency which avoids inter-datacenter communication latency</td>
-        </tr>
-        <tr>
-            <td align="left">ONE</td>
-            <td align="left">lowest consistency and highest availability</td>
-        </tr>
-    </tbody>
-</table>
+| Consistency Level        | Usage         									      |
+| -------------------------|------------------------------------------------------------------------------------------|
+| ALL		           | highest consistency and lowest availability					      |
+| QUORUM     		   | strong consistency with some level of failure					      |
+| LOCAL_QUORUM		   | strong consistency which avoids inter-datacenter communication latency		      |
+| ONE			   | lowest consistency and highest availability					      |
+
 <p align="left">Table 1: Read Consistency Levels</p>
 
 ### Write Request in Cassandra
