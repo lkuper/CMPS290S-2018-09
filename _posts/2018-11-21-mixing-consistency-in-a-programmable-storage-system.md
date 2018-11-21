@@ -1,4 +1,4 @@
-----
+---
 title: Mixing Consistency in a Programmable Storage System
 author: Aldrin Montana
 layout: single
