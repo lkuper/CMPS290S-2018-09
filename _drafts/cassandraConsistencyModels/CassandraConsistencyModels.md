@@ -7,14 +7,6 @@ classes: wide
 
 by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
 
-<html>
-<head>
-    <script async
-  src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-</head>
-</html>
-
 ## Introduction
 <p align="justify">
 Today, all popular NoSQL databases like <a href="http://cassandra.apache.org/">Cassandra</a>, <a href="https://www.mongodb.com/scale/apache-open-source-projects">MongoDB</a> or <a href="https://hbase.apache.org/">HBase</a> claim to provide eventual consistency and offer mechanisms to tune consistency.
@@ -47,14 +39,20 @@ For example, if row X is replicated on two replicas R1 and R2, client A writes r
 
 ## Cassandra's Model of Consistency
 
+<html>
+<head>
+<script src="http://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</head>
+<body>
 <p align="justify">
 Let's establish a few definitions before getting started:
-<p>
+</p>
 
 * RF (Replication Factor): the number of copies of each data item
 * R: the number of replicas that are contacted when a data object is accessed through a read operation
 * W: the number of replicas that need to acknowledge the receipt of the update before the update completes
 * QUORUM: \\(sum_of_replication_factors/2 + 1\\), where sum_of_replication_factors = sum of all the replication factor settings for each data center
+</body></html>
 
 <p align="justify">  
 R + W > RF is a strong consistency model, where the write set and the read set always overlap.
