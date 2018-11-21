@@ -1,17 +1,40 @@
-# Cassandra's *TRUE* Consistency Model
+---
+title: "Cassandra's *True* Consistency Model"
+author: Natasha Mittal
+layout: single
+classes: wide
+---
+
+by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
+
 ## Introduction
 <p align="justify" markdown="1">
-Today, all popular NoSQL databases like Cassandra, MongoDB or HBase claim to provide eventual consistency by offering tunable consistency. Reading this, the next question that comes to my mind is, What is consistency? In distributed systems, consistency defines rules for ordering and visibility of operations to multiple replicas regarding all the nodes in the cluster. For example, if row X is replicated on two replicas R1 and R2, client A writes row X to R1 and after a time period t, B reads row X from node R2. Then, the consistency model has to determine whether client B sees the write from client A or not.</p>
-<p align="justify" markdown="1">
-    A strongly consistent system guarantees that all operations are seen in the same order by all the nodes in the cluster. This is hard to achieve, as it involves a lot of synchronization overhead which hampers availability and scalability, the key features of modern distributed systems. On the other hand, eventual consistency, also called optimistic replication is somewhat easier to achieve. It guarantees that if no updates are made to given data item, eventually all accesses to that item will return the last updated value, thereby providing high availability.
+Today, all popular NoSQL databases like [Cassandra](http://cassandra.apache.org/), [MongoDB](https://www.mongodb.com/scale/apache-open-source-projects) or [HBase](https://hbase.apache.org/) claim to provide eventual consistency and offer mechanisms to tune consistency.
+</p>
+
+<p align="justify">
+What is a consistency model? 
+</p>
+
+<p align="justify">
+A consistency model is a contract between the distributed data store and processes, in which if the processes agree to obey rules for ordering the read/write operations, the underlying data store will precisely specify the result of these operations.
 </p>
 
 <p align="justify" markdown="1">
-    Tunable consistency is where clients have the flexibility to adjust the consistency levels as per their needs, ranging from strong to eventual consistency. Cassandra offers support for per-operation(read/write) tradeoff between consistency and availability via varied 'Consistency Levels'. Basically, an operation’s consistency level specifies how many of the replicas need to respond to the coordinator node in order to consider the operation a success.
+A strongly consistent system guarantees that all operations are seen in the same order by all the nodes in the cluster. This is hard to achieve, as it involves a lot of synchronization overhead which hampers availability and scalability, the key features of modern distributed systems. On the other hand, eventual consistency, is easier to achieve and provides lower latency(no synchronization overhead). It guarantees that if no updates are made to a given data item, eventually all accesses to that item will return the last updated value. 
+</p>
+
+<p align="justify">
+For example, if row X is replicated on two replicas R1 and R2, client A writes row X to R1 and after a time period t, B reads row X from node R2. Then, the consistency model has to determine whether client B sees the write from client A or not. In a distributed system with strong consistency guarantees, client B must see the write from client A, while in an eventually consistent system, it is not a requirement and client B can see old value of row X.
+
 </p>
 
 <p align="justify" markdown="1">
-    In this blog post, I will explain Cassandra’s consistency levels, light weight transactions (LWT) which provide serial consistency, vector clocks and Jepsen analysis of distributed concurrency bugs in Cassandra.
+    Tunable consistency is where clients have the flexibility to adjust the consistency levels as per their needs, ranging from strong to eventual consistency. Cassandra offers support for per-operation (read/write) tradeoff between consistency and availability via varied 'Consistency Levels'. An operation’s consistency level specifies how many of the replicas need to respond to the coordinator node in order to consider the operation a success.
+</p>
+
+<p align="justify" markdown="1">
+    In this blog post, We will go over Cassandra’s consistency levels, Light Weight Transactions (LWT) which provide serial consistency, vector clocks and Jepsen analysis of distributed concurrency bugs in Cassandra.
 </p>
 
 ## Cassandra's Model of Consistency
@@ -23,7 +46,7 @@ Let's establish a few definitions before getting started:
 * RF (Replication Factor): the number of copies of each data item
 * R: the number of replicas that are contacted when a data object is accessed through a read operation
 * W: the number of replicas that need to acknowledge the receipt of the update before the update completes
-* QUORUM: sum_of_replication_factors/2 + 1, where sum_of_replication_factors = sum of all the replication factor settings for each data center
+* QUORUM: \\(sum_of_replication_factors/2 + 1\\), where sum_of_replication_factors = sum of all the replication factor settings for each data center
 
 <p align="justify">  
 R + W > RF is a strong consistency model, where the write set and the read set always overlap.
