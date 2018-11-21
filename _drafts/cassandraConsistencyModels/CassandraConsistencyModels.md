@@ -8,9 +8,9 @@ classes: wide
 by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
 
 ## Introduction
-Today, all popular NoSQL databases like <a href="http://cassandra.apache.org/">Cassandra</a>, <a href="https://www.mongodb.com/scale/apache-open-source-projects">MongoDB</a> or <a href="https://hbase.apache.org/">HBase</a> claim to provide eventual consistency and offer mechanisms to tune consistency.
+Today, all popular NoSQL databases like [Cassandra](http://cassandra.apache.org/), [MongoDB](https://www.mongodb.com/scale/apache-open-source-projects) or [HBase](https://hbase.apache.org/) claim to provide eventual consistency and offer mechanisms to tune consistency.
 
-*What is a consistency model?*
+*__What is a consistency model?__*
 
 A consistency model is a contract between the distributed data store and processes, in which if the processes agree to obey rules for ordering the read/write operations, the underlying data store will precisely specify the result of these operations.
 
@@ -20,7 +20,7 @@ For example, if row X is replicated on two replicas R1 and R2, client A writes r
 
 Tunable consistency is where clients have the flexibility to adjust the consistency levels as per their needs, ranging from strong to eventual consistency. Cassandra offers support for per-operation (read/write) tradeoff between consistency and availability via varied 'Consistency Levels'. An operation’s consistency level specifies how many of the replicas need to respond to the coordinator node in order to consider the operation a success.
 
-In this blog post, we will go over Cassandra’s consistency levels, Light Weight Transactions (LWT) which provide serial consistency, vector clocks and Jepsen analysis of distributed concurrency bugs in Cassandra.
+In this blog post, we will go over Cassandra’s consistency levels, [Light Weight Transactions (LWT)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0) which provide serial consistency, [vector clocks](https://amturing.acm.org/p558-lamport.pdf) and [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) analysis of distributed concurrency [bugs in Cassandra](https://issues.apache.org/jira/projects/CASSANDRA/issues).
 
 ## Cassandra's Model of Consistency
 
@@ -81,12 +81,11 @@ The coordinator node sends a write request to all the replicas that contain th
 
 Table 2: Write Consistency Levels
 
-## Lightweight Transactions (LWT)
+## [Lightweight Transactions (LWT)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0)
 
-Applications like banking or airline reservations require the operations to perform in sequence without any interruptions. This is linearizable consistency which is one of the strongest single-object consistency model. Cassandra provides linearizability via lightweight transactions (LWTs).
+Applications like banking or airline reservations require the operations to perform in sequence without any interruptions. This is linearizable consistency which is one of the strongest single-object consistency model. Cassandra provides linearizability via [lightweight transactions (LWTs)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0).
 
 Cassandra Query Language (CQL) provides IF syntax to deal with such cases:
-
 
 ```sql
 INSERT INTO account (transaction_date, customer_id, amount) 
@@ -101,7 +100,7 @@ AND customer_id = 356
 IF amount = 125.00
 ```
 
-To synchronize replica nodes for LWT, Cassandra uses Paxos consensus protocol. There are four phases in Paxos: <b>prepare/promise</b>, <b>read/results</b>, <b>propose/accept</b> and <b>commit/ack</b>. Thus, Cassandra makes four network round trips between a node proposing a lightweight transaction(leader node) and other replicas in the cluster to ensure linearizable execution, so performance is affected. 
+To synchronize replica nodes for [LWT](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0), Cassandra uses [Paxos consensus protocol](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf). There are four phases in Paxos: <b>prepare/promise</b>, <b>read/results</b>, <b>propose/accept</b> and <b>commit/ack</b>. Thus, Cassandra makes four network round trips between a node proposing a lightweight transaction(leader node) and other replicas in the cluster to ensure linearizable execution, so performance is affected. 
 
 Prepare/promise is the critical phase of the Paxos algorithm. The leader (node which proposes the value) picks a proposal number and sends it to the participating replicas. If the proposal number is the highest a replica has seen, it promises to not accept any proposals associated with any earlier proposal number. Along with that promise, it includes the most recent proposal it has already received.
 
@@ -127,16 +126,16 @@ password]]\n Row: EMPTY | email=mick@gmail.com, password=mick) [SharedPool-Worke
 2016-08-22 12:38:44.199000 | 127.0.0.1 | 67804
 ~~~~
 
-There are two consistency levels associated with LWTs:
+There are two consistency levels associated with [LWTs](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0):
 
 1. **SERIAL** : where paxos consensus protocol will involve all the nodes across multiple datacenters.
 2. **LOCAL_SERIAL** : where paxos consensus protocol will run on local datacenter.
 
 SERIAL reads allows reading the current (and possibly uncommitted) data. If a SERIAL read finds an uncommitted LWT in progress, Cassandra performs a read repair as part of the SERIAL read.
 
-## Vector Clocks
+## [Vector Clocks](https://amturing.acm.org/p558-lamport.pdf)
 
-Vector Clocks are used to determine whether pairs of events are causally related in a distributed system. Timestamps are generated for each event in the system, and their causal relationship is determined by comparing those timestamps.
+[Vector Clocks](https://amturing.acm.org/p558-lamport.pdf) are used to determine whether pairs of events are causally related in a distributed system. Timestamps are generated for each event in the system, and their causal relationship is determined by comparing those timestamps.
 The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.
 
 Each process assigns a timestamp to each event. The timestamp is composed of that process’ logical time and the last known time of every other process.
@@ -161,19 +160,19 @@ To determine if two events are concurrent, do an element-by-element comparison o
 
 <img src="vector_clock_final.gif"></img>
 
-Example of how vector clock works
+Example of how [vector clock](https://amturing.acm.org/p558-lamport.pdf) works
 	
-## Jepsen
+## [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra)
 
-Jepsen is an open source Clojure library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing the systems with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.
+[Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) is an open source Clojure library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing the systems with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.
 
-A Jepsen test has three key properties:
+A [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) test has three key properties:
 
 1. <b>Generative</b>: relies on randomized testing to explore the state space of distributed systems
 2. <b>Blackbox</b>: observes the system at client boundaries (does not need any tracing framework or apply some code patch in the distributed system to run the test)
 3. <b>Invariance</b>: checks invariance from recorded history of operations rather than runtime
 
-Jepsen Test Data Structure:
+[Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) [Test Data Structure](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=931s):
 
 ~~~~
 {:name                    ...| name of the results
@@ -185,7 +184,7 @@ Jepsen Test Data Structure:
  :checker              ...}  | looks at and assesses the test run
 ~~~~
 
-### How a test runs?
+### [How a test runs?](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=931s)
 
 <img src="lein_test1.png" width="500px;" />
 
@@ -199,17 +198,17 @@ Jepsen Test Data Structure:
 5. Operations in the history are expressed as windows which marks the beginning and ending.
 6. After running the tests, the attached checker is executed, which produces judgement on the validity of the test or produces some artifacts to explain the result of the tests.
 
-### Jepsen Analysis of Cassandra
+### [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) Analysis of Cassandra
 
-#### Vector Clocks
+#### [Vector Clocks](https://amturing.acm.org/p558-lamport.pdf)
 
-Cassandra chose not to implement vector clocks because vector clocks require a read before each write. In order to speed-up performance, Cassandra uses last-write-wins(LWW) in all cases, thereby cutting down the number of round trips required for a write from 2 to 1. But, now the problem is that there is no safe way to modify column value. Instead of modifying a column, each distinct change is written to its own UUID-keyed column. Then, at read time, all the column values are read and a merge function is applied to obtain the result. This implies that order of writes is completely irrelevant. Any write made to the cluster could eventually wind up winning, if it has a higher timestamp.
+[Cassandra chose not to implement vector clocks](https://www.datastax.com/dev/blog/why-cassandra-doesnt-need-vector-clocks) because vector clocks require a read before each write. In order to speed-up performance, Cassandra uses last-write-wins(LWW) in all cases, thereby cutting down the number of round trips required for a write from 2 to 1. But, now the problem is that there is no safe way to modify column value. Instead of modifying a column, each distinct change is written to its own UUID-keyed column. Then, at read time, all the column values are read and a merge function is applied to obtain the result. This implies that order of writes is completely irrelevant. Any write made to the cluster could eventually wind up winning, if it has a higher timestamp.
 
 Now, the question arises that what will happens if Cassandra sees two copies of a column with a same timestamp? <i>It picks the lexicographically bigger value.</i>
 
 That means that if the values written to two distinct columns don’t have the same sort order, Cassandra could pick final column values from different transactions. For instance, we might write {10,-20} and {20,-10}. 20 is greater than 10, so the first column will be 20. But -10 is bigger than -20, so -10 wins in the second column. The result? {20 -10}. In order for that to happen, you’d need two timestamps to collide. It’s unlikely that two writes will get the same microsecond-resolution timestamp.
 
-Jepsen tested the same by repeatedly changing a column value and found that 1 row is corrupted per 250 transactions. 
+[Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) tested the same by repeatedly changing a column value and found that 1 row is corrupted per 250 transactions. 
 
 ~~~~
 1000 total
@@ -228,7 +227,7 @@ Cassandra is tightly bounded to wall-clock timestamps for ordering the writes. I
 
 Jepsen tests introduce clock drifts due to which system clocks are unsynchronized and Cassandra no longer holds session consistency guarantees. For instance,
 
-1. a client writes w1 prior to leap second and 
+1. a client writes w1 prior to [leap second](https://en.wikipedia.org/wiki/Leap_second) and 
 2. same client then writes w2 just after the leap second
 3. session consistency expects subsequent read to see w2
 4. but w2 has lower timestamp than w1, Cassandra ignores w2 
@@ -290,7 +289,7 @@ A table 'lww_cas' is created where each row comprising of id(primary key) and va
                                     {:linear checker/linearizable})})
 ~~~~
 
-In the generator phases, various tests are run by mixing read/write operations with explicit delays, staggering, timeouts and disrupting/crashing a node. Numerous issues populated which challenged Cassandra's claim to offer linearizability via LWTs:
+In the generator phases, various tests are run by mixing read/write operations with explicit delays, staggering, timeouts and disrupting/crashing a node. Numerous [issues](https://issues.apache.org/jira/projects/CASSANDRA/issues) populated which challenged Cassandra's claim to offer linearizability via LWTs:
 
 #### WriteTimeoutException when LWT concurrency level = QUORUM
 During high contention, the coordinator node loses track of whether the value it submitted to Paxos has been applied or not. For instance:
@@ -317,14 +316,6 @@ But the current implementation ignores the value already accepted by some accept
 1. [Datastax official documentation of Cassandra 2.0](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dmlAboutDataConsistency.html)
 
 2. [Eventually Consistent: All things Distributed](https://www.allthingsdistributed.com/2008/12/eventually_consistent.html)
-
-3. [Datastax blog on LWTs](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0)
-
-4. [Datastax blog on Vector Clocks](https://www.datastax.com/dev/blog/why-cassandra-doesnt-need-vector-clocks)
-
-5. [Apache Cassandra JIRA Issues](https://issues.apache.org/jira/projects/CASSANDRA/issues)
-
-6. [Jepsen Analysis of Cassandra 2.0](https://aphyr.com/posts/294-call-me-maybe-cassandra)
 
 7. [Jepsen github code for Cassandra test cases](https://github.com/jepsen-io/jepsen)
 
