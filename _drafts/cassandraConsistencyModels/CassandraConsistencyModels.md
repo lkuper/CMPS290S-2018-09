@@ -14,9 +14,10 @@ by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
     <link rel="stylesheet" media="all" href="normalize.css">
     <link rel="stylesheet" media="all" href="core.css">
     <link rel="stylesheet" media="all" href="style.css">
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async
+  src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 </head>
-<body data-document>&nbsp;</body>
 </html>
 
 ## Introduction
