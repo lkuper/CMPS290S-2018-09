@@ -7,9 +7,21 @@ classes: wide
 
 by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
 
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" media="all" href="normalize.css">
+    <link rel="stylesheet" media="all" href="core.css">
+    <link rel="stylesheet" media="all" href="style.css">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body data-document>&nbsp;</body>
+</html>
+
 ## Introduction
 <p align="justify">
-Today, all popular NoSQL databases like [Cassandra](http://cassandra.apache.org/), [MongoDB](https://www.mongodb.com/scale/apache-open-source-projects) or [HBase](https://hbase.apache.org/) claim to provide eventual consistency and offer mechanisms to tune consistency.
+Today, all popular NoSQL databases like <a href="http://cassandra.apache.org/">Cassandra</a>, <a href="https://www.mongodb.com/scale/apache-open-source-projects">MongoDB</a> or <a href="https://hbase.apache.org/">HBase</a> claim to provide eventual consistency and offer mechanisms to tune consistency.
 </p>
 
 <p align="justify">
