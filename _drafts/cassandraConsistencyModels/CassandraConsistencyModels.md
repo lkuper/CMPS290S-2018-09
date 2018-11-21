@@ -7,13 +7,8 @@ classes: wide
 
 by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
 
-<!doctype html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" media="all" href="normalize.css">
-    <link rel="stylesheet" media="all" href="core.css">
-    <link rel="stylesheet" media="all" href="style.css">
     <script async
   src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
