@@ -8,7 +8,7 @@ classes: wide
 by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
 
 ## Introduction
-<p align="justify" markdown="1">
+<p align="justify">
 Today, all popular NoSQL databases like [Cassandra](http://cassandra.apache.org/), [MongoDB](https://www.mongodb.com/scale/apache-open-source-projects) or [HBase](https://hbase.apache.org/) claim to provide eventual consistency and offer mechanisms to tune consistency.
 </p>
 
