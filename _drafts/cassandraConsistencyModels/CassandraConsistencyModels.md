@@ -1,5 +1,5 @@
 ---
-title: "Cassandra's *True* Consistency Model"
+title: "Cassandra's TRUE Consistency Model"
 author: Natasha Mittal
 layout: single
 classes: wide
@@ -13,7 +13,7 @@ Today, all popular NoSQL databases like <a href="http://cassandra.apache.org/">C
 </p>
 
 <p align="justify">
-What is a consistency model? 
+	<i>What is a consistency model?</i>
 </p>
 
 <p align="justify">
@@ -26,7 +26,6 @@ A strongly consistent system guarantees that all operations are seen in the same
 
 <p align="justify">
 For example, if row X is replicated on two replicas R1 and R2, client A writes row X to R1 and after a time period t, B reads row X from node R2. Then, the consistency model has to determine whether client B sees the write from client A or not. In a distributed system with strong consistency guarantees, client B must see the write from client A, while in an eventually consistent system, it is not a requirement and client B can see old value of row X.
-
 </p>
 
 <p align="justify" markdown="1">
@@ -119,18 +118,18 @@ Applications like banking or airline reservations require the operations to perf
 Cassandra Query Language (CQL) provides IF syntax to deal with such cases:
 </p>
 
-~~~~
+```sql
 INSERT INTO account (transaction_date, customer_id, amount) 
 VALUES (2016-11-02, 356, 125.00) 
 IF NOT EXISTS
-~~~~
+```
 
-~~~~
+```sql
 UPDATE account SET amount = 230.00 
 WHERE payment_date = 2016-11-02
 AND customer_id = 356 
 IF amount = 125.00
-~~~~
+```
 
 <p align="justify">
 To synchronize replica nodes for LWT, Cassandra uses Paxos consensus protocol. There are four phases in Paxos: <b>prepare/promise</b>, <b>read/results</b>, <b>propose/accept</b> and <b>commit/ack</b>. Thus, Cassandra makes four network round trips between a node proposing a lightweight transaction(leader node) and other replicas in the cluster to ensure linearizable execution, so performance is affected. 
@@ -145,7 +144,7 @@ If a majority of the nodes promise to accept the leader's proposal, it may proce
 </p>
 
 <p align="justify">
-Conceptually, if a leader interrupts an earlier leader, it must first finish that leader's proposal before proceeding with its own, thus giving the desired linearizable behavior. After the commit phase, the value written by LWT is visible to non-LWTs. Following is an exmaple of paxos trace in Cassandra: 
+Conceptually, if a leader interrupts an earlier leader, it must first finish that leader's proposal before proceeding with its own, thus giving the desired linearizable behavior. After the commit phase, the value written by LWT is visible to non-LWTs. Following is an example of paxos trace in Cassandra: 
 </p>
 
 ~~~~
@@ -197,14 +196,14 @@ For process P2, the timestamp will be:
 If the event is the sending of a message, the entire vector associated with that event is sent along with the message. When the message is received by a process, the receiving process does the following:
 </p>
 
-1. Increment the counter for the process' position in the vector
-2. Perform an element-by-element comparison of the received vector with the process's timestamp vector. Set the process' timestamp vector to the higher of the values:
+ 1. Increment the counter for the process' position in the vector
+ 2. Perform an element-by-element comparison of the received vector with the process's timestamp vector. Set the process' timestamp vector to the higher of the values:
 
-~~~~
+```
 for (i=0; i < num_elements; i++) 
 	if (received[i] > system[i])
 		system[i] = received[i];
-~~~~
+```
 
 <p align="justify">
 To determine if two events are concurrent, do an element-by-element comparison of the corresponding vector timestamps. If each element of timestamp V is less than or equal to the corresponding element of timestamp W then V causally dominates W and the events are not concurrent. If each element of timestamp V is greater than or equal to the corresponding element of timestamp W then W causally dominates V and the events are not concurrent. If, on the other hand, neither of these conditions apply and some elements in V are greater than while others are less than the corresponding element in W then the events are concurrent.
@@ -220,11 +219,11 @@ Example of how vector clock works
 ## Jepsen
 
 <p align="justify">
-Jepsen is an open source ‘clojure’ library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing the systems with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.
+Jepsen is an open source Clojure library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing the systems with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.
 </p>
 
 <p align="justify">
-Jepsen test has three key properties:
+A Jepsen test has three key properties:
 </p>
 
 1. <b>Generative</b>: relies on randomized testing to explore the state space of distributed systems
