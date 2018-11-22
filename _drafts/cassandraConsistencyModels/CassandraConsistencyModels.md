@@ -249,11 +249,11 @@ Having worked extensively with Cassandra as a backend developer in an e-commerce
 
 During high contention, the coordinator node loses track of whether the value it submitted to Paxos has been applied or not. For instance:
 
-Thread A: Reads version 1
-Thread A: Transaction id=ABC, updates version 1 to 2 and sets account balance to $0+$100=$100, successfully applies the update but still receives a WTE.
-Thread B: Reads version 2
-Thread B: Transaction id=XYZ, updates version 2 to 3, and sets account balance to $100+500=$600, no WTE.
-Thread A: tries again, reads version 3 this time, sees that version 3 is greater than it's previous version 2, now it checks the transaction id and finds it's also different.
+ * Thread A: Reads version 1
+ * Thread A: Transaction id=ABC, updates version 1 to 2 and sets account balance to $0+$100=$100, successfully applies the update but still receives a WTE.
+ * Thread B: Reads version 2
+ * Thread B: Transaction id=XYZ, updates version 2 to 3, and sets account balance to $100+500=$600, no WTE.
+ * Thread A: tries again, reads version 3 this time, sees that version 3 is greater than it's previous version 2, now it checks the transaction id and finds it's also different.
 
 In this case, thread A cannot clearly identify that whether its update failed or succeeded. A might assume that it failed and try again and add another $100 to the balance, causing more money to appear in the account that would be expected.
 
