@@ -18,7 +18,7 @@ The need to use a range of consistency levels in the same application motivates 
 
 In this blog post, we are interested in exploring approaches for specifying a range of consistency guarantees in a _programmable storage_ system. After giving an informal overview of data consistency in distributed systems, I'll discuss what programmable storage is and how a programmable storage system might support a mixture of consistency levels.
 
-## Data Consistency
+## Data consistency
 
 In a distributed system where data is copied between multiple servers, keeping the copies consistent with each other may not always be possible.
 For instance, consider a small system where each _data object_ has two copies (Copy<sub>1</sub> and Copy<sub>2</sub>), distributed over two servers. What if you're accessing Copy<sub>1</sub> and it is somehow different from Copy<sub>2</sub>?
@@ -27,7 +27,7 @@ A _consistency model_ defines the ways in which Copy<sub>1</sub> and Copy<sub>2<
 
 In some contexts, such as in the [MixT][mixt-paper] and [IPA][ipa-paper] programming models, consistency is considered a property of the _data_ being operated on, rather than a property of the operations themselves. Since ADTs are defined by the operations that can be invoke on them, though, these two points of view are necessarily difficult to disentangle. 
 
-# Programmable Storage
+## Programmable storage
 
 Across all fields of computing, data storage is extremely important. In fact, even abstract 
 models of computation require the concept of _tape_, as an infinite, contiguous sequence of locations that can store symbols. It likely isn't surprising that significant improvements in storage devices have huge impacts for many areas of computing. However, hardware improvements have not always come fast enough. As application requirements for storage have grown, storage systems have grown more complex. To accommodate web-scale and high-performance applications, storage systems have become distributed, and spanned many storage devices.
@@ -48,11 +48,11 @@ difficult to work with. This makes Ceph's support for only strong consistency, v
 
 Further building up our motivating example, we would like to consider extensions to [ZLog][noah-blog-zlog], an distributed shared log developed on top of Malacology. ZLog is an implementation of the [CORFU](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan) strongly-consistent shared log. If Ceph (and Malacology on top of it) supported multiple consistency levels, then ZLog could as well.  It would be interesting to compare FuzzyLog to a mixed-consistency version of ZLog built on Malacology. Using an approach in the spirit of QUELEA, MixT, or IPA for mixing consistencies would align well with the programmability aspect of programmable storage.
 
-## Mixing Consistency
+## Mixing consistency
 
 For developers working in distributed systems, it can be cumbersome to think about whether the correct consistency guarantees are being satisfied, especially when building on storage systems that support a mixture of consistency levels. In the past few years, there have been a variety of language-level abstractions that support reasoning about mixtures of consistency guarantees.
 
-### The Inconsistent, Performance-bound, Approximate (IPA) storage system
+### Inconsistent, Performance-bound, Approximate (IPA) programming
 
 [IPA][ipa-paper] provides a _consistency type system_ that makes consistency models explicit in types.  Developers are able to verify that important data types are used at an appropriate consistency level. This type of support from the programming model is useful for developers to be both more efficient and more correct. IPA is motivated by taking a principled approach to the trade-off between consistency and performance.
 
@@ -76,7 +76,7 @@ Dynamic consistency policies are specifications of performance or behavior prope
 
 [QUELEA][quelea-paper] takes a declarative programming approach that allows developers to specify constraints on a data store and on the operations that interact with it. Programmers can annotate operations with _contracts_ that enforce application-level invariants, such as preventing a negative bank account balance. An SMT-based _contract classification_ system analyzes these contracts and automatically determines the minimum consistency level at which an operation can be run, simplifying reasoning about consistency from the developer's perspective. Further, QUELEA supports transactional contracts even when the backend datastore does not.
 
-### Mixing consistency in programmable storage
+## Mixing consistency in programmable storage
 
 The typical IO path to Ceph's storage cluster does not support consistency models other than strong consistency. To
 support weaker consistency models in our programmable storage system, we would need to build support for a range of consistency models directly in Ceph.  That, in turn, would motivate the need for a language-level abstraction to help programmers deal with the resulting "consistency zoo".
