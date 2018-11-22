@@ -181,7 +181,7 @@ His talk also covers the Jepsen [Test Data Structure](https://www.youtube.com/wa
 Finally, his talk discusses [how a Jepsen test runs](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=507s).
 <img src="lein_test1.png" width="500px;" />
 
-  1.    Orchestration node has one thread for each client and a thread for nemesis conductor.
+  1.    Orchestration node has one thread for each client and a thread for nemesis (introduces straggling, data corruption, clock drifts and node crashes) conductor.
   2.    A series of generated data comprising of read/write operations for client threads and crash/corrupt/partition operations for nemesis thread.
   3.    N nodes on which Cassandra cluster is running.
 
@@ -237,7 +237,6 @@ Jepsen explains the following situation that can arise in Cassandra:
   3. session consistency expects subsequent read to see w2
   4. but w2 has lower timestamp than w1, Cassandra ignores w2 
 
-
 Since system clocks are not monotonic, timestamps alone cannot be used for global total ordering of operations across all the data centers.
 
 Having worked extensively with Cassandra as a backend developer in an e-commerce firm, I can say that these issues are prominent, and occur frequently during the copious amounts of transaction processing. This has forced enterprises to introduce hacks at the application level, thereby increasing complexity and making the application code lengthy.
@@ -247,7 +246,6 @@ Having worked extensively with Cassandra as a backend developer in an e-commerce
 [The analysis found numerous issues](https://issues.apache.org/jira/projects/CASSANDRA/issues) which challenged Cassandra's claim to offer linearizability via LWTs:
 
 #### WriteTimeoutException when LWT concurrency level = QUORUM
-
 
 During high contention, the coordinator node loses track of whether the value it submitted to Paxos has been applied or not. For instance:
 
@@ -260,7 +258,6 @@ Thread A: tries again, reads version 3 this time, sees that version 3 is greater
 In this case, thread A cannot clearly identify that whether its update failed or succeeded. A might assume that it failed and try again and add another $100 to the balance, causing more money to appear in the account that would be expected.
 
 #### Incorrect implementation of Paxos
-
 
 Paxos says that on receiving the promise messages from a majority of nodes, the leader should propose the value of the higher-number proposal accepted amongst the ones returned by the nodes, and only propose its own value if no node has sent back a previously accepted value.
 
