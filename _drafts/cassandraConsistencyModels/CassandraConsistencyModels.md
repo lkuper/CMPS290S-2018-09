@@ -180,13 +180,14 @@ His talk also covers the Jepsen [Test Data Structure](https://www.youtube.com/wa
 ```
 
 Finally, his talk discusses [how a Jepsen test runs](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=507s).
+
 <img src="lein_test1.png" width="500px;" />
 
   1.	Orchestration node has one thread for each client and a thread for nemesis (nemesis thread introduces node crashes, data corruption or clock drifts) conductor.
   2.	A series of generated data comprising of read/write operations for client threads and crash/corrupt/partition operations for nemesis thread.
   3.	N nodes on which Cassandra cluster is running.
 
-<img src="lein_test2.png" width="500px;" />
+<img src="lein_test2.png" width="500px;"/>
 
   4. A concurrent recorded history that explains the chronological behavior of the test. 
   5.	Operations in the history are expressed as windows which marks the beginning and ending.
@@ -234,7 +235,7 @@ Since system clocks are not monotonic, timestamps in Cassandra are fundamentally
 
 Having worked extensively with Cassandra as a backend developer in an e-commerce firm, I can say that these issues are prominent, and occur frequently during the copious amounts of transaction processing. This has forced enterprises to introduce hacks at the application level, thereby increasing complexity and making the application code lengthy.
 
-#### Bugs that Jepsen analysis found in Cassandra
+### Bugs that Jepsen analysis found in Cassandra
 
 [The analysis found numerous issues](https://issues.apache.org/jira/projects/CASSANDRA/issues) which challenged Cassandra's claim to offer linearizability via LWTs:
 
