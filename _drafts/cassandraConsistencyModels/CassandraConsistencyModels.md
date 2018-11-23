@@ -9,58 +9,43 @@ by Natasha Mittal ⋅ edited by Devashish Purandare and Lindsey Kuper
 
 ## Introduction
 
-Today, all popular NoSQL databases like [Cassandra](http://cassandra.apache.org/), [MongoDB](https://www.mongodb.com/scale/apache-open-source-projects) or [HBase](https://hbase.apache.org/) claim to provide eventual consistency and offer mechanisms to tune consistency.
+Today, all popular NoSQL databases like [Cassandra](http://cassandra.apache.org/), [MongoDB](https://www.mongodb.com/scale/apache-open-source-projects) or [HBase](https://hbase.apache.org/) claim to provide _eventual consistency_ and offer mechanisms to tune consistency.
 
-*__What is a consistency model?__*
+A consistency model is a contract between the distributed data store and processes, in which if the processes agree to obey rules for ordering the read/write operations, the underlying data store will precisely specify the result of these operations. In the context of Cassandra, consistency ["refers to how up-to-date and synchronized a row of Cassandra data is on all of its replicas"](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dml_config_consistency_c.html). 
 
-A consistency model is a contract between the distributed data store and processes, in which if the processes agree to obey rules for ordering the read/write operations, the underlying data store will precisely specify the result of these operations. According to [DataStax](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dml_config_consistency_c.html), consistency refers to how up-to-date and synchronized a row of Cassandra data is on all of its replicas. 
+Under strong consistency, all operations are seen in the same order by all the nodes in the cluster; that is, there must be a global total ordering of all read and write operations. This introduces high latency, as a lot of synchronization is required which hampers availability and scalability. On the other hand, eventual consistency merely guarantees that if no updates are made to a given data item, eventually all replicas will converge and return the last updated value of the data item.  It provides lower latency, as there is no synchronization overhead.
 
-A _strongly consistent_ system guarantees that all operations are seen in the same order by all the nodes in the cluster, i.e., global total ordering of all read and write operations. This introduces high latency, as a lot of synchronization is required which hampers availability and scalability. On the other hand, _eventual consistency_ is easier to implement and provides lower latency as there is no synchronization overhead. It guarantees that if no updates are made to a given data item, eventually all replicas will converge and return the last updated value of the data item.
-
-[_Tunable consistency_](https://docs.datastax.com/en/archived/cassandra/2.1/cassandra/dml/dmlAboutDataConsistency.html) is where clients have the flexibility to adjust the consistency levels as per the application requirements, ranging from strong to eventual consistency. Cassandra provides different read and write consistency levels and users can fine-tune these levels by explicitly modifying Cassandra's configuration file. An operation’s consistency level specifies how many replicas in the cluster need to acknowledge the coordinator node.
-
-In this blog post, we will go over Cassandra’s consistency levels, [Light Weight Transactions (LWT)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0) which provide serial consistency, [vector clocks](https://amturing.acm.org/p558-lamport.pdf), and the [Jepsen](https://aphyr.com/posts/294-call-me-maybe-cassandra) analysis of distributed concurrency [bugs in Cassandra](https://issues.apache.org/jira/projects/CASSANDRA/issues).
+Cassandra's [_tunable consistency_](http://cassandra.apache.org/doc/latest/architecture/dynamo.html#tunable-consistency) is intended to give clients the flexibility to adjust consistency levels to meet application requirements. Cassandra provides different read and write consistency levels, and users can fine-tune these levels by explicitly modifying Cassandra's configuration file. The consistency level associated with an operation determines the number of replicas in the cluster that must respond with an acknowledgment for that operation to succeed.
+ 
+In this blog post, we will go over Cassandra’s consistency levels, [Light Weight Transactions (LWT)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0) which provide serial consistency, some background on [vector clocks](https://amturing.acm.org/p558-lamport.pdf), and the [2013 Jepsen analysis of Cassandra](https://aphyr.com/posts/294-call-me-maybe-cassandra) that revealed a number of consistency-related bugs.
 
 ## Cassandra's Model of Consistency
 
-
-Let's establish a [few definitions](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dmlAboutDataConsistency.html) before getting started:
+Let's establish a [few definitions](http://cassandra.apache.org/doc/latest/architecture/dynamo.html#replication) before getting started:
 
   * RF (Replication Factor): the number of copies of each data item
   * R: the number of replicas that are contacted when a data object is accessed through a read operation (the _read set_)
   * W: the number of replicas that need to acknowledge the receipt of the update before the update completes (the _write set_)
   * QUORUM: sum_of_replication_factors/2 + 1, where sum_of_replication_factors = sum of all the replication factor settings for each data center
 
+If R + W > RF, the write set and the read set always overlap, resulting in what the Cassandra documentation describes as ["strong" consistency](http://cassandra.apache.org/doc/latest/architecture/dynamo.html#picking-consistency-levels).
 
-R + W > RF is a strong consistency model, where the write set and the read set always overlap.
+The right choices for RF, R and W in this model depend on the application for which the storage system is being used. In a write-intensive application, setting W=1 and R=RF can affect durability, as failures can result in conflicting writes. In read-intensive applications, setting W=RF and R=1 can affect the probability of the write succeeding.  To provide strong consistency and fault tolerance for a balanced mix of reads and writes, one should ensure that these two properties hold:
 
-
-Configuring RF, R and W in this model depend on the application for which the storage system is being used. In a write-intensive application, setting W=1 and R=RF can affect durability in as failures can result in conflicting writes. In read-intensive applications, setting W=RF and R=1 can affect the probability of the write succeeding.
-
-
-So, to provide strong consistency and fault tolerance for balanced read-write requests, these two properties are appropriate:
-
-
-* R + W > RF 
-* R = W = QUORUM
+  * R + W > RF 
+  * R = W = QUORUM
 
 For example, a system with configuration RF=3, W=2, and R=2 provides strong consistency.
-
 
 R + W <= RF is a weaker consistency model, where there is a possibility that the read and write set will not overlap and the system is vulnerable to reading from nodes that have not yet received the updates.
   
 ### Read Requests in Cassandra
 
+As [the Cassandra documentation explains](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlClientRequestsRead.html), Cassandra can send three types of read requests to a replica: direct read requests, _digest_ requests, and background read repair requests.  A [digest request](https://wiki.apache.org/cassandra/DigestQueries) returns only a hash of the data being read instead of the actual data.  The purpose of a digest request is to allow quick comparisons of the contents of replicas: if the hashes disagree, then the actual data will disagree as well.
 
-As mentioned in the [DataStax documentation for Cassandra](https://docs.datastax.com/en/archived/cassandra/2.0/cassandra/dml/dmlAboutDataConsistency.html), Cassandra can send three types of read requests to a replica:
+When reading, the coordinator node sends a direct read request to one replica, and a digest request to a number of replicas determined by the consistency level specified by the client. If all replicas are not in sync, the coordinator chooses the data with the latest timestamp and sends the result back to the client. Meanwhile, a background read repair request is sent to out-of-date replicas to ensure that the requested data is made consistent on all replicas.
 
-1. Direct read request
-2. Digest request
-3. Background read repair request
-
-The coordinator node sends one replica node with a direct read request and a digest request to a number of replicas determined by the consistency level specified by the client. These contacted nodes return the requested data and the coordinator compares the rows from each replica to ensure consistency. If all replicas are not in sync, the coordinator chooses the data with the latest timestamp and forwards the result back to the client. Meanwhile, a background read repair request is sent to out-of-date replicas to ensure that the requested data is made consistent on all replicas.
-
-The following table shows the read consistency levels that Cassandra provides:
+The following table shows some of the [read consistency levels](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlConfigConsistency.html#dmlConfigConsistency__dml-config-read-consistency) that Cassandra provides:
 
 | Consistency Level        | Usage                                                   |
 | -------------------------|------------------------------------------------------------------------------------------|
@@ -71,9 +56,9 @@ The following table shows the read consistency levels that Cassandra provides:
 
 ### Write Requests in Cassandra
 
-The coordinator node sends a write request to all the replicas that comprise the write set for that particular row. As long as all the replicas are available, they will get the write request regardless of the write consistency level specified by the client. The write consistency level determines how many replicas should respond with an acknowledgment in order for the write to be considered successful.
+The coordinator node sends a write request to all the replicas that comprise the write set for that particular row. As long as all the replicas are available, they will get the write request regardless of the write consistency level specified by the client. For a write operation to succeed, the number of replicas required to respond with an acknowledgement is determined by its consistency level. So, if W = QUORUM and RF = 3, then write request will be sent to all the three replicas but an acknowledgment is expected from any two.
 
-The following table shows the write consistency levels that Cassandra provides:
+Cassandra also provides a variety of [write consistency levels](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlConfigConsistency.html#dmlConfigConsistency__dml-config-write-consistency):
 
 | Consistency Level        | Usage                                                   |
 | -------------------------|------------------------------------------------------------------------------------------|
@@ -103,11 +88,13 @@ IF amount = 125.00
 ```
 
 To synchronize replica nodes for [LWT](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0), Cassandra uses an implementation of the [Paxos consensus protocol](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf). There are four phases in this implementation of Paxos: **prepare/promise**, **read/results**, **propose/accept** and **commit/ack**. Thus, Cassandra makes four network round trips between the coordinator node and other replicas in the cluster to ensure linearizable execution, so performance is affected.
+
 Prepare/Promise is the most time-consuming phase of the Paxos algorithm. The leader node proposes a ballot number and sends it to all the replicas in the cluster. The replicas accept the proposal if the ballot number is the highest it has seen so far and sends back a promise message which includes the most recent proposal it has already received in advance.
 
 If a majority/quorum of the nodes promises to accept the ballot number, the leader can then move on to the next phase of the protocol. But if a majority of the nodes sent an earlier proposal with their promise message, the leader must use that value.
 
 If a leader node interrupts a previous leader node, then it must finish the previous leader’s proposal first and then proceed with its own proposal, thereby assuring the desired linearizable behavior. After the commit phase, the value written by LWT is visible to non-LWTs.
+
 The following is a (slightly anonymized) example of a Paxos trace in Cassandra (taken from one of my own Cassandra logs from a system I worked on): 
 
 ```
@@ -137,7 +124,7 @@ There are two consistency levels associated with [LWTs](https://www.datastax.com
 
 [Vector clocks](https://en.wikipedia.org/wiki/Vector_clock) are used to determine whether pairs of events are causally related in a distributed system. Logical timestamps are generated for each event in the distributed system, and their causality (happens-before relation) is determined by comparing those logical timestamps.
 
- The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.  Each process assigns a timestamp to each event. 
+The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.  Each process assigns a timestamp to each event. 
 
 For a send_message event, the entire vector associated with that event is sent along with the message/payload. When the message is received by a process, the receiving process does the following:
 
@@ -150,7 +137,11 @@ for (i=0; i < num_elements; i++)
         system[i] = received[i];
 ```
 
-To determine if two events are concurrent, an element-by-element comparison of their vector timestamps is done. If each element of timestamp V1 is less than or equal to the corresponding element of timestamp V2 then V1 causally dominates V2 and the events are not concurrent. If each element of timestamp V2 is greater than or equal to the corresponding element of timestamp V1 then V2 causally dominates V1 and the events are not concurrent. If neither of these conditions applies and some elements in V1 is greater than while others are less than the corresponding elements in V2, then the events are concurrent.
+To determine if two events are concurrent, their vector timestamps are compared element-by-element. 
+
+* if each element of V1 timestamp <= each element of V2 timestamp, then V1 causally precedes V2, or
+* if each element of V2 timestamp <= each element of V1 timestamp, then V2 causally precedes V1, or 
+* if neither of these conditions applies and some elements in V1 timestamp  is greater than while others are less than the corresponding elements in V2 timestamp, then the events are concurrent.
 
 Vector clocks are illustrated in the following image:
 
@@ -158,13 +149,13 @@ Vector clocks are illustrated in the following image:
     
 ## Jepsen
 
-[Jepsen](https://github.com/jepsen-io/jepsen) is an open source Clojure library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing the systems with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.  The Jepsen project [did an analysis of Cassandra in 2013](https://aphyr.com/posts/294-call-me-maybe-cassandra).
+[Jepsen](https://github.com/jepsen-io/jepsen) is an open-source Clojure library, written by Kyle Kingsbury, designed to test the partition tolerance of distributed systems by fuzzing them with random operations. The results of these tests are analyzed to expose failure modes and to verify if the system violates any of the consistency properties it claims to have.  The Jepsen project [did an analysis of Cassandra in 2013](https://aphyr.com/posts/294-call-me-maybe-cassandra).
 
-As [Joel Knighton mentions in his talk about how the DataStax team uses Jepsen](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=335s), a Jepsen test has three key properties:
+As [Joel Knighton explains in his talk about how the DataStax team uses Jepsen](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=335s), a Jepsen test has three key properties:
 
-  1. **Generative**: relies on randomized testing to explore the state space of distributed systems
-  2. **Blackbox**: observes the system at client boundaries (does not need any tracing framework or apply some code patch in the distributed system to run the test)
-  3. **Invariance**: checks invariance from the recorded history of operations rather than runtime
+  1. **It is generative**: relies on randomized testing to explore the state space of distributed systems
+  2. **It's "black box"**: observes the system at client boundaries (does not need any tracing framework or apply some code patch in the distributed system to run the test)
+  3. **It relies on invariants**: it checks invariants from the recorded history of operations rather than runtime
 
 His talk also covers the Jepsen [Test Data Structure](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=368s):
 
@@ -181,7 +172,7 @@ His talk also covers the Jepsen [Test Data Structure](https://www.youtube.com/wa
 Finally, his talk discusses [how a Jepsen test runs](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=507s).
 <img src="lein_test1.png" width="500px;" />
 
-  1.    Orchestration node has one thread for each client and a thread for nemesis (introduces straggling, data corruption, clock drifts and node crashes) conductor.
+  1.    Orchestration node has one thread for each client and a thread for nemesis conductor.
   2.    A series of generated data comprising of read/write operations for client threads and crash/corrupt/partition operations for nemesis thread.
   3.    N nodes on which Cassandra cluster is running.
 
@@ -196,7 +187,7 @@ Finally, his talk discusses [how a Jepsen test runs](https://www.youtube.com/wat
 #### Vector Clocks
 
 Cassandra uses last-write-wins (LWW) policy to resolve conflicts and does not implement vector clocks. This reduces the number of network round trips from 2 to 1. In this case, 
-if a client A writes x=1, and another client B writes x=2, it is possible that the final value of x can be 1 or 2 depending upon which write wins(the one with the latest timestamp). 
+if a client A writes x=1, and another client B writes x=2, it is possible that the final value of x can be 1 or 2 depending upon which write wins (the one with the latest timestamp). 
 
 In order to avoid this problem, Cassandra uses the concept of immutable data. For every update operation for a particular column, a <value,timestamp> pair is added. For example, for a particular column ‘name’, subsequent updates will be of the type:
 
@@ -206,9 +197,9 @@ Mick, 2017-11-23 12:11:23
 Micky, 2017-11-24 17:13:45
 Micky Lawson, 2017-12-02 09:34:09
 ```
-When a client makes a read request, a client-specific merge function is applied to all the column values and the desired result is obtained.
+When a client makes a read request, a client-specific merge function is applied to all the column values and the desired result is obtained. 
 
-**In case of equal timestamps, the lexicographically greater value is chosen.** 
+*In case of equal timestamps (tie), the lexicographically greater value is chosen.* 
 
 For this to happen, two timestamps need to collide and it is a rare possibility that two writes will get an exactly same microsecond-resolution timestamp.
 
@@ -220,7 +211,7 @@ For this to happen, two timestamps need to collide and it is a rare possibility 
 397 survivors
 4 acknowledged writes lost!         //writes lost means corrupt data
 ```
-In Cassandra, the time-resolution is in milliseconds (three zeroes are blindly appended at the end to show microsecond precision). The probability of writes conflicting is much higher for millisecond-resolution and this results in so much corrupt data.
+In Cassandra, the time-resolution is in milliseconds (three zeroes are blindly appended at the end to show microsecond precision). The probability of writes conflicting is much higher for millisecond-resolution and this results in so much corrupted data.
 
 When a client makes a read request, the coordinator node collects the data from required nodes and compares the digest (hash) of the data. If there is a mismatch, conflict is resolved by using the latest timestamp wins policy. In the case of equal timestamps, a value which is lexicographically greater is chosen and sent to inconsistent replicas for read repair. It is possible that the corrupted value is lexically greater than the original value. As a result, the corrupted value will be returned to the user and also propagated to other correct replicas.
 
@@ -230,7 +221,7 @@ Since Cassandra uses last-write-wins policy, it is tightly bound to wall-clock t
 
 The Jepsen tests of Cassandra introduce clock drifts due to which system clocks are unsynchronized, and the session guarantees no longer hold. For instance, this becomes an issue when dealing with leap seconds.  A leap second is a one-second adjustment (due to irregularities in Earth’s rotation) that is occasionally applied UTC to keep it close to the solar time at Greenwich. Linux Kernel systems handle leap seconds by taking a one-second backward jump.
 
-Jepsen explains the following situation that can arise in Cassandra:
+[Jepsen explains the following situation](https://aphyr.com/posts/299-the-trouble-with-timestamps) that can arise in Cassandra:
 
   1. a client writes w1 prior to leap second and 
   2. same client then writes w2 just after the leap second
@@ -239,7 +230,7 @@ Jepsen explains the following situation that can arise in Cassandra:
 
 Since system clocks are not monotonic, timestamps alone cannot be used for global total ordering of operations across all the data centers.
 
-Having worked extensively with Cassandra as a backend developer in an e-commerce firm, I can say that these issues are prominent, and occur frequently during the copious amounts of transaction processing. This has forced enterprises to introduce hacks at the application level, thereby increasing complexity and making the application code lengthy.
+Having worked extensively with Cassandra as a backend developer, I can say that these issues are prominent, and occur frequently during the copious amounts of transaction processing. This has forced enterprises to introduce hacks at the application level, thereby increasing complexity and making the application code lengthy.
 
 #### Bugs that Jepsen analysis found in Cassandra
 
@@ -249,11 +240,11 @@ Having worked extensively with Cassandra as a backend developer in an e-commerce
 
 During high contention, the coordinator node loses track of whether the value it submitted to Paxos has been applied or not. For instance:
 
- * Thread A: Reads version 1
- * Thread A: Transaction id=ABC, updates version 1 to 2 and sets account balance to $0+$100=$100, successfully applies the update but still receives a WTE.
- * Thread B: Reads version 2
- * Thread B: Transaction id=XYZ, updates version 2 to 3, and sets account balance to $100+500=$600, no WTE.
- * Thread A: tries again, reads version 3 this time, sees that version 3 is greater than it's previous version 2, now it checks the transaction id and finds it's also different.
+Thread A: Reads version 1
+Thread A: Transaction id=ABC, updates version 1 to 2 and sets account balance to $0+$100=$100, successfully applies the update but still receives a WTE.
+Thread B: Reads version 2
+Thread B: Transaction id=XYZ, updates version 2 to 3, and sets account balance to $100+500=$600, no WTE.
+Thread A: tries again, reads version 3 this time, sees that version 3 is greater than it's previous version 2, now it checks the transaction id and finds it's also different.
 
 In this case, thread A cannot clearly identify that whether its update failed or succeeded. A might assume that it failed and try again and add another $100 to the balance, causing more money to appear in the account that would be expected.
 
