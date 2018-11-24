@@ -241,6 +241,6 @@ In this case, thread 1 cannot clearly identify whether its update failed or succ
 
 In Paxos, the leader node proposes the highest-number ballot that has been accepted by the nodes. In case no node responds back with a value, the leader then proposes its own value.
 
-But cassandra’s current implementation of Paxos “ignores the value already accepted by some nodes if any of the nodes sends a more recent ballot than the other node but with no values. The net effect is that mistakenly the system is accepting two different values for the same round” as mentioned in Cassandra Bug [#6012](https://issues.apache.org/jira/browse/CASSANDRA-6012).
+But cassandra’s current implementation of Paxos “ignores the value already accepted by some nodes if any of the nodes sends a more recent ballot than the other node but with no values. The net effect is that mistakenly the system is accepting two different values for the same round” as mentioned in [Cassandra-6012](https://issues.apache.org/jira/browse/CASSANDRA-6012).
 
 Since the first analysis of Cassandra by Jepsen in 2013, the DataStax team has adapted Jepsen and further extended it by incorporating new tests to break the new versions of Cassandra and this has helped to identify critical bugs in the implementation.
