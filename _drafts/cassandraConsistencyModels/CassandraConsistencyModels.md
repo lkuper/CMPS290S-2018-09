@@ -56,9 +56,9 @@ The following table shows some of the [read consistency levels](https://docs.dat
 
 ### Write Requests in Cassandra
 
-The coordinator node sends a write request to all the replicas that comprise the write set for that particular row. As long as all the replicas are available, they will get the write request regardless of the write consistency level specified by the client. For a write operation to succeed, the number of replicas required to respond with an acknowledgement is determined by its consistency level. So, if W = QUORUM and RF = 3, then write request will be sent to all the three replicas but an acknowledgment is expected from any two.
+The coordinator node sends a write request to all the replicas that comprise the write set for that particular row. As long as all the replicas are available, they will get the write request regardless of the [write consistency level](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlClientRequestsWrite.html) specified by the client. For a write operation to succeed, the number of replicas required to respond with an acknowledgement is determined by its consistency level. So, if W = QUORUM and RF = 3, then write request will be sent to all the three replicas but an acknowledgment is expected from any two.
 
-Cassandra also provides a variety of [write consistency levels](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlConfigConsistency.html#dmlConfigConsistency__dml-config-write-consistency):
+Here are some of the [write consistency levels](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlConfigConsistency.html#dmlConfigConsistency__dml-config-write-consistency) Cassandra provides:
 
 | Consistency Level        | Usage                                                   |
 | -------------------------|------------------------------------------------------------------------------------------|
@@ -71,9 +71,9 @@ Cassandra also provides a variety of [write consistency levels](https://docs.dat
 
 ## Lightweight Transactions (LWT)
 
-Applications like banking or airline reservations require the operations to perform in sequence without any interruptions. This is [linearizable](https://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf) consistency, which is one of the strongest single-object consistency models. Cassandra provides linearizability via [lightweight transactions (LWT)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0).
+Applications like banking or airline reservations require operations to be appear to be performed at a single, instantaneous, global time. This is [linearizable](https://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf) consistency, which is one of the strongest single-object consistency models. Cassandra provides linearizability via [lightweight transactions (LWT)](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0).
 
-LWTs are used for insert and update operations using *IF* clause:
+In the SQL-like [Cassandra Query Language](http://cassandra.apache.org/doc/latest/cql/), LWTs are used for `INSERT`, `UPDATE`, and `DELETE` operations that are conditioned on an `IF` or `IF NOT EXISTS` condition, such as:
 
 ```sql
 INSERT INTO account (transaction_date, customer_id, amount) 
@@ -87,14 +87,13 @@ AND customer_id = 356
 IF amount = 125.00
 ```
 
-To synchronize replica nodes for [LWT](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0), Cassandra uses an implementation of the [Paxos consensus protocol](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf). There are four phases in this implementation of Paxos: **prepare/promise**, **read/results**, **propose/accept** and **commit/ack**. Thus, Cassandra makes four network round trips between the coordinator node and other replicas in the cluster to ensure linearizable execution, so performance is affected.
+To synchronize replica nodes for [LWT](https://www.datastax.com/dev/blog/lightweight-transactions-in-cassandra-2-0), Cassandra uses an implementation of the [Paxos consensus protocol](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf). There are four phases in this implementation of Paxos: **prepare/promise**, **read/results**, **propose/accept** and **commit/ack**. Thus, Cassandra makes four network round trips between the coordinator node and other replicas in the cluster to ensure linearizable execution, so performance is affected.  In fact, the Cassandra documentation points out that ["`IF` conditions will incur a non-negligible performance cost (internally, Paxos will be used) so this should be used sparingly."](http://cassandra.apache.org/doc/latest/cql/dml.html#update)
 
-Prepare/Promise is the most time-consuming phase of the Paxos algorithm. The leader node proposes a ballot number and sends it to all the replicas in the cluster. The replicas accept the proposal if the ballot number is the highest it has seen so far and sends back a promise message which includes the most recent proposal it has already received in advance.
+Prepare/promise is the most time-consuming phase of the Paxos algorithm. The leader node proposes a ballot number and sends it to all the replicas in the cluster. The replicas accept the proposal if the ballot number is the highest it has seen so far and sends back a promise message which includes the most recent proposal it has already received in advance.
 
 If a majority/quorum of the nodes promises to accept the ballot number, the leader can then move on to the next phase of the protocol. But if a majority of the nodes sent an earlier proposal with their promise message, the leader must use that value.
 
 If a leader node interrupts a previous leader node, then it must finish the previous leader’s proposal first and then proceed with its own proposal, thereby assuring the desired linearizable behavior. After the commit phase, the value written by LWT is visible to non-LWTs.
-
 The following is a (slightly anonymized) example of a Paxos trace in Cassandra (taken from one of my own Cassandra logs from a system I worked on): 
 
 ```
@@ -119,33 +118,6 @@ There are two consistency levels associated with [LWTs](https://www.datastax.com
 
   1. **SERIAL** : where the Paxos consensus protocol will involve all the nodes across multiple data centers.
   2. **LOCAL_SERIAL** : where the Paxos consensus protocol will run on the local datacenter.
-
-## Vector Clocks
-
-[Vector clocks](https://en.wikipedia.org/wiki/Vector_clock) are used to determine whether pairs of events are causally related in a distributed system. Logical timestamps are generated for each event in the distributed system, and their causality (happens-before relation) is determined by comparing those logical timestamps.
-
-The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.  Each process assigns a timestamp to each event. 
-
-For a send_message event, the entire vector associated with that event is sent along with the message/payload. When the message is received by a process, the receiving process does the following:
-
-  1. Increments the counter for the process' position in the vector.
-  2. Performs an element-by-element comparison of the received vector with the process's timestamp vector, and sets the process' timestamp vector to the higher of the values:
-
-```
-for (i=0; i < num_elements; i++) 
-    if (received[i] > system[i])
-        system[i] = received[i];
-```
-
-To determine if two events are concurrent, their vector timestamps are compared element-by-element. 
-
-* if each element of V1 timestamp <= each element of V2 timestamp, then V1 causally precedes V2, or
-* if each element of V2 timestamp <= each element of V1 timestamp, then V2 causally precedes V1, or 
-* if neither of these conditions applies and some elements in V1 timestamp  is greater than while others are less than the corresponding elements in V2 timestamp, then the events are concurrent.
-
-Vector clocks are illustrated in the following image:
-
-<img src="vector_clock_final.gif"></img>
     
 ## Jepsen
 
@@ -184,12 +156,39 @@ Finally, his talk discusses [how a Jepsen test runs](https://www.youtube.com/wat
 
 ### Jepsen Analysis of Cassandra
 
-#### Vector Clocks
+#### Background: Vector Clocks
 
-Cassandra uses last-write-wins (LWW) policy to resolve conflicts and does not implement vector clocks. This reduces the number of network round trips from 2 to 1. In this case, 
-if a client A writes x=1, and another client B writes x=2, it is possible that the final value of x can be 1 or 2 depending upon which write wins (the one with the latest timestamp). 
+[Vector clocks](https://en.wikipedia.org/wiki/Vector_clock) are a technique for determining whether pairs of events are causally related in a distributed system. Logical timestamps are generated for each event in the system, and their potential causality (i.e., their [happens-before](https://amturing.acm.org/p558-lamport.pdf) relationship) is determined by comparing those logical timestamps.
 
-In order to avoid this problem, Cassandra uses the concept of immutable data. For every update operation for a particular column, a <value,timestamp> pair is added. For example, for a particular column ‘name’, subsequent updates will be of the type:
+ The timestamp for an event is a vector of numbers, with each number corresponding to a process. Each process knows its position in the vector.  Each process assigns a timestamp to each event.
+
+For a message send event, the entire vector associated with that event is sent along with the message payload. When the message is received by a process, the receiving process does the following:
+
+  1. Increments the counter for the process's position in the vector.
+  2. Performs an element-by-element comparison of the received vector with the process's timestamp vector, and sets the process's timestamp vector to the higher of the values:
+
+```
+for (i=0; i < num_elements; i++) 
+    if (received[i] > system[i])
+        system[i] = received[i];
+```
+
+To determine if two events are concurrent, their vector timestamps are compared element-by-element. 
+
+* if each element of V1 timestamp <= each element of V2 timestamp, then V1 causally precedes V2, or
+* if each element of V2 timestamp <= each element of V1 timestamp, then V2 causally precedes V1, or 
+* if neither of these conditions applies and some elements in V1 timestamp  is greater than while others are less than the corresponding elements in V2 timestamp, then the events are concurrent.
+
+The following animation shows an example of vector clocks in a system with three interacting processes:
+
+<img src="vector_clock_final.gif"></img>
+
+#### Conflicting writes in Cassandra
+
+Cassandra uses a last-write-wins (LWW) policy to resolve write conflicts and does _not_ implement vector clocks ["for performance reasons"](https://aphyr.com/posts/294-jepsen-cassandra). In this case, 
+if a client A writes x=1, and another client B writes x=2, it is possible that the final value of x can be 1 or 2 depending upon which write comes second (the one with the most recent timestamp). 
+
+In order to avoid this problem, Cassandra uses the concept of immutable data. For every update operation for a particular column, a <value,timestamp> pair is added. For example, for a particular column called `name`, one might have a series of updates, as follows:
 
 ```
 name
@@ -197,13 +196,9 @@ Mick, 2017-11-23 12:11:23
 Micky, 2017-11-24 17:13:45
 Micky Lawson, 2017-12-02 09:34:09
 ```
-When a client makes a read request, a client-specific merge function is applied to all the column values and the desired result is obtained. 
+When a client makes a read request, a client-specific merge function is applied to all the column values and the desired result is obtained.  In the case of equal timestamps (i.e., a tie), [the lexicographically greater value is chosen](https://aphyr.com/posts/294-jepsen-cassandra).
 
-*In case of equal timestamps (tie), the lexicographically greater value is chosen.* 
-
-For this to happen, two timestamps need to collide and it is a rare possibility that two writes will get an exactly same microsecond-resolution timestamp.
-
-[The Jepsen analysis of Cassandra tested this](https://aphyr.com/posts/294-call-me-maybe-cassandra) by repeatedly changing a column value and found that 1 row is corrupted per 250 transactions. 
+For this to happen, two timestamps need to collide, and it would seem to be a rare possibility that two writes would get exactly the same microsecond-resolution timestamp.  However, [the Jepsen analysis of Cassandra tested this](https://aphyr.com/posts/294-call-me-maybe-cassandra) by repeatedly changing a column value and found that 1 row is corrupted per 250 transactions. 
 
 ```
 1000 total
@@ -211,22 +206,16 @@ For this to happen, two timestamps need to collide and it is a rare possibility 
 397 survivors
 4 acknowledged writes lost!         //writes lost means corrupt data
 ```
-In Cassandra, the time-resolution is in milliseconds (three zeroes are blindly appended at the end to show microsecond precision). The probability of writes conflicting is much higher for millisecond-resolution and this results in so much corrupted data.
 
-When a client makes a read request, the coordinator node collects the data from required nodes and compares the digest (hash) of the data. If there is a mismatch, conflict is resolved by using the latest timestamp wins policy. In the case of equal timestamps, a value which is lexicographically greater is chosen and sent to inconsistent replicas for read repair. It is possible that the corrupted value is lexically greater than the original value. As a result, the corrupted value will be returned to the user and also propagated to other correct replicas.
+This is happening because in Cassandra, the time resolution is in milliseconds, not microseconds. The probability of writes conflicting is much higher for millisecond resolution, resulting in much corrupted data.
 
-#### Session Consistency
+#### Session consistency
 
-Since Cassandra uses last-write-wins policy, it is tightly bound to wall-clock timestamps for ordering the writes. It provides the "Read Your Writes" and "Monotonic Reads" [session guarantees](https://dl.acm.org/citation.cfm?id=645792.668302)
+Since Cassandra uses a last-write-wins policy, the writes are ordered by wall-clock timestamps. One might expect that the "Read Your Writes" and "Monotonic Reads" [session guarantees](https://dl.acm.org/citation.cfm?id=645792.668302) would hold.  However, the Jepsen tests of Cassandra introduce clock drifts due to which system clocks are unsynchronized, and the session guarantees no longer hold.
 
-The Jepsen tests of Cassandra introduce clock drifts due to which system clocks are unsynchronized, and the session guarantees no longer hold. For instance, this becomes an issue when dealing with leap seconds.  A leap second is a one-second adjustment (due to irregularities in Earth’s rotation) that is occasionally applied UTC to keep it close to the solar time at Greenwich. Linux Kernel systems handle leap seconds by taking a one-second backward jump.
+Another issue arises in the event of a _leap second_, which is ["a one-second adjustment that is occasionally applied to civil time Coordinated Universal Time (UTC) to keep it close to the mean solar time at Greenwich, in spite of the Earth's rotation slowdown and irregularities"](https://en.wikipedia.org/wiki/Leap_second).  Linux kernel systems handle leap seconds by taking a one-second backward jump.  When that happens, [the following situation can arise in Cassandra, as Kyle Kingsbury explains](https://aphyr.com/posts/299-the-trouble-with-timestamps):
 
-[Jepsen explains the following situation](https://aphyr.com/posts/299-the-trouble-with-timestamps) that can arise in Cassandra:
-
-  1. a client writes w1 prior to leap second and 
-  2. same client then writes w2 just after the leap second
-  3. session consistency expects subsequent read to see w2
-  4. but w2 has lower timestamp than w1, Cassandra ignores w2 
+> Say a client writes w1 just prior to a leap second, then writes w2 just after the leap second. Session consistency demands that any subsequent read will see w2–but since w2 has a lower timestamp than w1, Cassandra immediately ignores w2 on any nodes where w1 is visible.
 
 Since system clocks are not monotonic, timestamps alone cannot be used for global total ordering of operations across all the data centers.
 
@@ -234,26 +223,24 @@ Having worked extensively with Cassandra as a backend developer, I can say that 
 
 #### Bugs that Jepsen analysis found in Cassandra
 
-[The analysis found numerous issues](https://issues.apache.org/jira/projects/CASSANDRA/issues) which challenged Cassandra's claim to offer linearizability via LWTs:
+The Jepsen analysis of Cassandra found numerous issues that challenged Cassandra's claim to offer linearizability via LWTs.
 
-#### WriteTimeoutException when LWT concurrency level = QUORUM
+##### WriteTimeoutException when LWT concurrency level = QUORUM
 
-During high contention, the coordinator node loses track of whether the value it submitted to Paxos has been applied or not. For instance:
+During high contention, the coordinator node loses track of whether the value it submitted to Paxos has been applied or not. For instance, in a banking application, the following situation could occur:
 
-Thread A: Reads version 1
-Thread A: Transaction id=ABC, updates version 1 to 2 and sets account balance to $0+$100=$100, successfully applies the update but still receives a WTE.
-Thread B: Reads version 2
-Thread B: Transaction id=XYZ, updates version 2 to 3, and sets account balance to $100+500=$600, no WTE.
-Thread A: tries again, reads version 3 this time, sees that version 3 is greater than it's previous version 2, now it checks the transaction id and finds it's also different.
+Thread 1: Reads account_balance=$0
+Thread 1: Updates account_balance=$0+$100=$100 successfully but still receives WriteTimeoutException.
+Thread 2: Reads account_balance=$100.
+Thread 2: Updates account_balance=$100+500=$600 successfully with no WriteTimeoutException.
+Thread 1: Tries again and reads account_balance=$600, this is greater than its previous update.
 
-In this case, thread A cannot clearly identify that whether its update failed or succeeded. A might assume that it failed and try again and add another $100 to the balance, causing more money to appear in the account that would be expected.
+In this case, thread 1 cannot clearly identify whether its update failed or succeeded. It might assume that it failed and try again and add another $100 to the balance.
 
-#### Incorrect implementation of Paxos
+##### Incorrect implementation of Paxos
 
-Paxos says that on receiving the promise messages from a majority of nodes, the leader should propose the value of the higher-number proposal accepted amongst the ones returned by the nodes, and only propose its own value if no node has sent back a previously accepted value.
+In Paxos, the leader node proposes the highest-number ballot that has been accepted by the nodes. In case no node responds back with a value, the leader then proposes its own value.
 
-But the current implementation ignores the value already accepted by some nodes if any of the nodes sends a more recent ballot than the other node but with no values. The net effect is that mistakenly the system is accepting two different values for the same round.
+But cassandra’s current implementation of Paxos “ignores the value already accepted by some nodes if any of the nodes sends a more recent ballot than the other node but with no values. The net effect is that mistakenly the system is accepting two different values for the same round” as mentioned in Cassandra Bug [#6012](https://issues.apache.org/jira/browse/CASSANDRA-6012).
 
 Since the first analysis of Cassandra by Jepsen in 2013, the DataStax team has adapted Jepsen and further extended it by incorporating new tests to break the new versions of Cassandra and this has helped to identify critical bugs in the implementation.
-
-
