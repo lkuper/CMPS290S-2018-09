@@ -34,6 +34,17 @@ Devashish Purandare:
 
 Abhishek Singh:
   name : "Abhishek Singh"
+  avatar: "https://users.soe.ucsc.edu/~abasingh/img/p1.jpg"
+  links :
+    - label: "Email"
+      icon : "fas fa-fw fa-envelope-square"
+      url  : "mailto:abasingh@ucsc.edu"
+    - label: "Website"
+      icon : "fas fa-fw fa-link"
+      url  : "https://users.soe.ucsc.edu/~abasingh/"
+    - label: "Twitter"
+      icon : "fab fa-fw fa-twitter-square"
+      url  : "https://twitter.com/alfredd"
 
 Aldrin Montana:
   name  : "Aldrin Montana"
