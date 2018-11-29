@@ -142,19 +142,7 @@ Knighton's talk also covers the Jepsen [test data structure](https://www.youtube
  :checker              ...}  | looks at and assesses the test run
 ```
 
-Finally, Knighton's talk discusses [how a Jepsen test runs](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=507s).  Here's a brief summary of his explanation; check out the [video](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=507s) for more detail:
-
-<figure>
-  <img src="/CMPS290S-2018-09/blog-assets/lein_test1.png" height="500" />
-</figure> 
-
-In this diagram, we see an _orchestration node_ has one thread for each client and a thread for the _nemesis_, which is the Jepsen process that injects failures into a distributed system as it runs.  The orchestration node connects to several nodes on which the Cassandra cluster is running.  Jepsen generates a stream of read and write operations for client threads and crash/corrupt/partition operations for the nemesis thread.
-  
-<figure>
-  <img src="/CMPS290S-2018-09/blog-assets/lein_test2.png" height="500" />
-</figure> 
-
-The result is a _history_ that shows which operations happened during the test and when.  Operations in the history are expressed as _windows_ that show when they began and ended.  Finally, Jepsen runs a _checker_ that can determine whether the history is valid according to some metric of correctness.  The checker can also produce an artifact to help explain performance characteristics, such as the latency of operations.
+Finally, Knighton's talk discusses [how a Jepsen test runs](https://www.youtube.com/watch?v=OnG1FCr5WTI&t=507s).  As he explains, in Jepsen an _orchestration node_ has one thread representing each client of the system being tested, and a thread for the _nemesis_, which is the Jepsen process that injects failures into the system as it runs.  The orchestration node connects to several nodes on which the Cassandra cluster is running.  Jepsen generates a stream of read and write operations for client threads and crash/corrupt/partition operations for the nemesis thread.  The result is a _history_ that shows which operations happened during the test and when.  Operations in the history are expressed as _windows_ that show when they began and ended.  Finally, Jepsen runs a _checker_ that can determine whether the history is valid according to some metric of correctness.  The checker can also produce an artifact to help explain performance characteristics, such as the latency of operations.
 
 ### Jepsen Analysis of Cassandra
 
