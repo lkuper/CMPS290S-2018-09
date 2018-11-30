@@ -221,10 +221,10 @@ The Jepsen analysis of Cassandra found numerous issues that challenged Cassandra
 
 As explained in Cassandra bug [9328](https://issues.apache.org/jira/browse/CASSANDRA-9328) during high contention, the coordinator node "loses track" of whether the value it submitted to Paxos has been applied or not. For instance, in a banking application, the following situation could occur:
 
-Thread 1: Reads account_balance=$0
-Thread 1: Updates account_balance=$0+$100=$100 successfully, but still receives WriteTimeoutException.
-Thread 2: Reads account_balance=$100.
-Thread 2: Updates account_balance=$100+500=$600 successfully with no WriteTimeoutException.
+Thread 1: Reads account_balance=$0.\
+Thread 1: Updates account_balance=$0+$100=$100 successfully, but still receives WriteTimeoutException.\
+Thread 2: Reads account_balance=$100.\
+Thread 2: Updates account_balance=$100+500=$600 successfully with no WriteTimeoutException.\
 Thread 1: Tries again and reads account_balance=$600, which is greater than its previous update.
 
 In this case, thread 1 cannot clearly identify whether its update failed or succeeded. It might assume that it failed and try again and add another $100 to the balance.
