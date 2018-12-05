@@ -20,12 +20,20 @@ Here's a list of the assumptions:
 >  5. Unlike the implementation in the [paper](http://doi.acm.org/10.1145/67544.66963), we do not assign priorities to an operation. Every operation has equal priority.
 >  6. An operation is sent to others immediately after it was executed at one particular site. There is no out-of-order delivery of messages.
 
+
 <figure>
   <img src="test_operations.png" height="600" width="450" />
   <figcaption>Figure 1. Operations received by Alice and Bob are transformed before being applied to local data.</figcaption>
 </figure> 
 
 
-Let's understand what would happen when these assumptions are removed in our original design. Firstly, there is a problem of ascertaining [causality](https://en.wikipedia.org/wiki/Causality) of messages in the design. Consider the second and third operations exchanged between Alice and Bob in Figure 1. There is no way for Alice to know if the third operation (INSERT ("x", 2)) sent by Bob happened before or after Bob received the second operation from Alice (INSERT("y", 0)). That's because we ignored causality in the last blog post. This is a major problem. Even with only two users in the system, there is enough uncertainty in the system when we don't consider the history of how changes happened in the system. This is just one of the problems I wish to address in this post.
+Let's understand what would happen when some of these assumptions are removed from our original design. Primarily, there is a problem of ascertaining [causality](https://en.wikipedia.org/wiki/Causality) of messages in the design. Consider the second and third operations exchanged between Alice and Bob in Figure 1. There is no way for Alice to know if the third operation (INSERT ("x", 2)) sent by Bob happened before or after Bob received the second operation from Alice (INSERT("y", 0)). That's because we ignored causality in the last blog post. This is a major problem. Even with only two users in the system, there is enough uncertainty in the system when we don't consider the history of how changes happened in the system. This is just one of the problems I wish to address in this post.
 
-The text editor in the first post consisted of only 2 users Alice and Bob. It was designed with only 2 users in mind. If we increased the number of users in the system we would hit a roadblock in our design. The design of the system dealt with only Let's say that there was another user in the system called __Carol__. 
+The text editor in the first post consisted of only 2 users Alice and Bob. It was designed with only 2 users in mind. It is easy to understand how operation messages are exchanged when only two users exist in the system. With increase in the number of users in the system, the number of messages needed to share changes with other users grows linearly. Since each user has a replica of the document state, each change in the document state must be informed to the other users. If there are `n` users in the system, every state change at one user must be communicated with `n-1` users. With each user making changes to their document state the design of the two-user collaborative text editor developed in the last post cannot be used as there was no notion to find out the exact state on which the operation was executed.
+
+The problem of receiving out-of-order messages or duplicate messages is another issue in the design. This is one assumption, we will maintain for the remaining portion of the discussion.
+
+ 
+ If we increased the number of users in the system we would hit a roadblock in our design. The design of the system dealt with only Let's say that there was another user in the system called __Carol__. 
+
+
