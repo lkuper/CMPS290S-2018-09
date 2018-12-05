@@ -9,7 +9,7 @@ classes: wide
 src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
 </script>
 
-by Austen Barker &middot; edited by Sohum and Lindsey Kuper
+by Austen Barker &middot; edited by Sohum Banerjea and Lindsey Kuper
 
 ## Background & Recap
 
