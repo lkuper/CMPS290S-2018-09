@@ -31,13 +31,10 @@ Let's understand what would happen when some of these assumptions are removed fr
 
 The text editor in the first post consisted of only 2 users Alice and Bob. It was designed with only 2 users in mind. It is easy to understand how operation messages are exchanged when only two users exist in the system. With increase in the number of users in the system, the number of messages needed to share changes with other users grows linearly. Since each user has a replica of the document state, each change in the document state must be informed to the other users. If there are `n` users in the system, every state change at one user must be communicated with `n-1` users. With each user making changes to their document state the design of the two-user collaborative text editor developed in the last post cannot be used as there was no notion to find out the exact state on which the operation was executed.
 
-The problem of receiving out-of-order messages or duplicate messages is another issue in the design. If the same message is received multiple times we will not be able to differentiate between duplicates or out of order messages and would execute the operation on the replica. This would aggravate the problem of data inconsistency in the design. However, this is one assumption, we will maintain for the remainder of this post. We will look at some ways to deal with this problem at the end of the post.
+The problem of receiving out-of-order messages or duplicate messages is another issue in the design. If the same message is received multiple times we will not be able to differentiate between duplicates or out of order messages and would execute the operation on the replica. This would aggravate the problem of data inconsistency among the users. However, this is one assumption, we will maintain for the remainder of this post. We will look at some ways to deal with this problem at the end of the post.
 
 
-### State management: when, where, how
+### State management
 
-
-
-
-
+The essence of the problem from one user's perspective is that we cannot trace the history of how a particular change was made and how it relates to that particular user's local replica history. This is the main problem. There are some solutions to this problem. The "easiest" one is to send a complete historical record of the operations on a replica with the new operation message. This is never a good option as it is a clear sign of state explosion. We will look at solutions which do not lead to state explosion. 
 
