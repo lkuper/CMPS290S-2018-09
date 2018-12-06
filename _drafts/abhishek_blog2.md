@@ -36,5 +36,19 @@ The problem of receiving out-of-order messages or duplicate messages is another 
 
 ### State management
 
-The essence of the problem from one user's perspective is that we cannot trace the history of how a particular change was made and how it relates to that particular user's local replica history. This is the main problem. There are some solutions to this problem. The "easiest" one is to send a complete historical record of the operations on a replica with the new operation message. This is never a good option as it is a clear sign of state explosion. We will look at solutions which do not lead to state explosion. 
+The essence of the problem from one user's perspective is that we cannot trace the history of how a particular change was made and how it relates to that particular user's local replica history. This is the main problem. We now look at the algorithm proposed by [Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963) in the __dOPT__ algorithm more deeply to understand a possible solution to this problem. The route proposed in the dOPT algorithm involves the use of a vector clock to order the operations generated on different sites (each site is associated with a unique user). The paper defines two properties a _convergence property_ and a _precedence property_. The dOPT algorithm described in the paper assumes constant number of sites. Each operation request has the following form:
+
+`<i, s, o, p>`
+
+Here, `i` represents the site identifier. `s` represents the state vector of the site `i`. The "state vector" as referred to in the paper is essentially a vector clock maintained by each site. `o` represents the operation to be performed (insert or delete). `p` specifies a priority of the operation. 
+
+
+There are some solutions to this problem. The one that we will be looking at is based on a paper by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090). 
+
+
+The "easiest" one is to send a complete historical record of the operations on a replica with the new operation message. 
+
+
+
+This is never a good option as it is a clear sign of state explosion. We will look at solutions which do not lead to state explosion. 
 
