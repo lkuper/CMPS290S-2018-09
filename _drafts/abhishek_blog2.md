@@ -36,7 +36,15 @@ The problem of receiving out-of-order messages or duplicate messages is another 
 
 ### State management
 
-The essence of the problem from one user's perspective is that we cannot trace the history of how a particular change was made and how it relates to that particular user's local replica history. This is the main problem. We now look at the algorithm proposed by [Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963) in the __dOPT__ algorithm more deeply to understand a possible solution to this problem. The route proposed in the dOPT algorithm involves the use of a vector clock to order the operations generated on different sites (each site is associated with a unique user). The paper defines two properties a _convergence property_ and a _precedence property_. The dOPT algorithm described in the paper assumes constant number of sites. Each operation request has the following form:
+The essence of the problem from one user's perspective is that we cannot trace the history of how a particular change was made and how it relates to that particular user's local replica history. This is the main problem. We now look at the algorithm proposed by [Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963) in the __dOPT__ algorithm more deeply to understand a possible solution to this problem. The route proposed in the dOPT algorithm involves the use of a vector clock to order the operations generated on different sites (each site is associated with a unique user). The paper defines a _convergence property_ and a _precedence property_ and a notion of _quiescence_ to describe the correctness of the algorithm. The authors define the properties as follows:
+
+> The _Precedence Property_ states that if one operation, 0, precedes another, p, then at each site the execution of o happens before the execution of p.
+
+> A groupware session is _quiescent_ iff all generated operations have been executed at all sites, that is, there are no requests in transit or waiting to be executed by a site process.
+
+> The _Convergence Property_ states that site objects are identical at all sites at quiescence.
+
+The dOPT algorithm in essence an attempt at making sure that the transformations involved would allow the system to remain consistent. The dOPT algorithm described in the paper assumes constant number of sites. Each operation request has the following form:
 
 `<i, s, o, p>`
 
