@@ -44,7 +44,7 @@ The essence of the problem from one user's perspective is that we cannot trace t
 
 > The _Convergence Property_ states that site objects are identical at all sites at quiescence.
 
-The dOPT algorithm in essence an attempt at making sure that the transformations involved would allow the system to remain consistent. The dOPT algorithm described in the paper assumes constant number of sites. Each operation request has the following form:
+The dOPT algorithm in essence an attempt at making sure that the transformations involved would allow the system to remain consistent. The dOPT algorithm described in the paper assumes constant number of sites. For every change that a site makes to its replica, a request is generated and sent to other sites. Each request has the following form:
 
 `<i, s, o, p>`
 
