@@ -44,14 +44,15 @@ The essence of the problem from one user's perspective is that we cannot trace t
 
 > The _Convergence Property_ states that site objects are identical at all sites at quiescence.
 
-The dOPT algorithm in essence an attempt at making sure that the transformations involved would allow the system to remain consistent. To achieve the two properties the design uses a Request Queue Q<sub>i</sub> and a Request Log L<sub>i</sub>.
+The dOPT algorithm in essence an attempt at making sure that the transformations involved would allow the system to remain consistent. The dOPT algorithm described in the paper assumes constant number of sites. For every change that a site makes to its replica, a request is generated and sent to other sites. To achieve the two properties the design uses a Request Queue Q<sub>i</sub> and a Request Log L<sub>i</sub>, where the subscript 'i' is the site identifier. Throughout the rest of the discussion site 'i' would be the location where the request is being processed and site 'j' will be the site which sent the request. The request queue contains operation requests either sent by remote sites (j) or from the user of the current site 'i'. These are requests that are waiting to be processed and the queue acts as a buffer where all incoming requests are stored for further processing. The request log on the other hand is a log of requests that have been executed by the site. The log is a list of requests ordered by the order in which the requests were executed.
 
-
-The dOPT algorithm described in the paper assumes constant number of sites. For every change that a site makes to its replica, a request is generated and sent to other sites. Each request has the following form:
+Each request has the following form:
 
 `<i, s, o, p>`
 
-Here, `i` represents the site identifier. `s` represents the state vector of the site `i`. The "state vector" as referred to in the paper is essentially a vector clock maintained by each site. `o` represents the operation to be performed (insert or delete). `p` specifies a priority of the operation. 
+Here, `i` represents the site identifier. `s` represents the state vector of the site `i`. The "state vector" as referred to in the paper is essentially a vector clock maintained by each site. `o` represents the operation to be performed (insert or delete). `p` specifies a priority of the operation. Given two state vectors _s_<sub>_i_</sub> and _s_<sub>_j_</sub> the following relations are defined:
+
+
 
 
 There are some solutions to this problem. The one that we will be looking at is based on a paper by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090). 
