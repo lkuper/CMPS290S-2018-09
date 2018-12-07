@@ -52,8 +52,32 @@ Each request has the following form:
 
 Here, `i` represents the site identifier. `s` represents the state vector of the site `i`. The "state vector" as referred to in the paper is essentially a vector clock maintained by each site. `o` represents the operation to be performed (insert or delete). `p` specifies a priority of the operation. Given two state vectors _s_<sub>_i_</sub> and _s_<sub>_j_</sub> the following relations are defined:
 
+> 1. _s_<sub>_i_</sub> = _s_<sub>_j_</sub> ; if each component of _s_<sub>_i_</sub> is equal to the corresponding component of _s_<sub>_j_</sub>.
+> 2. _s_<sub>_i_</sub> &lt; _s_<sub>_j_</sub> ; if each component of _s_<sub>_i_</sub> is less than or equal to the corresponding component of _s_<sub>_j_</sub> and at least one component of  _s_<sub>_i_</sub> is less than the corresponding component in  _s_<sub>_j_</sub>.
+> 3. _s_<sub>_i_</sub> &gt; _s_<sub>_j_</sub> ; if at least one component of  _s_<sub>_i_</sub> is greater than the corresponding component in  _s_<sub>_j_</sub>.
 
+Consider the following cases:
 
+```python
+Case 1:
+    si = [ 1 2 3 4 ] 
+    sj = [ 1 2 3 4 ]
+    si = sj => True
+```
+```python
+Case 2:
+    si = [ 1 2 3 3 ] 
+    sj = [ 1 2 3 4 ]
+    si < sj => True
+```
+```python
+Case 3:
+    si = [ 4 3 2 1 ] 
+    sj = [ 1 2 3 4 ]
+    si > sj => True
+```
+
+The three cases shown above describe the structure of the three conditions for state vectors in requests.
 
 There are some solutions to this problem. The one that we will be looking at is based on a paper by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090). 
 
