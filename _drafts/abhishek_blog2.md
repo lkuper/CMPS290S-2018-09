@@ -34,7 +34,7 @@ The text editor in the first post consisted of only 2 users Alice and Bob. It wa
 The problem of receiving out-of-order messages or duplicate messages is another issue in the design. If the same message is received multiple times we will not be able to differentiate between duplicates or out of order messages and would execute the operation on the replica. This would aggravate the problem of data inconsistency among the users. However, this is one assumption, we will maintain for the remainder of this post. We will look at some ways to deal with this problem at the end of the post.
 
 
-### State management
+### The Distributed Operational Transformation (dOPT)
 
 The essence of the problem from one user's perspective is that we cannot trace the history of how a particular change was made and how it relates to that particular user's local replica history. This is the main problem. We now look at the algorithm proposed by [Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963) in the __dOPT__ algorithm more deeply to understand a possible solution to this problem. The route proposed in the dOPT algorithm involves the use of a vector clock to order the operations generated on different sites (each site is associated with a unique user). The paper defines a _convergence property_ and a _precedence property_ and a notion of _quiescence_ to describe the correctness of the algorithm. The authors define the properties as follows:
 
@@ -79,7 +79,26 @@ Case 3:
     si > sj => True
 ```
 
-The three cases shown above describe the structure of the three conditions for state vectors in requests.
+The three cases shown above describe state vector comparisons as specified by dOPT. 
+
+During initialization the following operations are done:
+
+1. Set Q<sub>i</sub> to empty
+2. Set L<sub>i</sub> to empty
+3. Set s<sub>i</sub> to < 0, 0, ..., 0>
+
+
+The algorithm defines three possible execution states:
+
+1. Operation request generation,
+2. Operation request reception, and
+3. Operation execution,
+
+During "operation request generation" the site 'i' generates an operation (either insert or delete). The operation is not executed immediately; the local data is not modified during operation request generation. Once the request is generated it is appended to the site's request queue Q<sub>i</sub> and broadcast to all other sites.
+
+Q<sub>i</sub>     :=     <i ,s<sub>i</sub> , o, p>
+
+A request generated on a site 'j', is eventually received by site 'i' which then moves to the "operation request reception" state. In this state, the received operations are appended to the site's request queue.  
 
 There are some solutions to this problem. The one that we will be looking at is based on a paper by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090). 
 
