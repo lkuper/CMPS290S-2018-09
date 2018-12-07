@@ -106,7 +106,7 @@ A request generated on a site 'j', is eventually received by site 'i' which then
 
 > Q<sub>i</sub>  :=  Q<sub>i</sub>  +  <j ,s<sub>j</sub> , o<sub>j</sub>, p<sub>j</sub> >
 
-
+During "operation execution", requests from the request queue are processed. The order of execution of requests in the request queue is determined by the total order of events in the request queue as determined by the comparison of the state vectors. 
 
 
 
