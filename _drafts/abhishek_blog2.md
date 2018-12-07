@@ -50,7 +50,9 @@ Each request has the following form:
 
 `<i, s, o, p>`
 
-Here, `i` represents the site identifier. `s` represents the state vector of the site `i`. The "state vector" as referred to in the paper is essentially a vector clock maintained by each site. `o` represents the operation to be performed (insert or delete). `p` specifies a priority of the operation. Given two state vectors _s_<sub>_i_</sub> and _s_<sub>_j_</sub> the following relations are defined:
+Here, `i` represents the site identifier. `s` represents the state vector of the site `i`. The "state vector" as referred to in the paper is essentially a vector clock maintained by each site. `o` represents the operation to be performed (insert or delete). `p` specifies a priority of the operation. Additionally, the operations must commute as discussed. The additional property compared to the previous implementation is that the operation requests contain vector clocks that specify when an operation was executed on site 'j' and its relation to the operations in the request queue in site 'i'.
+
+Given two state vectors _s_<sub>_i_</sub> and _s_<sub>_j_</sub> the following relations are defined:
 
 > 1. _s_<sub>_i_</sub> = _s_<sub>_j_</sub> ; if each component of _s_<sub>_i_</sub> is equal to the corresponding component of _s_<sub>_j_</sub>.
 > 2. _s_<sub>_i_</sub> &lt; _s_<sub>_j_</sub> ; if each component of _s_<sub>_i_</sub> is less than or equal to the corresponding component of _s_<sub>_j_</sub> and at least one component of  _s_<sub>_i_</sub> is less than the corresponding component in  _s_<sub>_j_</sub>.
