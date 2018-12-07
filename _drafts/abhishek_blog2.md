@@ -96,9 +96,20 @@ The algorithm defines three possible execution states:
 
 During "operation request generation" the site 'i' generates an operation (either insert or delete). The operation is not executed immediately; the local data is not modified during operation request generation. Once the request is generated it is appended to the site's request queue Q<sub>i</sub> and broadcast to all other sites.
 
-> Q<sub>i</sub>     :=     <i ,s<sub>i</sub> , o, p>
+>  Generate operation <i ,s<sub>i</sub> , o, p>
+
+>  Q<sub>i</sub>  :=  Q<sub>i</sub>  +  <i ,s<sub>i</sub> , o, p>
 
 A request generated on a site 'j', is eventually received by site 'i' which then moves to the "operation request reception" state. In this state, the received operations are appended to the site's request queue.  
+
+> Receive operation request from remote site j: <j ,s<sub>j</sub> , o<sub>j</sub>, p<sub>j</sub> >
+
+> Q<sub>i</sub>  :=  Q<sub>i</sub>  +  <j ,s<sub>j</sub> , o<sub>j</sub>, p<sub>j</sub> >
+
+
+
+
+
 
 There are some solutions to this problem. The one that we will be looking at is based on a paper by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090). 
 
