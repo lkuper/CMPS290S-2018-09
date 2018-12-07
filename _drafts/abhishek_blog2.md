@@ -31,7 +31,7 @@ Let's understand what would happen when some of these assumptions are removed fr
 
 The text editor in the first post consisted of only 2 users Alice and Bob. It was designed with only 2 users in mind. It is easy to understand how operation messages are exchanged when only two users exist in the system. With increase in the number of users in the system, the number of messages needed to share changes with other users grows linearly. Since each user has a replica of the document state, each change in the document state must be informed to the other users. If there are `n` users in the system, every state change at one user must be communicated with `n-1` users. With each user making changes to their document state the design of the two-user collaborative text editor developed in the last post cannot be used as there was no notion to find out the exact state on which the operation was executed.
 
-The problem of receiving out-of-order messages or duplicate messages is another issue in the design. If the same message is received multiple times we will not be able to differentiate between duplicates or out of order messages and would execute the operation on the replica. This would aggravate the problem of data inconsistency among the users. However, this is one assumption, we will maintain for the remainder of this post. We will look at some ways to deal with this problem at the end of the post.
+The problem of receiving out-of-order messages or duplicate messages is another issue in the design. If the same message is received multiple times we will not be able to differentiate between duplicates or out of order messages and would execute the operation on the replica. This would aggravate the problem of data inconsistency among the users. This problem is resolved in the dOPT algorithm in the paper by [Ellis and Gibbs](http://doi.acm.org/10.1145/67544.66963) by using a vector clock.
 
 
 ### The Distributed Operational Transformation (dOPT)
@@ -106,22 +106,14 @@ A request generated on a site 'j', is eventually received by site 'i' which then
 
 > Q<sub>i</sub>  :=  Q<sub>i</sub>  +  <j ,s<sub>j</sub> , o<sub>j</sub>, p<sub>j</sub> >
 
-During "operation execution", requests from the request queue are processed. The order of execution of requests in the request queue is determined by the total order of events in the request queue as determined by the comparison of the state vectors. Briefly, the algorithm follows the following steps:
+During "operation execution", requests from the request queue are processed. The order of execution of requests in the request queue is determined by the total order of events in the request queue as determined by the comparison of the state vectors. Briefly, in this step the operation from the request queue is chosen based on the executed operations in the request log. We locate the operation older than the current state vector at site 'i'. Transformation is performed based on the operation logs in the request log. Comparison of the state vector follows the conditions stated previously. 
 
-```markdown
+1. If the state vector of incoming request s<sub>j</sub> &gt; s<sub>j</sub>, this means that the site 'j' has executed operations which site 'i' has not seen yet. So this operation will have to stay in the queue till all operations between i and j have been executed. 
+2. If s<sub>j</sub> = s<sub>j</sub>, the two state vectors are identical and operation o<sub>j</sub> can be executed without transformation.
+3. If s<sub>j</sub> &lt; s<sub>j</sub>, site 'i' has executed operations not seen by site 'j'. The operation can be applied immediately but require operations to be transformed because other changes not visible to site 'j' have already been executed by site 'i'.
 
-for each <j ,s<sub>j</sub> , o<sub>j</sub>, p<sub>j</sub> >
-```
+The principles behind transformations were discussed in the first post. The main idea is that the transformations must commute. This allows the operations to be executed in any order. The idea of commutative operations is vital to any operational transformation technique. In fact, the idea of commutative operations is used in distributed systems very frequently for synchronization free convergence algorithms. The idea was also proposed by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090) in their RGA protocol to tackle the problem of collaborative text editing. 
 
+## A retrospective
 
-
-
-There are some solutions to this problem. The one that we will be looking at is based on a paper by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090). 
-
-
-The "easiest" one is to send a complete historical record of the operations on a replica with the new operation message. 
-
-
-
-This is never a good option as it is a clear sign of state explosion. We will look at solutions which do not lead to state explosion. 
-
+Over the years there have been other solutions proposed to solve the problem of collaborative text editing. The [Jupiter collaboration system](https://dl.acm.org/citation.cfm?doid=215585.215706) proposed by resolving the architecture of the interactions between the sites. Instead of a peer-to-peer system as we have been discussing till now, the Jupiter system used a centralised architecture where a server maintains a single copy and all operation requests are handled via the server. This system became the basis of Google Wave and Google Docs projects as mentioned in the previous posts. In recent years, the operation transformation algorithm originally proposed by Ellis and Gibbs developed into a compendium of technologies. The problem of collaborative text editing has been tackled more recently by [Attiya et al](http://doi.acm.org/10.1145/2933057.2933090) in their algorithm which doesn't use operational transformation but does attempt to improve on the dOPT algorithm by proposing the RGA algorithm. The RGA algorithm shares operation history instead of vector clocks to allow the operations to be executed on remote systems. [CRDT](https://link.springer.com/chapter/10.1007%2F978-3-642-24550-3_29)s are another class of algorithms that allow data types to be created which allow state convergence.
