@@ -60,19 +60,19 @@ Given two state vectors _s_<sub>_i_</sub> and _s_<sub>_j_</sub> the following re
 
 Consider the following cases:
 
-```python
+```text
 Case 1:
     si = [ 1 2 3 4 ] 
     sj = [ 1 2 3 4 ]
     si = sj => True
 ```
-```python
+```text
 Case 2:
     si = [ 1 2 3 3 ] 
     sj = [ 1 2 3 4 ]
     si < sj => True
 ```
-```python
+```text
 Case 3:
     si = [ 4 3 2 1 ] 
     sj = [ 1 2 3 4 ]
