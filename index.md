@@ -12,7 +12,7 @@ For more information, read the [first-day-of-class course overview](course-overv
 <ul>
   {% for post in site.posts %}
     <li>
-      <a href="{{ post.url | prepend:site.baseurl }}">{{ post.title }}</a>
+      <a href="{{ post.url | prepend:site.baseurl }}">{{ post.title }}</a> by {{ post.author }}
     </li>
   {% endfor %}
 </ul>
