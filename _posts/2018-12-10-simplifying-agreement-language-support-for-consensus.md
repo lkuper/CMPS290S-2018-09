@@ -67,7 +67,7 @@ of the confusion surrounding it, and that's where [Raft](https://raft.github.io/
 simplify consensus. (Although, as mentioned [in my previous post](/CMPS290S-2018-09/2018/11/19/manufacturing-consensus-an-overview-of-distributed-consensus-implementations.html), it is an [open question](https://twitter.com/copyconstruct/status/1061818753925578753)
 whether Raft succeeds in doing that.)
 
-#### DistAlgo's Superpowers!
+### DistAlgo's Superpowers!
 
 DistAlgo supports the notion of a process, which presents interfaces for initialization 
 (`setup`), code execution (`run`), and handling of received messages (`receive`).
