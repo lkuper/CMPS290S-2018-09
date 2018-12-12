@@ -145,10 +145,10 @@ value. Acks to the client could also be sent from a replica earlier in the chain
 reflect a desirable strongly consistent factor. This reflects a relationship between when an update
 is acknowledged and where a read can occur:
 
-    If the replica that acks to clients (OSD<sub>Ack</sub>) is further down the replication chain
-    than the replica that receives writes (OSD<sub>Ack</sub> >= OSD<sub>Write</sub>), then reads
+    If the replica that acks to clients (OSD_ack) is further down the replication chain
+    than the replica that receives writes (OSD_ack> >= OSD_write), then reads
     are strongly consistent, with a replication factor equal to the number of replicas earlier in
-    the chain than OSD<sub>Ack</sub>.
+    the chain than OSD_ack.
 
 Finally, we consider splay replication. The main difference between primary-copy and splay is which
 OSD acks to the client that a write has been applied. This allows better load balancing by
