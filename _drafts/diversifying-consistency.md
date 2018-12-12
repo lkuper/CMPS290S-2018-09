@@ -43,8 +43,10 @@ mapping of files to objects to PGs to object storage devices (OSDs) is succinctl
 Section 5 of the [Ceph paper][ceph-paper]. The organization of OSDs into a PG is calculated using
 the CRUSH algorithm, detailed in the [CRUSH paper][crush-paper].
 
-
-Diagram - Overview of object assignment to placement groups and object storage devices
+<figure>
+  <img src="/CMPS290S-2018-09/blog-assets/diversifying-consistency-in-ceph/ceph_pg_overview.png" />
+  <figcaption>Diagram - Overview of object assignment to placement groups and object storage devices</figcaption>
+</figure>
 
 To facilitate communication and failure recovery, monitor services maintain an up-to-date
 representation of cluster state called the cluster map, which includes all PGs, OSDs, and other
@@ -72,8 +74,10 @@ OSD, PROAR improves write latency at the expense of consistency. PROAR claims to
 consistent, and the fact that operations on a given object are deterministically directed to the
 same replica can help to ameliorate typical replication anomalies, such as stale reads.
 
-
-Diagram - PROAR PG replication circle, based on Figure 3 in the PROAR paper
+<figure>
+  <img src="/CMPS290S-2018-09/blog-assets/diversifying-consistency-in-ceph/proar-hash-ring.png" />
+  <figcaption>Diagram - PROAR PG replication circle, based on Figure 3 in the PROAR paper</figcaption>
+</figure>
 
 ## Other eventually consistent replication strategies
 The PROAR paper proposes one approach to supporting eventual consistency in Ceph. We could also
@@ -83,8 +87,10 @@ the RADOS paper is included below, and serves as the main discussion point of va
 eventual consistency in Ceph. Our goal will be to reduce write latency by  weakening consistency.
 These ideas are important in the trade-offs discussed below.
 
-
-Diagram - [RADOS Figure 2][rados-paper] - replication protocols
+<figure>
+  <img src="/CMPS290S-2018-09/blog-assets/diversifying-consistency-in-ceph/rados-figure2-replstrategies.png.png" />
+  <figcaption>Diagram - [RADOS Figure 2][rados-paper] - replication protocols</figcaption>
+</figure>
 
 The default replication strategy for OSDs is primary-copy, where clients are expected to send all
 write and read operations to the primary OSD for the PG. Acknowledgments of an applied write, or
