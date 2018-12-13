@@ -30,7 +30,7 @@ Here's the list of the assumptions I made in my previous post:
 Let us consider the consequences of removing these assumptions in the original implementation discussed in [part 1](http://composition.al/CMPS290S-2018-09/2018/11/20/conflict-resolution-in-collaborative-text-editing-with-operational-transformation-part-1-of-2.html). Primarily, there is a problem of ascertaining [causality](https://dl.acm.org/citation.cfm?id=359563) of messages in the design. Consider the second and third operations exchanged between Alice and Bob in Figure 1. There is no way for Alice to know if the operation `INSERT ("x", 2)` sent by Bob happened before or after Bob received the `INSERT("y", 0)` operation from Alice (even though we can see the figure and know that the operations were concurrent). This is more obvious in Figure 2. Alice cannot know the causal relationship because we did not address causality in part 1. Total order on the messages was enforced only by the order in which the messages were delivered to a user. Figure 2, shows that even with just two editors causality can break the best laid algorithms (which, in the case of my previous post, was far from being the best algorithm).
 
 <figure>
-  <img src="test_operations.png" height="600" width="450" />
+  <img src="o_site.png" height="600" width="450" />
   <figcaption>Figure 2. Alice does not know how Bob executed the operations at his end and therefore cannot know how received operations should be applied at her end.</figcaption>
 </figure> 
 
