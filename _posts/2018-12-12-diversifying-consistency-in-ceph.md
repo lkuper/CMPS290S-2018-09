@@ -1,4 +1,4 @@
-----
+---
 title: Diversifying Consistency in Ceph
 author: Aldrin Montana
 layout: single
