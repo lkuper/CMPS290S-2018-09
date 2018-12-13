@@ -90,7 +90,7 @@ the RADOS paper is included below as a reference point.
 We'll look at each of these replication strategies and consider how we might tweak them to lower write latency.
 
 <figure>
-  <img src="/CMPS290S-2018-09/blog-assets/diversifying-consistency-in-ceph/rados-figure2-replstrategies.png.png" />
+  <img src="/CMPS290S-2018-09/blog-assets/diversifying-consistency-in-ceph/rados-figure2-replstrategies.png" />
   <figcaption>Figure 2 from the RADOS paper: replication strategies implemented by RADOS</figcaption>
 </figure>
 
