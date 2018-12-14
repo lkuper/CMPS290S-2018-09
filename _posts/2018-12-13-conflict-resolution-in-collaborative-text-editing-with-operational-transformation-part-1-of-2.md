@@ -40,7 +40,7 @@ Finally, another assumption we made has to do with the number of users participa
 
 ## Precedence, convergence, and quiescence
 
-The crux of the data consistency problem discussed until now is that a site does not know the historical trace of an operation when it receives the operation request.  The approach proposed for dOPT in [Ellis and Gibbs's paper](http://doi.acm.org/10.1145/67544.66963) involves the use of a [vector clock](https://en.wikipedia.org/wiki/Vector_clock) to order the operations generated on different sites (each site or user is associated with a single document replica). The paper defines a \_Convergence Property_ and a _Precedence Property_ and a notion of _quiescence_ to describe the correctness of the algorithm. The authors define the properties as follows:
+The crux of the data consistency problem discussed until now is that a site does not know the historical trace of an operation when it receives the operation request.  The approach proposed for dOPT in [Ellis and Gibbs's paper](http://doi.acm.org/10.1145/67544.66963) involves the use of a [vector clock](https://en.wikipedia.org/wiki/Vector_clock) to order the operations generated on different sites (each site or user is associated with a single document replica). The paper defines a _Convergence Property_ and a _Precedence Property_ and a notion of _quiescence_ to describe the correctness of the algorithm. The authors define the properties as follows:
 
 > The _Precedence Property_ states that if one operation, _o_, precedes another, _p_, then at each site the execution of _o_ happens before the execution of _p_.
 
@@ -48,7 +48,7 @@ The crux of the data consistency problem discussed until now is that a site does
 
 > The _Convergence Property_ states that site objects are identical at all sites at quiescence.
 
-The Precedence Property makes use of the _precedes_ relation, which is reminiscent of Lamport's [“happens-before” relation](https://dl.acm.org/citation.cfm?id=359563).  If an operation _o_ _precedes _p_, then the Precedence Property ensures that _o_ is executed before _p_ everywhere.
+The Precedence Property makes use of the _precedes_ relation, which is reminiscent of Lamport's [“happens-before” relation](https://dl.acm.org/citation.cfm?id=359563).  If an operation _o_ _precedes_ _p_, then the Precedence Property ensures that _o_ is executed before _p_ everywhere.
 
 The Convergence Property combined with the notion of quiescence is nearly identical to the Strong Convergence property defined by [Shapiro et al.](https://hal.inria.fr/inria-00609399v1/document). In the Ellis and Gibbs paper, however, quiescence is enforced periodically. The detection of quiescence is done via a distributed consensus algorithm, which is not discussed in the paper.
 
@@ -64,11 +64,11 @@ The dOPT algorithm builds a transformation matrix for the operations that are su
 
 The algorithm uses state vectors to order events causally. Given two state vectors _s_<sub>_i_</sub> and _s_<sub>_j_</sub>, Ellis and Gibbs define the following relations:
 
-> 1. _s_<sub>_i_</sub> = _s_<sub>_j_</sub> ; if each component of _s_<sub>_i_</sub> is equal to the corresponding component of _s_<sub>_j_</sub>.
-> 2. _s_<sub>_i_</sub> &lt; _s_<sub>_j_</sub> ; if each component of _s_<sub>_i_</sub> is less than or equal to the corresponding component of _s_<sub>_j_</sub> and at least one component of  _s_<sub>_i_</sub> is less than the corresponding component in  _s_<sub>_j_</sub>.
-> 3. _s_<sub>_i_</sub> &gt; _s_<sub>_j_</sub> ; if at least one component of  _s_<sub>_i_</sub> is greater than the corresponding component in  _s_<sub>_j_</sub>.
+> 1. _s_<sub>_i_</sub> = _s_<sub>_j_</sub> if each component of _s_<sub>_i_</sub> is equal to the corresponding component of _s_<sub>_j_</sub>.
+> 2. _s_<sub>_i_</sub> &lt; _s_<sub>_j_</sub> if each component of _s_<sub>_i_</sub> is less than or equal to the corresponding component of _s_<sub>_j_</sub> and at least one component of  _s_<sub>_i_</sub> is less than the corresponding component in  _s_<sub>_j_</sub>.
+> 3. _s_<sub>_i_</sub> &gt; _s_<sub>_j_</sub> if at least one component of  _s_<sub>_i_</sub> is greater than the corresponding component in  _s_<sub>_j_</sub>.
 
-For example, if _s_<sub>_i_</sub> = `[ 1 2 3 3 ]` and _s_<sub>_j_</sub> = `[ 1 2 3 4 ]`, we have _s_<sub>_i_</sub> < _s_<sub>_j_</sub>.  However, if For example, if _s_<sub>_i_</sub> = `[ 4 3 2 1 ]` and _s_<sub>_j_</sub> = `[ 1 2 3 4 ]`, we have _s_<sub>_i_</sub> > _s_<sub>_j_</sub>. 
+For example, if _s_<sub>_i_</sub> = `[ 1 2 3 3 ]` and _s_<sub>_j_</sub> = `[ 1 2 3 4 ]`, we have _s_<sub>_i_</sub> < _s_<sub>_j_</sub>.  However, if _s_<sub>_i_</sub> = `[ 4 3 2 1 ]` and _s_<sub>_j_</sub> = `[ 1 2 3 4 ]`, we have _s_<sub>_i_</sub> > _s_<sub>_j_</sub>. 
 
 During initialization the following operations are done:
 
@@ -100,10 +100,10 @@ During operation execution, requests from the request queue are processed. The o
   2. If s<sub>j</sub> = s<sub>j</sub>, the two state vectors are identical and operation o<sub>j</sub> can be executed without transformation.
   3. If s<sub>j</sub> &lt; s<sub>j</sub>, site _i_ has executed operations not seen by site _j_. The operation can be applied immediately, but requires operations to be transformed because other changes not visible to site _j_ have already been executed by site _i_.
 
-The principles behind transformations were discussed in my previous post. The main idea is that the transformations must commute. This allows the operations to be executed in any order. The idea of commutative operations is vital to any operational transformation technique. In fact, the idea of commutative (and associative) operations comes up very frequently in discussions of synchronization-free convergence algorithms in distributed systems. A fairly recent example is a paper by [Attiya et al.](http://doi.acm.org/10.1145/2933057.2933090) when discussing convergence of replica state in their formalization of the [RGA protocol](https://www.sciencedirect.com/science/article/pii/S0743731510002716) for collaborative text editing. Another example is in [conflict-free replicated data types](https://hal.inria.fr/inria-00609399v1/document), where operation commutativity is key to state convergence.
+The principles behind transformations were discussed in my previous post. The main idea is that the transformations must commute. This allows the operations to be executed in any order. The idea of commutative operations is vital to any operational transformation technique. In fact, the idea of commutative (and associative) operations comes up very frequently in discussions of synchronization-free convergence algorithms in distributed systems. A fairly recent example is in [a paper by Attiya et al.](http://doi.acm.org/10.1145/2933057.2933090) when discussing convergence of replica state in their formalization of the [RGA protocol](https://www.sciencedirect.com/science/article/pii/S0743731510002716) for collaborative text editing. Another example is in [conflict-free replicated data types](https://hal.inria.fr/inria-00609399v1/document), where operation commutativity is key to state convergence.
 
 ## Final thoughts
 
 The idea of operational transformation originally proposed by Ellis and Gibbs has morphed into a [compendium of technologies](https://en.wikipedia.org/wiki/Operational_transformation) used to build collaborative systems.  A prominent example is the [Jupiter collaboration system](https://dl.acm.org/citation.cfm?doid=215585.215706).  Instead of a peer-to-peer system as we have been discussing until now, Jupiter used a centralised architecture where a server maintains a single copy and all operation requests are handled via the server. This system became the basis of the Google Wave and Google Docs projects, as mentioned in my previous post.
 
-Over the course of these two blog posts, I have aimed to understand the key ideas behind the early specification of operational transformation and convey them with some clarity.  Although cooperative text editing has been a topic of research since at least the 1980s, writing these posts allowed me to study the problem in some detail and has kindled my interest in building systems where multiple agents can work together towards a common goal. Thinking about building useful abstractions for collaborative computing agents is something that will keep me busy for some time.
+Over the course of these two blog posts, I have aimed to understand the key ideas behind the early specification of operational transformation and convey them with some clarity.  Although collaborative text editing has been a topic of research since at least the 1980s, writing these posts allowed me to study the problem in some detail and has kindled my interest in building systems where multiple agents can work together towards a common goal. Thinking about building useful abstractions for collaborative computing agents is something that will keep me busy for some time.
