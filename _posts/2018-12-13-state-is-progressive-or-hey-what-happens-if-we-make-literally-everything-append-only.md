@@ -15,7 +15,7 @@ But we keep finding situations in which this view of state loses us verifiabilit
 
 In the effort to do more, there's a common thread: designs that don’t mutate state, only [add to it](https://sites.google.com/site/progressive294/); that conceptualise knowledge as something that only monotonically grows, and never decreases. 
 
-In this post, we’ll look at a few examples of these “progressive systems”. For our purposes, it’s easiest to discuss them in terms of the axis along with they restrict state to be monotonic. Treating the data itself as always monotonic, independent of time, gets you _lattice models_, whereas treating time as the property that is always monotonic gives you _stream models_.
+In this post, we’ll look at a few examples of these “progressive systems”. For our purposes, it’s easiest to discuss them in terms of the axis along which they restrict state to be monotonic. Treating the data itself as always monotonic, independent of time, gets you _lattice models_, whereas treating time as the property that is always monotonic gives you _stream models_.
 
 ## Lattice Models
 
@@ -50,7 +50,7 @@ our programs to be monotonic, we end up needing these synchronisation points for
 
 ### LVars
 
-[LVars](https://users.soe.ucsc.edu/~lkuper/papers/lvars-fhpc13.pdf) are another data structure that associates states with lattice elements. Any write to an LVar updates it to the least upper bound of the value being written and the state the LVar already had. Where they differ is in the additional restrictions they impose on how this data can be interacted with: LVars are not directly readable. The read operation on an LVar is a “threshold read” --- an operation that blocks until one of a set of specified points in the lattice has been reached or surpassed, and thus can never return any intermediate state.
+[LVars](https://users.soe.ucsc.edu/~lkuper/papers/lvars-fhpc13.pdf) are another data structure that associates states with lattice elements. Any write to an LVar updates it to the least upper bound of the value being written and the state the LVar already had. Where they differ from CRDTs is in the additional restrictions they impose on how this data can be interacted with: LVars are not directly readable. The read operation on an LVar is a “threshold read” --- an operation that blocks until one of a set of specified points in the lattice has been reached or surpassed, and thus can never return any intermediate state.
 To preserve determinism, this threshold read doesn't even necessarily return the current state of the LVar when it unblocks.  Rather, it deterministically returns a state that the current state is guaranteed to be _at or above_.
 
 In exchange, LVars recover _determinism_. That is, all interleavings of a program that coordinates data with LVars will produce the same result. This design decision is a more natural set of tradeoffs to want in their domain: LVars were designed for shared memory, whereas CRDTs were designed for replicated data.
@@ -61,7 +61,7 @@ attempts to freeze it, and thus this weakens the determinism guarantee to
 “quasi-determinism” --- all interleavings of the program are guaranteed to produce the same
 result as long as _that interleaving doesn't error_.
 
-LVars don't aim to adddress the non-monotonic use cases; instead the philosophy is that they can just give up control over the data once a non-monotonic operation is necessary. The assumption is that a non-monotonic operation will _not_ be necessary until after a phase of monotonic operations, and so LVars allow parallelisation of the monotonic phase.
+LVars don't aim to adddress non-monotonic use cases; instead, the philosophy is that they can just give up control over the data once a non-monotonic operation is necessary. The assumption is that a non-monotonic operation will _not_ be necessary until after a (often lengthy) phase of monotonic computation, and so LVars allow parallelisation of the monotonic phase.
 
 ### Bloom and Bloom^L
 
@@ -88,7 +88,7 @@ in its lattice, and thus `ifnot` is the only monotonic operation available on it
 The constraints of Bloom^L allow it to guarantee monotonicity without static
 checking in most cases.
 
-(Psst. Don't tell anyone, but the Bloom^L _also_ belongs in the next
+(Psst. Don't tell anyone, but Bloom^L _also_ belongs in the next
 section. See you there!)
 
 ## Data as Streams
