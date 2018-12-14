@@ -94,9 +94,9 @@ A request generated on a site _j_ is eventually received by site _i_ which then 
 
 > Q<sub>i</sub>  :=  Q<sub>i</sub>  +  <j ,s<sub>j</sub> , o<sub>j</sub>, p<sub>j</sub> >
 
-During operation execution, requests from the request queue are processed. The order of execution of requests in the request queue is determined by the total order of events in the request queue as determined by the comparison of the state vectors. Briefly, in this step the operation from the request queue is chosen based on the executed operations in the request log. We locate the operation older than the current state vector at site _i_. Transformation is performed based on the operation logs in the request log. Comparison of the state vector follows the conditions stated previously:
+During operation execution, requests from the request queue are processed. The order of execution of requests in the request queue is determined by the total order of events in the request queue as determined by the comparison of the state vectors. Briefly, in this step the operation from the request queue is chosen based on the executed operations in the request log. We locate the operation older than the current state vector at site _i_. Transformation is performed based on the operation logs in the request log. Comparison of the state vectors follows the conditions stated previously:
 
-  1. If the state vector of incoming request s<sub>j</sub> &gt; s<sub>j</sub>, this means that the site _j_ has executed operations which site _i_ has not seen yet. So this operation will have to stay in the queue till all operations between _i_ and _j_ have been executed. 
+  1. If s<sub>j</sub> &gt; s<sub>j</sub>, this means that the site _j_ has executed operations which site _i_ has not seen yet. So this operation will have to stay in the queue till all operations between _i_ and _j_ have been executed. 
   2. If s<sub>j</sub> = s<sub>j</sub>, the two state vectors are identical and operation o<sub>j</sub> can be executed without transformation.
   3. If s<sub>j</sub> &lt; s<sub>j</sub>, site _i_ has executed operations not seen by site _j_. The operation can be applied immediately, but requires operations to be transformed because other changes not visible to site _j_ have already been executed by site _i_.
 
