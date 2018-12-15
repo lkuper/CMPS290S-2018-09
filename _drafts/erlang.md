@@ -8,38 +8,37 @@ classes: wide
 by Natasha Mittal ⋅ edited by Abhishek Singh and Lindsey Kuper
 
 ## Introduction
-In 1981, the Ericsson [Computer Science Laboratory (CSLab)](http://www.cs-lab.org/) had been experimenting with ways to program telephony features in Prolog, a declarative language. Telecom applications in general are distributed systems with a large number of concurrent actions taking place. The downside to Prolog was that such declarative languages did not possess error-handling facilities and also lacked the means for concurrency control across multiple systems. Thus began a series of collaborations which led to the development of Erlang.
 
-Erlang is described in [Joe Armstrong](https://joearms.github.io/)'s [2003 PhD thesis](http://erlang.org/download/armstrong_thesis_2003.pdf) on "Making reliable distributed systems in the presence of software errors". In it, he describes how Erlang supports building fault-tolerant systems. Since its inception in 1986, Erlang has grown popular for building reliable telecom applications. It has been used in Web Prioritizer and [Mail Robustifier](https://dl.acm.org/citation.cfm?id=338532), two products developed by [Bluetail](https://www.walerud.com/blog/bluetail-spinning-out-of-ericsson-and-selling-for-152m-in-18-months), a company founded by Joe Armstrong. [Ericsson's AXD301](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.33.5674&rep=rep1&type=pdf), a scalable ATM switching system developed using Erlang middleware, was one of the company's most successful new products from 1998 to the mid-2000s. 
+In 1981, the Ericsson [Computer Science Laboratory (CSLab)](http://www.cs-lab.org/) had been experimenting with ways to program telephony features in Prolog, a declarative language. Telecom applications in general are distributed systems with a large number of concurrent actions taking place. The downside to Prolog was that such declarative languages did not have error-handling facilities and also lacked the means for concurrency control across multiple systems. Thus began a series of collaborations which led to the development of Erlang.
 
-Armstrong describes Erlang as ["a concurrent programming language designed for programming large-scale distributed soft real-time control applications"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.34.5602&rep=rep1&type=pdf). It is used in conjunction with a collection of libraries and tools called [OTP (Open Telecom Platform)](http://erlang.org/doc/system_architecture_intro/sys_arch_intro.html), which uses "supervision trees" to provide descriptions of error recovery actions to take for a given error. Erlang is [process-based](https://www.toptal.com/elixir/process-oriented-programming-elixir-and-otp), in the sense that individual processes do not share memory and communicate via asynchronous message passing, hence maintaining strong isolation between concurrent processes. Since the resource threads are not shared, processes are isolated from each other and errors occuring in one process cannot propagate to other processes, so Erlang's programming model is able to use fail-fast processes. Concurrency is provided by the language and not the underlying operating system. 
+Erlang is described in [Joe Armstrong](https://joearms.github.io/)'s [2003 PhD thesis, "Making reliable distributed systems in the presence of software errors"](http://erlang.org/download/armstrong_thesis_2003.pdf).  In it, he describes how Erlang supports building fault-tolerant systems. Since its inception in 1986, Erlang has grown popular for building reliable telecom applications. It has been used in Web Prioritizer and [Mail Robustifier](https://dl.acm.org/citation.cfm?id=338532), two products developed by [Bluetail](https://www.walerud.com/blog/bluetail-spinning-out-of-ericsson-and-selling-for-152m-in-18-months), a company founded by Joe Armstrong. [Ericsson's AXD301](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.33.5674&rep=rep1&type=pdf), a scalable ATM switching system developed using Erlang middleware, was one of the company's most successful new products from 1998 to the mid-2000s. 
 
-Erlang also offers support for dynamic code replacement, which aids in code updating and maintenance without stopping the system. This is essential since telecom applications are long-lived, or more often than not, aren't shut down ever.
+Armstrong describes Erlang as ["a concurrent programming language designed for programming large-scale distributed soft real-time control applications"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.34.5602&rep=rep1&type=pdf). It is used in conjunction with a collection of libraries and tools called [OTP (Open Telecom Platform)](http://erlang.org/doc/system_architecture_intro/sys_arch_intro.html), which uses "supervision trees" to provide descriptions of error recovery actions to take for a given error. Erlang has been described as a ["process-oriented"](https://www.toptal.com/elixir/process-oriented-programming-elixir-and-otp) language; individual processes do not share memory and communicate via asynchronous message passing, hence maintaining strong isolation between concurrent processes. Since processes are isolated from each other, errors occuring in one process cannot propagate to other processes, so Erlang's programming model is able to use fail-fast processes.  Erlang also offers support for dynamic code replacement, which aids in code updating and maintenance without stopping the system. This is essential since telecom applications are long-lived, or, more often than not, aren't shut down ever.
 
-## Concurrency Oriented Programming
+## Concurrency-Oriented Programming
 
-In his [thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), Armstrong coined the term _COPL_, which stands for "concurrency-oriented programming language", and  argued that Erlang falls into this category of languages. Armstrong says that the advantage of using COPLs is the way they can easily model real-world concurrent activities and map them onto concurrent processes in a 1:1 fashion, in contrast to non-COPLs, where one process or thread might control several independent activities.
+In his [thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), Armstrong coined the term _COPL_, which stands for "concurrency-oriented programming language", and  argued that Erlang falls into this category of languages. Armstrong wrote that the advantage of using COPLs is the way they can easily model real-world concurrent activities and map them onto concurrent processes in a one-to-one fashion, in contrast to non-COPLs, where one process or thread might control several independent activities.
 
-As described in section 2.4.2 in his [thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), there are six essential characteristics of a COPL:
+As described in section 2.4.2 in Armstrong's [thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), there are six essential characteristics of a COPL:
 
-1. It supports lightweight processes, i.e., the computation required to generate and destroy processes is minimal.
-2. It supports isolation of processes.
-3. Every process is identified uniquely by a Pid.
-4. There is no shared state between processes.
-5. Message passing does not guarantee delivery, and is pure (no dangling pointers or data references).
-6. Processes can detect the occurrence of and also the reason of failures in other processes.
+  1. It supports lightweight processes, i.e., the computation required to generate and destroy processes is minimal.
+  2. It supports isolation of processes.
+  3. Every process is identified uniquely by a Pid.
+  4. There is no shared state between processes.
+  5. Message passing does not guarantee delivery, and is pure (no dangling pointers or data references).
+  6. Processes can detect the occurrence of, and the reason for, failures in other processes.
 
-A critical requirement in COPLs is that of isolation. There must be strong isolation between the multiple processes running on a single machine. Unless programmed, no faults in any process should affect any of the other processes on the machine. To enable isolation, all processes have "share nothing" semantics and message passing between processes is asynchronous to prevent a sender of the message from getting indefinitely blocked in case software errors occur in the receiver. Data is also immutable within individual processes.
+A critical requirement in COPLs is _isolation_. There must be strong isolation between the multiple processes running on a single machine. Unless programmed, no faults in any process should affect any of the other processes on the machine. To enable isolation, all processes have "share nothing" semantics and message passing between processes is asynchronous to prevent a sender of the message from getting indefinitely blocked in case software errors occur in the receiver. Data is also immutable within individual processes.
 
-Another requirement is unforgeability of process names so that it is impossible to guess their names. Each process can only know its own name and the name of the child processes it has created. The act of revealing names to other processes is called the “name distribution problem”, mentioned in section 2.4.4 in Armstrong’s [thesis] (http://erlang.org/download/armstrong_thesis_2003.pdf). Such revelations have to be limited to trusted processes only to maintain system security. 
+Another requirement is unforgeability of process names so that it is impossible to guess their names. Each process can only know its own name and the names of the child processes it has created. The act of revealing names to other processes is called the “name distribution problem”, mentioned in section 2.4.4 in Armstrong’s [thesis](http://erlang.org/download/armstrong_thesis_2003.pdf). Such revelations have to be limited to trusted processes only to maintain system security. 
 
-Message passing has "send and pray" semantics in Erlang. Every message is assumed to be received in its entirety or not received at all. Messages can be sent to and received via mailboxes, which every process has. To aid isolation, there can be no pointers or references to data structures residing on other machines, once a message has been passed. Additionally, messages are received in the exact order they were sent. A key advantage of message passing  is scalability: message-passing systems are relatively easy to replicate over multiple isolated machines, thereby enabling fault tolerance as well. Even though individual components may fail, the probability of all of them failing at the same time is low. 
+Message passing has "send and pray" semantics in Erlang. Every message is assumed to be received in its entirety or not received at all. Messages can be sent to and received via _mailboxes_, which every process has. To aid isolation, a message cannot contain pointers or references to data structures residing on other machines. Additionally, messages are received in the exact order they were sent. A key advantage of message passing is scalability: message-passing systems are relatively easy to replicate over multiple isolated machines, thereby enabling fault tolerance as well. Even though individual components may fail, the probability of all of them failing at the same time is low. 
 
-## Fault-tolerance in Erlang
+## Fault tolerance in Erlang
 
-According to section 5.1 of [Armstrong’s thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), the main strategy for implementing fault-tolerance is to try to perform a task, and if unsuccessful, try to perform a simpler task. In this manner, a hierarchy of tasks is established. This strategy helps avoid unnecessary complexity that might result in the system becoming less reliable. 
+According to section 5.1 of [Armstrong’s thesis](http://erlang.org/download/armstrong_thesis_2003.pdf), the main strategy for implementing fault tolerance is to try to perform a task, and if unsuccessful, try to perform a simpler task. In this manner, a hierarchy of tasks is established. This strategy helps avoid unnecessary complexity that might result in the system becoming less reliable. 
 
-### Supervision Hierarchies
+### Supervision hierarchies
 
 Armstrong refers to these hierarchical organizations of tasks as "supervision hierarchies". In this level-based organization, the highest-level task is to run an application according to specific parameters, and if not possible, to run simpler lower-level tasks. A system failure occurs if the lowest-level task cannot be performed successfully. As we go down to simpler tasks, failure to perform the task becomes more unlikely. It is also interesting to note that on encountering more and more failures at different levels, the emphasis becomes less towards providing complete service and more towards protecting the system. Hence it becomes important to have some mechanism to log all failures and their particular reasons.
 
@@ -47,30 +46,19 @@ The supervision hierarchy detects and attempts to stop errors from propagating u
 
 A supervisor needs to have the information about how to start, stop or restart every worker under it. This data is stored in an SSRS (Start Stop and Restart Specification). In a linear hierarchy, the rule is: stop all child processes if a parent asks to stop the supervisor; and to restart a child in case it dies. 
 
-## Programming Model
+## Programming model
 
-### Process Creation
-Spawning is the way new processes are created. When *spawn()* is called, module name and  function within that module is passed as arguments. This newly spawned process executes this function and returns the identifier for the spawned process, i.e., the Pid. Pids can then be used for message passing between individual processes.
+### Process creation
 
-The syntax for doing this is as follows:
+Spawning is the way new processes are created in Erlang.  THe `spawn()` function takes as arguments a module name and the name of a function within that module.  For example, the call `spawn(moduleA, response, [thank you])` creates a new process which executes a function named `response` defined within module `moduleA` with the argument `thank you`.
 
-```erlang
-spawn(Module, Exported_Function, List of Arguments) 
-```
-
-As an example:
-```erlang
-spawn(moduleA, response, [thank you])
-```
-
-The above spawn function call creates a new process which executes a function named "response" with argument ‘thank you’ defined within module ‘moduleA’.
+The newly spawned process executes the function, and `spawn()` returns the identifier for the spawned process, i.e., the Pid. Pids can then be used for message passing between individual processes.
 
 ### Message Passing
-All processes abide by a message passing interface, which is same for all the concurrent processes. Message passing is the only form of data exchange between two processes, and there is no data sharing. A message can be a list, a tuple, integers, etc
 
-Message passing takes place causally, and with a construct called "receive". It directs processes to wait for message to come from another process. 
+All processes in Erlang use the same message-passing interface. Message passing is the only form of data exchange between two processes, and there is no data sharing. A message can be a list, a tuple, integers, and so on.  Message passing takes place causally.  The `receive` language construct directs a process to wait for a message to come from another process. 
 
-The example mentioned below has been taken from [Message Passing Subsection of Erlang’s website](http://erlang.org/doc/getting_started/conc_prog.html#message-passing), which explains message passing syntax. In this example, two processes are created which send messages to each other a number of times.
+The example below is taken from [the "Message Passing" subsection of the Erlang documnentation](http://erlang.org/doc/getting_started/conc_prog.html#message-passing), which explains Erlang's constructs for sending and receiving messages.  In this example, two processes are created that send messages to each other a number of times.
 
 ```erlang
 -module(msg_passing).
@@ -103,6 +91,8 @@ start() ->
   spawn(msg_passing, ping, [3, Pong_PID]).			%% another process is spawned which executes ping message
 ```
 
+An example run of the code looks like this:
+
 ```
 Eshell V5.9.3.1  (abort with ^G)
 1> c(msg_passing).
@@ -121,9 +111,9 @@ Pong finished
 
 ### Process Linking
 
-The linking of the processes is done via *link()* or *spawn_link()* functions. The example discussed below has been taken from [the "Errors and Processes" chapter of _Learn You Some Erlang for Great Good!_](https://learnyousomeerlang.com/errors-and-processes), which clearly explains how linking works in Erlang.
+Linking of Erlang processes is done via `link()` or `spawn_link()` functions. The example discussed below has been taken from [the "Errors and Processes" chapter of _Learn You Some Erlang for Great Good!_](https://learnyousomeerlang.com/errors-and-processes), which clearly explains how linking works in Erlang.
 
-This function spawns N processes which are linked to each other.
+The `chain()` function in the `linking` module below spawns _N_ processes, which are linked to each other.
 
 ```erlang
 -module(linking).				%% a module named linking is created
@@ -162,6 +152,8 @@ Stack Trace::
 [erl shell] <-- restarted       %% here erl also dies eventually.
 ```
 
+The error propagation that linking enables is used by the aforementioned OTP supervision trees.
+
 ## Conclusion
 
-The past couple of decades have seen a growth in Erlang's popularity, as its programming techniques are being picked up by various other transactional systems owing to a growing need for concurrent service based applications. Databases like [CouchDB](http://couchdb.apache.org/), [Scalaris](http://scalaris.zib.de/) and [Amazon SimpleDB](https://aws.amazon.com/simpledb/) have been implemented using Erlang. Erlang has also become a good choice as a general purpose programming language, as in the [Nitrogen framework](http://nitrogenproject.com/) for web development, or even [Wings3D](http://www.wings3d.com/) designed for graphics modeling. In conclusion, the following quote by Armstrong in [Rackspace in 2013](https://www.youtube.com/watch?v=u41GEwIq2mE&t=3m59s) seems apt:"If [Java](https://en.wikipedia.org/wiki/Java_(programming_language)) is '[write once, run anywhere](https://en.wikipedia.org/wiki/Write_once,_run_anywhere)', then Erlang is 'write once, run forever'.
+The past couple of decades have seen an increase in Erlang's popularity. Databases like [CouchDB](http://couchdb.apache.org/), [Scalaris](http://scalaris.zib.de/), and [Amazon SimpleDB](https://aws.amazon.com/simpledb/) have been implemented using Erlang. Erlang is also an increasingly popular choice for  general-purpose programming, as in the [Nitrogen framework](http://nitrogenproject.com/) for web development, or even [Wings 3D](http://www.wings3d.com/), designed for graphics modeling. In conclusion, the following quote from Armstrong in [a 2013 interview](https://www.youtube.com/watch?v=u41GEwIq2mE&t=3m59s) seems apt: "If [Java](https://en.wikipedia.org/wiki/Java_(programming_language)) is '[write once, run anywhere](https://en.wikipedia.org/wiki/Write_once,_run_anywhere)', then Erlang is 'write once, run forever'."
