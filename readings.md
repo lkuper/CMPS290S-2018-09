@@ -73,7 +73,7 @@ There's a vast amount of reading material that would be in scope for a course on
     - Ankush Desai et al., [Compositional Programming and Testing of Dynamic Distributed Systems (OOPSLA '18)](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2018/EECS-2018-95.pdf)
   - ...material on multitier programming, such as:
     - Ezra Cooper et al., [Links: web programming without tiers (FMCO '06)](http://links-lang.org/papers/links-fmco06.pdf)
-    - Pascal Weisenburger, Mirko Köhler, and Guido Salvaneschi, [Distributed System Development with ScalaLoci (OOPSLA '18)](https://2018.splashcon.org/event/splash-2018-oopsla-distributed-system-development-with-scalaloci) (TODO: update with correct paper link) (see also: [ScalaLoci website](https://scala-loci.github.io/) and [GitHub organization](https://github.com/scala-loci))
+    - Pascal Weisenburger, Mirko Köhler, and Guido Salvaneschi, [Distributed System Development with ScalaLoci (OOPSLA '18)](https://dl.acm.org/citation.cfm?id=3276499) (see also: [ScalaLoci website](https://scala-loci.github.io/) and [GitHub organization](https://github.com/scala-loci))
   - ...material on computation orchestration, such as:
     - Jayadev Misra and William R. Cook, [Computation Orchestration: A Basis for Wide-Area Computing (JSSM 2007)](http://orc.csres.utexas.edu/papers/OrcJSSM.pdf)
     - David Kitchin et al., [The Orc Programming Language (FORTE '09)](http://orc.csres.utexas.edu/papers/forte09.pdf)
