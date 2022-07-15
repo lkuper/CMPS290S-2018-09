@@ -24,4 +24,3 @@ defaults:
       type: posts
     values:
       author_profile: true
-      permalink: /:year/:month/:day/:title/
