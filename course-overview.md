@@ -23,9 +23,9 @@ Hi, I'm [Lindsey Kuper](https://users.soe.ucsc.edu/~lkuper/)!
   - The "S" in the course number stands for "systems", but don't read too much into it (roughly half the papers we read will be from programming-languages venues)
   - Class meets Mondays, Wednesdays, and Fridays, 1:20-2:25pm, Porter Acad 241 (in the Porter "D-Building", a [12m30s walk](https://taps.ucsc.edu/pdf/walking-map.pdf) from Science Hill)
   - No final exam, although you should save the time slot (8-11am on Wednesday, December 12) for a social event
-  - Course web page: <http://composition.al/CMPS290S-2018-09/>
+  - Course web page: <https://decomposition.al/CMPS290S-2018-09/>
   - Course GitHub repo: <https://github.com/lkuper/CMPS290S-2018-09/>
-  - This document: <http://composition.al/CMPS290S-2018-09/course-overview.html>
+  - This document: <https://decomposition.al/CMPS290S-2018-09/course-overview.html>
 
 ## What's this course about?
 
@@ -40,7 +40,7 @@ Topics we'll spend significant time on:
   - Languages and frameworks for distribution
   - Abstractions for configuration management
 
-The [readings page](http://composition.al/CMPS290S-2018-09/readings.html) has the current schedule of readings.
+The [readings page](https://decomposition.al/CMPS290S-2018-09/readings.html) has the current schedule of readings.
 
 ### "Official" course description
 
@@ -141,9 +141,9 @@ These presentations do not need to be highly polished performances, like confere
 
 ### Choosing topics to present
 
-By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](http://composition.al/CMPS290S-2018-09/readings.html) you'd like to present.  I'll do my best to assign everyone the readings they want to present.
+By next Monday, if you haven't done so yet, you should email me with a list of three to five [readings](https://decomposition.al/CMPS290S-2018-09/readings.html) you'd like to present.  I'll do my best to assign everyone the readings they want to present.
 
-If you have trouble coming up with three to five readings you want to present, pick from the ["further reading" section](http://composition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
+If you have trouble coming up with three to five readings you want to present, pick from the ["further reading" section](https://decomposition.al/CMPS290S-2018-09/readings.html#further-reading) instead; if there's enough interest in those, then we can promote them to the regular schedule.
 
 ### Advice on giving good talks
 
@@ -178,7 +178,7 @@ Choose several (at least three, but no more than six or so) related readings tha
 
 At most one of your selected readings should be one we're already covering in class.  The idea is to use something we read in class as a jumping-off point to go off on your own, explore the literature on a specific topic, and come back with new insights.
 
-Good sources of papers for a literature survey include the related work sections of things we read for class, or the ["further reading" section of the readings page](http://composition.al/CMPS290S-2018-09/readings.html#further-reading).
+Good sources of papers for a literature survey include the related work sections of things we read for class, or the ["further reading" section of the readings page](https://decomposition.al/CMPS290S-2018-09/readings.html#further-reading).
 
 ### Blog post idea: The experience report
 
@@ -274,5 +274,5 @@ US federal law (specifically, FERPA) and UC policy restrict the disclosure of in
 ## To do
 
   - **Once you have course repo access**: Make sure that you are able to push to the repo.  One way to do this is by pushing an _empty file_ called `XXXX-response-2018-10-01.md` to the `responses` directory, replacing `XXXX` with your unique ID.  When you submit your response to the first reading assignment, you'll update this file.
-  - **For Monday, October 1**: If you haven't yet done so, look over the [list of readings](http://composition.al/CMPS290S-2018-09/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
-  - **For Monday, October 1**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](http://composition.al/CMPS290S-2018-09/responses.html) are due by 11am on the day of class).
+  - **For Monday, October 1**: If you haven't yet done so, look over the [list of readings](https://decomposition.al/CMPS290S-2018-09/readings.html), pick 3-5 papers that you'd like to present, and email me your choices.  (If you don't pick, I'll pick for you.)
+  - **For Monday, October 1**: Read the first reading assignment ([Gilbert and Lynch](https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf)!) and submit your response to the course repo (remember that [responses](https://decomposition.al/CMPS290S-2018-09/responses.html) are due by 11am on the day of class).

@@ -189,8 +189,8 @@ development easier in a mixed-consistency environment would be nice.
 Language-level abstractions such as the ones I discussed in [my previous post](/CMPS290S-2018-09/2018/11/21/mixing-consistency-in-a-programmable-storage-system.html) could play an important role here.
 
 <!-- link URLs -->
-[mixing-consistency-blog-post]: http://composition.al/CMPS290S-2018-09/2018/11/21/mixing-consistency-in-a-programmable-storage-system.html
-[natasha-blog-post]: http://composition.al/CMPS290S-2018-09/2018/11/29/consistency-in-cassandra.html
+[mixing-consistency-blog-post]: https://decomposition.al/CMPS290S-2018-09/2018/11/21/mixing-consistency-in-a-programmable-storage-system.html
+[natasha-blog-post]: https://decomposition.al/CMPS290S-2018-09/2018/11/29/consistency-in-cassandra.html
 
 [programmable-storage]: http://programmability.us/
 

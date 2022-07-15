@@ -9,7 +9,7 @@ by Abhishek Singh ⋅ edited by Devashish Purandare and Lindsey Kuper
 
 ## Introduction
 
-In this post we continue the discussion on collaborative text editing started in [my previous post](http://composition.al/CMPS290S-2018-09/2018/11/20/conflict-resolution-in-collaborative-text-editing-with-operational-transformation-part-1-of-2.html).  The goal of part 1 of the post was to provide an overview of the dOPT operational transformation algorithm from Ellis and Gibbs' [“Concurrency control in groupware systems” paper](http://doi.acm.org/10.1145/67544.66963) and how it addresses the problem of conflict resolution in collaborative text editing. We looked at the problem through a toy example under a set of assumptions that limited the scope of the problem. In this post we remove some of those assumptions and discuss the details of the dOPT algorithm as discussed in the paper.
+In this post we continue the discussion on collaborative text editing started in [my previous post](https://decomposition.al/CMPS290S-2018-09/2018/11/20/conflict-resolution-in-collaborative-text-editing-with-operational-transformation-part-1-of-2.html).  The goal of part 1 of the post was to provide an overview of the dOPT operational transformation algorithm from Ellis and Gibbs' [“Concurrency control in groupware systems” paper](http://doi.acm.org/10.1145/67544.66963) and how it addresses the problem of conflict resolution in collaborative text editing. We looked at the problem through a toy example under a set of assumptions that limited the scope of the problem. In this post we remove some of those assumptions and discuss the details of the dOPT algorithm as discussed in the paper.
 
 Here's the list of the assumptions I made in my previous post:
 

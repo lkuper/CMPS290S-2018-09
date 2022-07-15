@@ -6,7 +6,7 @@ classes: wide
 ---
 
 <script type="text/javascript"
-src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,http://composition.al/javascripts/MathJaxLocal.js">
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,https://decomposition.al/javascripts/MathJaxLocal.js">
 </script>
 
 by Austen Barker &middot; edited by Natasha Mittal and Lindsey Kuper

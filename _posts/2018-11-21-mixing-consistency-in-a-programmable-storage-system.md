@@ -144,7 +144,7 @@ In a follow-up blog post, I will try to explore mechanisms by which Ceph could s
 [ioflow-paper]: https://www.microsoft.com/en-us/research/wp-content/uploads/2013/11/ioflow-sosp13.pdf
 
 <!-- consistency-types links -->
-[course-website]: http://composition.al/CMPS290S-2018-09/
+[course-website]: https://decomposition.al/CMPS290S-2018-09/
 [rdt-svo]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/replDataTypesPOPL13-complete.pdf
 [strong-enough]: http://software.imdea.org/~gotsman/papers/logic-popl16.pdf
 [ipa-impl]: https://github.com/bholt/ipa/tree/master/src/main/scala/ipa

@@ -94,7 +94,7 @@ section. See you there!)
 ## Data as Streams
 
 Another way to have grow-only state is to just totally order it in time. Despite
-[all the problems](http://composition.al/CMPS290S-2018-09/2018/11/17/time-is-partial-or-why-do-distributed-consistency-models-and-weak-memory-models-look-so-similar-anyway.html) in trying to totally order time, there are _some_ cases in which
+[all the problems](https://decomposition.al/CMPS290S-2018-09/2018/11/17/time-is-partial-or-why-do-distributed-consistency-models-and-weak-memory-models-look-so-similar-anyway.html) in trying to totally order time, there are _some_ cases in which
 we can structure the entirety of how we process state such that we can exploit this total
 ordering.
 
