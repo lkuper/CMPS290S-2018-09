@@ -9,6 +9,8 @@ paginate_path: /page:num/
 
 repository: "lkuper/CMPS290S-2018-09"
 
+url: "https://decomposition.al"
+
 baseurl: "/CMPS290S-2018-09"
 
 exclude: responses
